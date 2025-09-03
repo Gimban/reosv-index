@@ -21,9 +21,12 @@ function App() {
   }, []);
 
   return (
-    <div className="App">
-      <h1>CSV 데이터 표</h1>
-      <DataTable data={data} />
+    <div className="App-container"> {/* 전체 레이아웃을 감싸는 컨테이너 추가 */}
+      <Sidebar />
+      <div className="content-container"> {/* 실제 콘텐츠가 들어갈 영역 */}
+        <h1>CSV 데이터 표</h1>
+        <DataTable data={data} />
+      </div>
     </div>
   );
 }

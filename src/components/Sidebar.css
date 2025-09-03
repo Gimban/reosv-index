@@ -1,0 +1,27 @@
+.sidebar {
+  width: 250px; /* 사이드바의 너비 */
+  background-color: #f4f4f4;
+  padding: 20px;
+  position: fixed; /* 페이지 스크롤에 따라 고정 */
+  height: 100%; /* 페이지 전체 높이 */
+  overflow: auto; /* 내용이 길어지면 스크롤 가능 */
+}
+
+.sidebar ul {
+  list-style-type: none; /* 리스트 점 제거 */
+  padding: 0;
+}
+
+.sidebar li {
+  padding: 8px 0;
+}
+
+.sidebar a {
+  text-decoration: none; /* 밑줄 제거 */
+  color: #333;
+  font-weight: bold;
+}
+
+.sidebar a:hover {
+  color: #007bff; /* 마우스 오버 시 색상 변경 */
+}
