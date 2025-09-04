@@ -1,53 +1,55 @@
 import React from 'react';
 import './Sidebar.css';
 
-function Sidebar({ onSelectCategory }) {
-  // App.js의 GID_MAP과 유사한 구조를 사용하거나 props로 받을 수 있습니다.
-  // 여기서는 예시로 구조를 정의합니다.
-  const menu = {
-    '무기': {
-      '클래스 무기 강화 비용': '클래스 무기 강화 비용',
-      '특수 무기 스텟': '특수 무기 스텟',
-      '특수 무기 강화 비용': '특수 무기 강화 비용'
-    },
-    '방어구': {
-      '방어구 강화 비용': '방어구 강화 비용'
-    }
-  };
+function Sidebar({ gidMap, onSelectCategory }) {
+  // GID_MAP을 기반으로 메뉴 구조를 동적으로 생성합니다.
+  const menu = React.useMemo(() => {
+    const menuStructure = {
+      '무기': {},
+      '방어구': {},
+      '기타': {}
+    };
 
-  const mainCategories = Object.keys(menu);
+    for (const categoryName in gidMap) {
+      if (categoryName.includes('무기')) {
+        menuStructure['무기'][categoryName] = categoryName;
+      } else if (categoryName.includes('방어구')) {
+        menuStructure['방어구'][categoryName] = categoryName;
+      } else {
+        menuStructure['기타'][categoryName] = categoryName;
+      }
+    }
+
+    // 내용이 없는 카테고리는 숨깁니다.
+    if (Object.keys(menuStructure['기타']).length === 0) {
+      delete menuStructure['기타'];
+    }
+
+    return menuStructure;
+  }, [gidMap]);
 
   return (
     <div className="sidebar">
       <h2>목차</h2>
       <ul>
-        {mainCategories.map((category, index) => (
+        {Object.keys(menu).map((mainCategory, index) => (
           <li key={index}>
             <a 
               href="#"
-              onClick={(e) => {
-                e.preventDefault();
-                // 최상위 카테고리는 클릭해도 동작하지 않게 하거나,
-                // 첫 번째 하위 카테고리를 선택하게 할 수 있습니다.
-                const firstSubCategory = Object.keys(menu[category])[0];
-                if (firstSubCategory) {
-                  onSelectCategory(firstSubCategory);
-                }
-              }}
+              onClick={(e) => e.preventDefault()} // 최상위 카테고리는 클릭해도 동작하지 않음
             >
-              {category}
+              {mainCategory}
             </a>
             {/* 하위 목차 렌더링 */}
-            {Object.keys(menu[category]).length > 0 && (
+            {Object.keys(menu[mainCategory]).length > 0 && (
               <ul>
-                {Object.keys(menu[category]).map((subCategory, subIndex) => (
+                {Object.keys(menu[mainCategory]).map((subCategory, subIndex) => (
                   <li key={subIndex}>
                     <a
                       href="#"
                       onClick={(e) => {
                         e.preventDefault();
-                        // 하위 목차 클릭 시 상위 컴포넌트에 알림
-                        onSelectCategory(menu[category][subCategory]);
+                        onSelectCategory(subCategory);
                       }}
                     >
                       {subCategory}

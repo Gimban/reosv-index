@@ -49,7 +49,7 @@ function App() {
 
   return (
     <div className="App-container">
-      <Sidebar categories={Object.keys(GID_MAP)} onSelectCategory={setCurrentCategory} />
+      <Sidebar gidMap={GID_MAP} onSelectCategory={setCurrentCategory} />
       <div className="content-container">
         <h1>{currentCategory} 데이터</h1>
         <DataTable data={allData[currentCategory] || []} />
