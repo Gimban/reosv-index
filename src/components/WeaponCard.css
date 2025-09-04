@@ -14,6 +14,59 @@
   padding: 16px;
   border-bottom: 1px solid #eee;
   background-color: #f9f9f9;
+  color: #333;
+}
+
+/* 등급별 배경색 */
+.card-top.grade-common {
+  background-color: #f0f0f0;
+  background-color: #f0f0f0; /* Fallback */
+  background-image: linear-gradient(to right, #d0d0d0, #e8e8e8, #d0d0d0);
+}
+.card-top.grade-uncommon {
+  background-color: #e5f2e5;
+  background-color: #e5f2e5; /* Fallback */
+  background-image: linear-gradient(to right, #3aae41, #8ce990, #3aae41);
+}
+.card-top.grade-rare {
+  background-color: #e3f2fd;
+  background-color: #e3f2fd; /* Fallback */
+  background-image: linear-gradient(to right, #498edf, #95c5f4, #498edf);
+}
+.card-top.grade-heroic {
+  background-color: #e9e3f3;
+  background-color: #e9e3f3; /* Fallback */
+  background-image: linear-gradient(to right, #a03ae9, #c680f1, #a03ae9);
+}
+.card-top.grade-legendary {
+  background-color: #fff8e1;
+  background-color: #fff8e1; /* Fallback */
+  background-image: linear-gradient(to right, #eec20f, #f8e087, #eec20f);
+  border-bottom-color: #ffeeba;
+}
+.card-top.grade-mortal {
+  background-color: #fbe9e7;
+  background-color: #fbe9e7; /* Fallback */
+  background-image: linear-gradient(to right, #b02222, #dc7373, #b02222);
+  border-bottom-color: #f5c6cb;
+}
+.card-top.grade-boss {
+  background-color: #fbe9e7;
+  background-color: #fbe9e7; /* Fallback */
+  background-image: linear-gradient(to right, #fcbec9, #fee2e6, #fcbec9);
+  border-bottom-color: #f5c6cb;
+}
+.card-top.grade-other {
+  background-color: #fbe9e7;
+  background-color: #fbe9e7; /* Fallback */
+  background-image: linear-gradient(to right, #a4dede, #c6eded, #a4dede);
+  border-bottom-color: #f5c6cb;
+}
+.card-top.grade-destiny {
+  background-color: #fbe9e7;
+  background-color: #fbe9e7; /* Fallback */
+  background-image: linear-gradient(to right, #4068de, #97b2f4, #4068de);
+  border-bottom-color: #f5c6cb;
 }
 
 .image-placeholder {

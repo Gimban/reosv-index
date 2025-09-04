@@ -64,6 +64,7 @@ function WeaponCardView({ data }) {
               <WeaponCard
                 key={weaponGroup[0]["이름"]}
                 weaponData={weaponGroup}
+                grade={grade}
               />
             ))}
           </div>

@@ -1,7 +1,7 @@
 import React, { useState, useMemo } from "react";
 import "./WeaponCard.css";
 
-function WeaponCard({ weaponData }) {
+function WeaponCard({ weaponData, grade }) {
   const [currentIndex, setCurrentIndex] = useState(0);
 
   const handlePrev = () => {
@@ -140,9 +140,24 @@ function WeaponCard({ weaponData }) {
   const enhancementDisplay = Number(enhancement) > 0 ? `+${enhancement}` : "+0";
   const formattedDamageValue = formatDamage();
 
+  const getGradeClassName = (g) => {
+    const gradeMap = {
+      일반: "grade-common",
+      고급: "grade-uncommon",
+      희귀: "grade-rare",
+      영웅: "grade-heroic",
+      전설: "grade-legendary",
+      필멸: "grade-mortal",
+      보스: "grade-boss",
+      기타: "grade-other",
+      운명: "grade-destiny",
+    };
+    return gradeMap[g] || "grade-common";
+  };
+
   return (
     <div className="weapon-card">
-      <div className="card-top">
+      <div className={`card-top ${getGradeClassName(grade)}`}>
         <div className="image-placeholder">
           <span>이미지</span>
         </div>
