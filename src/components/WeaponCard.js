@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useMemo } from "react";
 import "./WeaponCard.css";
 
 function WeaponCard({ weaponData }) {
@@ -15,6 +15,51 @@ function WeaponCard({ weaponData }) {
   const currentStats = weaponData[currentIndex];
   // 1강 이상일 경우, 이전 강화 차수 데이터를 가져옵니다.
   const previousStats = currentIndex > 0 ? weaponData[currentIndex - 1] : null;
+
+  // Memoize derived stats to avoid recalculating on every render
+  const { dps, dpm, manaEfficiency, mps } = useMemo(() => {
+    if (!currentStats) {
+      return { dps: null, dpm: null, manaEfficiency: null, mps: null };
+    }
+
+    const numericDamage = Number(
+      String(currentStats["피해량"] || "0").replace(/,/g, "")
+    );
+    const numericHits = Number(currentStats["타수"] || "1");
+    const numericCooldown = Number(currentStats["쿨타임"] || "0");
+    const numericMana = Number(
+      String(currentStats["마나"] || "0").replace(/,/g, "")
+    );
+
+    const totalDamage = numericDamage * numericHits;
+
+    let dps = null;
+    let dpm = null;
+    if (numericDamage > 0 && numericCooldown > 0) {
+      const dpsRaw = totalDamage / numericCooldown;
+      dps = dpsRaw.toFixed(1);
+      dpm = (dpsRaw * 60).toLocaleString(undefined, {
+        minimumFractionDigits: 1,
+        maximumFractionDigits: 1,
+      });
+    }
+    const manaEfficiencyValue =
+      numericDamage > 0 && numericMana > 0
+        ? (totalDamage / numericMana).toFixed(1)
+        : null;
+    const mpsValue =
+      numericMana > 0 && numericCooldown > 0
+        ? (numericMana / numericCooldown).toFixed(1)
+        : null;
+
+    return {
+      dps: dps,
+      dpm: dpm,
+      manaEfficiency: manaEfficiencyValue,
+      mps: mpsValue,
+    };
+  }, [currentStats]);
+
   if (!currentStats) return null;
 
   const {
@@ -27,14 +72,7 @@ function WeaponCard({ weaponData }) {
     비고: note,
   } = currentStats;
 
-  /**
-   * 현재 값과 이전 값을 비교하여 변화량을 텍스트로 반환합니다.
-   * @param {string | number} current - 현재 값
-   * @param {string | number | null | undefined} previous - 이전 값
-   * @returns {string} '(+10)' 또는 '(-0.5)'와 같은 형식의 문자열
-   */
   const getStatDiffText = (current, previous) => {
-    // 이전 값이 없거나(0은 유효), 현재 값이 없으면 변화량을 표시하지 않습니다.
     if (previous === null || previous === undefined || !current) {
       return "";
     }
@@ -42,19 +80,16 @@ function WeaponCard({ weaponData }) {
     const currentValue = Number(String(current).replace(/,/g, ""));
     const previousValue = Number(String(previous).replace(/,/g, ""));
 
-    // 수치로 변환할 수 없는 값이면 변화량을 표시하지 않습니다.
     if (isNaN(currentValue) || isNaN(previousValue)) {
       return "";
     }
 
     const diff = currentValue - previousValue;
 
-    // 변화가 없으면 표시하지 않습니다.
     if (diff === 0) {
       return "";
     }
 
-    // 소수점 둘째 자리까지 반올림
     const roundedDiff = Math.round(diff * 100) / 100;
     const diffString = roundedDiff.toLocaleString();
 
@@ -103,7 +138,6 @@ function WeaponCard({ weaponData }) {
   };
 
   const enhancementDisplay = Number(enhancement) > 0 ? `+${enhancement}` : "+0";
-
   const formattedDamageValue = formatDamage();
 
   return (
@@ -150,6 +184,34 @@ function WeaponCard({ weaponData }) {
             </li>
           )}
         </ul>
+        {(dps || dpm || manaEfficiency || mps) && (
+          <div className="derived-stats-container">
+            {dps && (
+              <div className="derived-stat-item">
+                <span>DPS</span>
+                <strong>{dps}</strong>
+              </div>
+            )}
+            {dpm && (
+              <div className="derived-stat-item">
+                <span>DPM</span>
+                <strong>{dpm}</strong>
+              </div>
+            )}
+            {manaEfficiency && (
+              <div className="derived-stat-item">
+                <span>ME</span>
+                <strong>{manaEfficiency}</strong>
+              </div>
+            )}
+            {mps && (
+              <div className="derived-stat-item">
+                <span>MPS</span>
+                <strong>{mps}</strong>
+              </div>
+            )}
+          </div>
+        )}
       </div>
       {weaponData.length > 1 && (
         <div className="card-navigation">

@@ -1,7 +1,7 @@
 .weapon-card {
   border: 1px solid #ddd;
   border-radius: 8px;
-  width: 350px;
+  width: 320px;
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
   position: relative;
   overflow: hidden;
@@ -49,12 +49,19 @@
 .card-bottom {
   padding: 16px;
   flex-grow: 1;
+  display: flex;
+  flex-direction: column;
 }
 
 .stats-list {
   list-style: none;
   padding: 0;
   margin: 0;
+  flex-grow: 1;
+}
+
+.note-item {
+  align-items: flext-start;
 }
 
 .stats-list li {
@@ -78,6 +85,26 @@
   /* 텍스트가 길어질 경우를 대비해 우측 정렬 및 여백 추가 */
   text-align: right;
   padding-left: 8px;
+}
+
+.derived-stats-container {
+  border-top: 1px solid #eee;
+  padding-top: 10px;
+  margin-top: auto;
+  display: flex;
+  justify-content: space-around;
+  font-size: 0.85em;
+  color: #555;
+}
+
+.derived-stat-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.derived-stat-item strong {
+  margin-top: 2px;
 }
 
 .card-navigation {
@@ -112,11 +139,11 @@
 }
 
 .prev-arrow {
-  margin-left: 3px;
+  margin-left: 10px;
 }
 
 .next-arrow {
-  margin-right: 3px;
+  margin-right: 10px;
 }
 
 .nav-arrow:hover {
