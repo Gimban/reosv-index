@@ -8,7 +8,7 @@ body {
 }
 
 .content-container {
-  margin-left: 270px; /* 사이드바 너비(250px) + 여백(20px) */
+  margin-left: 0px;
   padding: 20px;
   flex-grow: 1;
 }
@@ -19,7 +19,8 @@ table {
   margin-top: 20px;
 }
 
-th, td {
+th,
+td {
   border: 1px solid #ddd;
   padding: 8px;
   text-align: left;

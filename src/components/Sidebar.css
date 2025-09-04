@@ -2,9 +2,9 @@
   width: 250px;
   background-color: #f4f4f4;
   padding: 20px;
-  position: fixed;
-  height: 100%;
+  height: 100vh;
   overflow: auto;
+  flex-shrink: 0;
 }
 
 .sidebar ul {
@@ -34,4 +34,35 @@
 
 .sidebar ul ul a {
   font-weight: normal; /* 하위 목차는 굵기 제거 */
+}
+
+/* 최상위 카테고리 제목 스타일 */
+.main-category-title {
+  font-weight: bold;
+  cursor: default;
+  /* a 태그와 비슷하게 보이도록 필요한 스타일 추가 */
+  display: block;
+  padding: 8px 16px;
+  color: #333; /* 기존 텍스트 색상 */
+}
+
+/* 하위 카테고리 버튼을 링크처럼 보이게 하는 스타일 */
+.category-button {
+  background: none;
+  border: none;
+  padding: 0;
+  margin: 0;
+  font: inherit;
+  color: #007bff; /* 기존 링크 색상 */
+  text-decoration: none;
+  cursor: pointer;
+  text-align: left;
+  width: 100%;
+  display: block;
+  padding: 8px 16px; /* 기존 a 태그와 동일한 패딩 */
+}
+
+.category-button:hover {
+  text-decoration: underline;
+  background-color: #f0f0f0; /* hover 효과 */
 }
