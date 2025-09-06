@@ -1,8 +1,9 @@
 import React, { useState, useMemo } from "react";
 import "./WeaponCard.css";
 
-function WeaponCard({ weaponData, grade }) {
+function WeaponCard({ weaponData, grade, showDescription }) {
   const [currentIndex, setCurrentIndex] = useState(0);
+  const [isHovered, setIsHovered] = useState(false);
 
   const handlePrev = () => {
     setCurrentIndex((prev) => (prev === 0 ? weaponData.length - 1 : prev - 1));
@@ -70,6 +71,7 @@ function WeaponCard({ weaponData, grade }) {
     쿨타임: cooldown,
     마나: mana,
     비고: note,
+    설명: description,
   } = currentStats;
 
   const getStatDiffText = (current, previous) => {
@@ -156,7 +158,14 @@ function WeaponCard({ weaponData, grade }) {
   };
 
   return (
-    <div className="weapon-card">
+    <div
+      className="weapon-card"
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
+    >
+      {showDescription && isHovered && description && (
+        <div className="description-tooltip">{description}</div>
+      )}
       <div className={`card-top ${getGradeClassName(grade)}`}>
         <div className="image-placeholder">
           <span>이미지</span>

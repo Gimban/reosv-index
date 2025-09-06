@@ -1,7 +1,40 @@
-.weapon-card-view h1 {
+.view-controls {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
   border-bottom: 2px solid #eee;
   padding-bottom: 10px;
   margin-bottom: 20px;
+}
+
+.view-controls h1 {
+  margin: 0;
+}
+
+.controls-group {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.view-controls label {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  cursor: pointer;
+}
+
+.sort-controls {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.sort-controls select {
+  padding: 4px 8px;
+  border-radius: 4px;
+  border: 1px solid #ccc;
+  font-size: 0.9em;
 }
 
 .grade-section {

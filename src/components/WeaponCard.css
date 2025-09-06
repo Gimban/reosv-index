@@ -4,7 +4,7 @@
   width: 320px;
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
   position: relative;
-  overflow: hidden;
+  /* overflow: hidden; */
   display: flex;
   flex-direction: column;
 }
@@ -201,4 +201,33 @@
 
 .nav-arrow:hover {
   background-color: rgba(0, 0, 0, 0.6);
+}
+
+.description-tooltip {
+  position: absolute;
+  width: 90%;
+  bottom: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  margin-bottom: 10px; /* 카드와 툴팁 사이의 간격 */
+  background-color: #333;
+  color: #fff;
+  padding: 10px;
+  border-radius: 6px;
+  z-index: 10;
+  font-size: 0.9em;
+  text-align: left;
+  line-height: 1.4;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.description-tooltip::after {
+  content: "";
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  margin-left: -5px;
+  border-width: 5px;
+  border-style: solid;
+  border-color: #333 transparent transparent transparent;
 }
