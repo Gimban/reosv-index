@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from "react";
+import React, { useMemo, useState, useEffect } from "react";
 import WeaponCard from "./WeaponCard";
 import "./WeaponCardView.css";
 
@@ -64,6 +64,7 @@ function WeaponCardView({ data }) {
   const [showDescription, setShowDescription] = useState(false);
   const [sortOption, setSortOption] = useState("기본"); // '기본', '총 피해량', 'DPS'
   const [sortEnhancement, setSortEnhancement] = useState(0); // 정렬 기준 강화 차수
+  const [gradeFilter, setGradeFilter] = useState({});
 
   const groupedWeapons = useMemo(() => {
     if (!data || data.length === 0) {
@@ -101,6 +102,38 @@ function WeaponCardView({ data }) {
     return weaponsByGrade;
   }, [data]);
 
+  // 등급 순서에 따라 정렬합니다.
+  const sortedGrades = useMemo(() => {
+    const gradeOrder = [
+      "일반",
+      "고급",
+      "희귀",
+      "영웅",
+      "전설",
+      "필멸",
+      "보스",
+      "기타",
+      "운명",
+    ];
+    return Object.keys(groupedWeapons).sort((a, b) => {
+      const indexA = gradeOrder.indexOf(a);
+      const indexB = gradeOrder.indexOf(b);
+      // gradeOrder에 없는 등급은 뒤로 보냅니다.
+      const finalIndexA = indexA === -1 ? gradeOrder.length : indexA;
+      const finalIndexB = indexB === -1 ? gradeOrder.length : indexB;
+      return finalIndexA - finalIndexB;
+    });
+  }, [groupedWeapons]);
+
+  useEffect(() => {
+    // groupedWeapons가 변경될 때 gradeFilter 상태를 초기화합니다.
+    const initialFilter = sortedGrades.reduce((acc, grade) => {
+      acc[grade] = false;
+      return acc;
+    }, {});
+    setGradeFilter(initialFilter);
+  }, [sortedGrades]);
+
   const sortedGroupedWeapons = useMemo(() => {
     if (sortOption === "기본") {
       return groupedWeapons;
@@ -130,19 +163,35 @@ function WeaponCardView({ data }) {
     return sorted;
   }, [groupedWeapons, sortOption, sortEnhancement]);
 
+  const isAllMode = useMemo(
+    () => !Object.values(gradeFilter).some((v) => v),
+    [gradeFilter]
+  );
+
+  const handleShowAllClick = () => {
+    const resetFilter = {};
+    Object.keys(gradeFilter).forEach((grade) => {
+      resetFilter[grade] = false;
+    });
+    setGradeFilter(resetFilter);
+  };
+
+  const handleGradeFilterChange = (grade, isChecked) => {
+    setGradeFilter((prevFilter) => ({
+      ...prevFilter,
+      [grade]: isChecked,
+    }));
+  };
+
+  const filteredGrades = useMemo(() => {
+    return isAllMode
+      ? sortedGrades
+      : sortedGrades.filter((grade) => gradeFilter[grade]);
+  }, [isAllMode, gradeFilter, sortedGrades]);
+
   if (Object.keys(groupedWeapons).length === 0) {
     return <p>특수 무기 스텟 데이터를 불러오는 중이거나 데이터가 없습니다.</p>;
   }
-
-  // 등급 순서에 따라 정렬합니다.
-  const gradeOrder = ["일반", "고급", "희귀", "영웅", "전설", "필멸"];
-  const sortedGrades = Object.keys(groupedWeapons).sort((a, b) => {
-    const indexA = gradeOrder.indexOf(a);
-    const indexB = gradeOrder.indexOf(b);
-    if (indexA === -1) return 1;
-    if (indexB === -1) return -1;
-    return indexA - indexB;
-  });
 
   return (
     <div className="weapon-card-view">
@@ -183,7 +232,29 @@ function WeaponCardView({ data }) {
           </label>
         </div>
       </div>
-      {sortedGrades.map((grade) => (
+      <div className="grade-filter-controls">
+        <span className="filter-title">등급 필터:</span>
+        <label className="radio-label">
+          <input
+            type="radio"
+            name="grade-filter"
+            checked={isAllMode}
+            onChange={handleShowAllClick}
+          />
+          모두 보기
+        </label>
+        {sortedGrades.map((grade) => (
+          <label key={grade} className="checkbox-label">
+            <input
+              type="checkbox"
+              checked={gradeFilter[grade] || false}
+              onChange={(e) => handleGradeFilterChange(grade, e.target.checked)}
+            />
+            {grade}
+          </label>
+        ))}
+      </div>
+      {filteredGrades.map((grade) => (
         <section key={grade} className="grade-section">
           <h2>{grade}</h2>
           <div className="cards-container">
