@@ -89,8 +89,8 @@ export function useWeaponData(data, sortOption, sortEnhancement) {
       "전설",
       "필멸",
       "보스",
-      "기타",
       "운명",
+      "기타",
     ];
     return Object.keys(groupedWeapons).sort((a, b) => {
       const indexA = gradeOrder.indexOf(a);

@@ -10,6 +10,7 @@ function WeaponCardView({ data }) {
   const [showDescription, setShowDescription] = useState(false);
   const [sortOption, setSortOption] = useState("기본");
   const [sortEnhancement, setSortEnhancement] = useState(0);
+  const [globalEnhancement, setGlobalEnhancement] = useState("개별");
   const [gradeFilter, setGradeFilter] = useState({});
 
   // 데이터 처리 로직 (커스텀 훅)
@@ -70,6 +71,8 @@ function WeaponCardView({ data }) {
         setSortEnhancement={setSortEnhancement}
         showDescription={showDescription}
         setShowDescription={setShowDescription}
+        globalEnhancement={globalEnhancement}
+        setGlobalEnhancement={setGlobalEnhancement}
       />
 
       <GradeFilterControls
@@ -90,6 +93,7 @@ function WeaponCardView({ data }) {
                 weaponData={weaponGroup}
                 grade={grade}
                 showDescription={showDescription}
+                globalEnhancement={globalEnhancement}
               />
             ))}
           </div>

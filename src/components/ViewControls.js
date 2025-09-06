@@ -7,6 +7,8 @@ function ViewControls({
   setSortEnhancement,
   showDescription,
   setShowDescription,
+  globalEnhancement,
+  setGlobalEnhancement,
 }) {
   return (
     <div className="view-controls">
@@ -29,6 +31,22 @@ function ViewControls({
             value={sortEnhancement}
             onChange={(e) => setSortEnhancement(Number(e.target.value))}
           >
+            {[...Array(16).keys()].map((level) => (
+              <option key={level} value={level}>
+                +{level}
+              </option>
+            ))}
+          </select>
+          <label htmlFor="global-enhancement-select">일괄 변경:</label>
+          <select
+            id="global-enhancement-select"
+            value={globalEnhancement}
+            onChange={(e) => {
+              const value = e.target.value;
+              setGlobalEnhancement(value === "개별" ? "개별" : Number(value));
+            }}
+          >
+            <option value="개별">개별 설정</option>
             {[...Array(16).keys()].map((level) => (
               <option key={level} value={level}>
                 +{level}

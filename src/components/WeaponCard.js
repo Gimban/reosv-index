@@ -1,9 +1,31 @@
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, useEffect } from "react";
 import "./WeaponCard.css";
 
-function WeaponCard({ weaponData, grade, showDescription }) {
+function WeaponCard({ weaponData, grade, showDescription, globalEnhancement }) {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isHovered, setIsHovered] = useState(false);
+
+  useEffect(() => {
+    if (globalEnhancement !== "개별" && weaponData.length > 0) {
+      const targetEnhancement = Number(globalEnhancement);
+
+      // Find the index of the weapon that best matches the target enhancement
+      const bestMatchIndex = weaponData.reduce(
+        (bestIndex, weapon, currentIndex) => {
+          const currentDiff = Math.abs(
+            Number(weapon["강화 차수"]) - targetEnhancement
+          );
+          const bestDiff = Math.abs(
+            Number(weaponData[bestIndex]["강화 차수"]) - targetEnhancement
+          );
+          return currentDiff < bestDiff ? currentIndex : bestIndex;
+        },
+        0
+      );
+
+      setCurrentIndex(bestMatchIndex);
+    }
+  }, [globalEnhancement, weaponData]);
 
   const handlePrev = () => {
     setCurrentIndex((prev) => (prev === 0 ? weaponData.length - 1 : prev - 1));
@@ -237,7 +259,7 @@ function WeaponCard({ weaponData, grade, showDescription }) {
           </div>
         )}
       </div>
-      {weaponData.length > 1 && (
+      {globalEnhancement === "개별" && weaponData.length > 1 && (
         <div className="card-navigation">
           <button onClick={handlePrev} className="nav-arrow prev-arrow">
             ‹
