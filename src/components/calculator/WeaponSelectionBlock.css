@@ -1,0 +1,98 @@
+.weapon-selection-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 15px;
+  margin-top: 20px;
+}
+
+.weapon-slot {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 12px;
+  border: 1px solid #ccc;
+  padding: 10px;
+  border-radius: 5px;
+  background-color: #fff;
+}
+
+.weapon-slot-main {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.enable-checkbox {
+  margin-right: 5px;
+  flex-shrink: 0;
+  cursor: pointer;
+}
+
+.weapon-slot .select-weapon-btn,
+.destiny-slot .select-weapon-btn {
+  flex-grow: 1;
+  text-align: left;
+  background-color: #f0f0f0;
+  border: 1px solid #ccc;
+  padding: 8px;
+  border-radius: 4px;
+  cursor: pointer;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.weapon-slot .select-weapon-btn:hover,
+.destiny-slot .select-weapon-btn:hover {
+  background-color: #e0e0e0;
+}
+
+.weapon-slot input {
+  width: 60px;
+  text-align: center;
+}
+
+.destiny-weapon-block {
+  border: 1px solid #ddd;
+  padding: 15px;
+  border-radius: 8px;
+  margin-bottom: 20px;
+  background-color: #fff8e1; /* 운명 등급 느낌을 주는 연한 노란색 */
+}
+
+.destiny-weapon-block h3 {
+  margin-top: 0;
+  margin-bottom: 10px;
+  font-size: 1.2em;
+  color: #c59000;
+}
+
+.weapon-slot-stats {
+  border-top: 1px solid #e0e0e0;
+  padding-top: 10px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 5px 10px;
+  font-size: 0.85em;
+}
+
+.disabled-stats {
+  opacity: 0.5;
+}
+
+.stat-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.stat-item .label {
+  color: #555;
+  margin-right: 5px;
+}
+
+.stat-item .value {
+  font-weight: bold;
+  color: #333;
+  white-space: nowrap;
+}

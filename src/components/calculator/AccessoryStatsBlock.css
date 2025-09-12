@@ -1,0 +1,48 @@
+.accessory-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+
+@media (max-width: 768px) {
+  .accessory-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.accessory-fieldset {
+  border: 1px solid #ddd;
+  padding: 20px;
+  border-radius: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  min-width: 0;
+}
+
+.accessory-fieldset legend {
+  padding: 0 10px;
+  font-weight: bold;
+  color: #333;
+  font-size: 1.1em;
+}
+
+.sub-options {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding-left: 15px;
+  margin-top: 10px;
+}
+
+.sub-options label {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.9em;
+}
+
+.sub-options input {
+  width: 80px;
+  margin-left: 10px;
+}

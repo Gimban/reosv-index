@@ -8,6 +8,9 @@ function Sidebar({ gidMap, onSelectCategory }) {
       홈: {
         홈: "홈",
       },
+      계산기: {
+        "DPS/DPM 계산기": "DPS/DPM 계산기",
+      },
       무기: {},
       방어구: {},
       기타: {},

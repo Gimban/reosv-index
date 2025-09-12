@@ -4,6 +4,7 @@ import DataTable from "./components/DataTable"; // 새로 만든 컴포넌트를
 import Sidebar from "./components/Sidebar";
 import Home from "./components/Home";
 import WeaponCardView from "./components/WeaponCardView";
+import DpsCalculator from "./components/DpsCalculator";
 import "./App.css";
 
 // 데이터를 불러올 CSV 링크
@@ -57,6 +58,8 @@ function App() {
           <Home />
         ) : currentCategory === "특수 무기 스텟" ? (
           <WeaponCardView data={allData[currentCategory] || []} />
+        ) : currentCategory === "DPS/DPM 계산기" ? (
+          <DpsCalculator weaponData={allData["특수 무기 스텟"] || []} />
         ) : (
           <>
             <h1>{currentCategory} 데이터</h1>
