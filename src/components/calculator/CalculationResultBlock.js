@@ -3,7 +3,10 @@ import "./CalculationResultBlock.css";
 
 function CalculationResultBlock({ results }) {
   const formatNumber = (num) =>
-    (num || 0).toLocaleString(undefined, { maximumFractionDigits: 0 });
+    (num || 0).toLocaleString(undefined, {
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2,
+    });
 
   return (
     <div className="calculator-block result-block">

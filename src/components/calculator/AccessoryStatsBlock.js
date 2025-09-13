@@ -2,6 +2,8 @@ import React, { useState, useEffect, useCallback } from "react";
 import "./AccessoryStatsBlock.css";
 
 function AccessoryStatsBlock({ onStatsChange }) {
+  const [classBasicDmgInc, setClassBasicDmgInc] = useState(0);
+  const [classSkillDmgInc, setClassSkillDmgInc] = useState(0);
   // Section 1 states
   const [specialWeaponDmg, setSpecialWeaponDmg] = useState(0);
   const [gradeDmg, setGradeDmg] = useState({
@@ -48,6 +50,8 @@ function AccessoryStatsBlock({ onStatsChange }) {
   // Combine all stats and pass to parent
   useEffect(() => {
     const stats = {
+      classBasicDmgInc,
+      classSkillDmgInc,
       specialWeaponDmg,
       gradeDmg,
       cooldownReduction,
@@ -58,6 +62,8 @@ function AccessoryStatsBlock({ onStatsChange }) {
     };
     onStatsChange(stats);
   }, [
+    classBasicDmgInc,
+    classSkillDmgInc,
     specialWeaponDmg,
     gradeDmg,
     cooldownReduction,
@@ -74,6 +80,30 @@ function AccessoryStatsBlock({ onStatsChange }) {
       <div className="form-grid accessory-grid">
         <fieldset className="accessory-fieldset">
           <legend>데미지 및 쿨타임</legend>
+          <div className="form-group">
+            <label htmlFor="class-basic-dmg-inc">
+              클래스 기본 공격 데미지 증가
+            </label>
+            <input
+              type="number"
+              id="class-basic-dmg-inc"
+              value={classBasicDmgInc}
+              onChange={handleNumericChange(setClassBasicDmgInc)}
+              min="0"
+            />
+          </div>
+          <div className="form-group">
+            <label htmlFor="class-skill-dmg-inc">
+              클래스 스킬 데미지 증가 (%)
+            </label>
+            <input
+              type="number"
+              id="class-skill-dmg-inc"
+              value={classSkillDmgInc}
+              onChange={handleNumericChange(setClassSkillDmgInc)}
+              min="0"
+            />
+          </div>
           <div className="form-group">
             <label htmlFor="special-weapon-dmg">
               특수 무기 데미지 증가 (%)

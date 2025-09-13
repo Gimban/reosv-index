@@ -24,13 +24,19 @@ const StatDisplay = ({ stats, enabled = true }) => {
       <div className="stat-item">
         <span className="label">DPS</span>
         <span className="value">
-          {stats.dps.toLocaleString(undefined, { maximumFractionDigits: 0 })}
+          {stats.dps.toLocaleString(undefined, {
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2,
+          })}
         </span>
       </div>
       <div className="stat-item">
         <span className="label">DPM</span>
         <span className="value">
-          {stats.dpm.toLocaleString(undefined, { maximumFractionDigits: 0 })}
+          {stats.dpm.toLocaleString(undefined, {
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2,
+          })}
         </span>
       </div>
     </div>

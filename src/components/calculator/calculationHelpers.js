@@ -89,3 +89,44 @@ export const calculateWeaponStats = (
 
   return { totalDamage: finalDamage, cooldown: finalCooldown, dps, dpm };
 };
+
+// Main calculation function for a single CLASS skill
+export const calculateClassSkillStats = (
+  baseDamage,
+  baseCooldown,
+  accessoryStats,
+  totalStatDamageIncrease,
+  skillType
+) => {
+  let parsedDamage = parseNum(baseDamage);
+  const parsedCooldown = parseNum(baseCooldown);
+
+  if (parsedDamage === 0 || parsedCooldown === 0) {
+    return { totalDamage: 0, cooldown: parsedCooldown, dps: 0, dpm: 0 };
+  }
+
+  // '클래스 기본 공격 데미지 증가' (합연산) 적용
+  if (skillType === "좌클릭") {
+    parsedDamage += accessoryStats?.classBasicDmgInc || 0;
+  }
+
+  // 1. Calculate final damage
+  // Class weapons are NOT affected by special/grade damage multipliers.
+  // They are only affected by player stats (attack/health).
+  let finalDamage = parsedDamage * (1 + totalStatDamageIncrease / 100);
+
+  // '클래스 스킬 데미지 증가' (곱연산) 적용
+  if (skillType !== "좌클릭") {
+    finalDamage *= 1 + (accessoryStats?.classSkillDmgInc || 0) / 100;
+  }
+
+  // 2. Calculate final cooldown
+  const finalCooldown =
+    parsedCooldown * (1 - (accessoryStats?.cooldownReduction || 0) / 100);
+
+  // 3. Calculate DPS and DPM
+  const dps = finalCooldown > 0 ? finalDamage / finalCooldown : 0;
+  const dpm = dps * 60;
+
+  return { totalDamage: finalDamage, cooldown: finalCooldown, dps, dpm };
+};

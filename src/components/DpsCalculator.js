@@ -1,6 +1,7 @@
 import React, { useState, useCallback, useMemo } from "react";
 import PlayerStatsBlock from "./calculator/PlayerStatsBlock";
 import AccessoryStatsBlock from "./calculator/AccessoryStatsBlock";
+import ClassWeaponBlock from "./calculator/ClassWeaponBlock";
 import WeaponSelectionBlock from "./calculator/WeaponSelectionBlock";
 import CalculationResultBlock from "./calculator/CalculationResultBlock";
 import { calculateWeaponStats } from "./calculator/calculationHelpers";
@@ -12,10 +13,11 @@ const DAMAGE_PER_ATTACK_POINT = 0.65; // 공격력 1포인트당 데미지 증�
 const DAMAGE_PER_HEALTH_POINT = 0.4; // 체력 1포인트당 데미지 증가량 (%)
 const EMPTY_WEAPON_STATS = { totalDamage: 0, cooldown: 0, dps: 0, dpm: 0 };
 
-function DpsCalculator({ weaponData }) {
+function DpsCalculator({ weaponData, classWeaponData }) {
   const [playerStats, setPlayerStats] = useState(null);
   const [accessoryStats, setAccessoryStats] = useState(null);
   const [weaponStats, setWeaponStats] = useState(null);
+  const [classWeaponStats, setClassWeaponStats] = useState(null);
 
   // 자식 컴포넌트의 스탯이 변경될 때마다 호출될 콜백 함수
   const handlePlayerStatsChange = useCallback((stats) => {
@@ -30,26 +32,34 @@ function DpsCalculator({ weaponData }) {
     setWeaponStats(stats);
   }, []);
 
-  const allCalculations = useMemo(() => {
-    const numDestinyWeapons = weaponStats?.destinySelections?.length || 0;
-    const totalSlots = 8 + numDestinyWeapons;
+  const handleClassWeaponStatsChange = useCallback((stats) => {
+    setClassWeaponStats(stats);
+  }, []);
 
-    if (!playerStats || !accessoryStats || !weaponStats) {
-      return {
-        perWeaponStats: Array(totalSlots).fill(EMPTY_WEAPON_STATS),
-        finalResults: null,
-      };
-    }
+  const totalStatDamageIncrease = useMemo(() => {
+    if (!playerStats || !accessoryStats) return 0;
 
-    // 1. 플레이어 스탯과 장신구 스탯 합산
     const combinedAttackPoints =
       (playerStats.attackPoints || 0) + (accessoryStats.finalDmgStat || 0);
     const combinedHealthPoints =
       (playerStats.healthPoints || 0) + (accessoryStats.maxHpStat || 0);
 
-    const totalStatDamageIncrease =
+    return (
       combinedAttackPoints * DAMAGE_PER_ATTACK_POINT +
-      combinedHealthPoints * DAMAGE_PER_HEALTH_POINT;
+      combinedHealthPoints * DAMAGE_PER_HEALTH_POINT
+    );
+  }, [playerStats, accessoryStats]);
+
+  const allCalculations = useMemo(() => {
+    const numDestinyWeapons = weaponStats?.destinySelections?.length || 0;
+    const totalSlots = 8 + numDestinyWeapons;
+
+    if (!playerStats || !accessoryStats || !weaponStats || !classWeaponStats) {
+      return {
+        perWeaponStats: Array(totalSlots).fill(EMPTY_WEAPON_STATS),
+        finalResults: null,
+      };
+    }
 
     // 2. 각 무기별 스탯 계산
     const perWeaponStats = [];
@@ -89,6 +99,10 @@ function DpsCalculator({ weaponData }) {
       });
     }
 
+    // 클래스 무기 DPS 추가
+    totalBaseDps += classWeaponStats.totalDps || 0;
+    totalBaseDpm += classWeaponStats.totalDpm || 0;
+
     // 3. 몬스터 종류별 최종 결과 계산
     const finalResults = {
       normal: {
@@ -102,7 +116,13 @@ function DpsCalculator({ weaponData }) {
     };
 
     return { perWeaponStats, finalResults };
-  }, [playerStats, accessoryStats, weaponStats]);
+  }, [
+    playerStats,
+    accessoryStats,
+    weaponStats,
+    classWeaponStats,
+    totalStatDamageIncrease,
+  ]);
 
   return (
     <div className="dps-calculator-container">
@@ -114,6 +134,12 @@ function DpsCalculator({ weaponData }) {
         onStatsChange={handlePlayerStatsChange}
       />
       <AccessoryStatsBlock onStatsChange={handleAccessoryStatsChange} />
+      <ClassWeaponBlock
+        classWeaponData={classWeaponData}
+        accessoryStats={accessoryStats}
+        totalStatDamageIncrease={totalStatDamageIncrease}
+        onStatsChange={handleClassWeaponStatsChange}
+      />
       <WeaponSelectionBlock
         weaponData={weaponData}
         onStatsChange={handleWeaponStatsChange}

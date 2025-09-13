@@ -13,10 +13,11 @@ const BASE_URL_ID = "1IZra9ZZRwBBgT4ai1W0fCATeFFsztHnF0k03DmLr1tI";
 
 // 카테고리 이름과 GID를 매핑합니다.
 const GID_MAP = {
-  "특수 무기 스텟": "0",
+  "특수 무기 스탯": "0",
   "클래스 무기 강화 비용": "882618671",
   "특수 무기 강화 비용": "2088796296",
   "방어구 강화 비용": "1463521558",
+  "클래스 무기 스탯": "1281476028",
 };
 
 // GID를 사용하여 CSV URL을 생성하는 함수
@@ -56,10 +57,13 @@ function App() {
       <div className="content-container">
         {currentCategory === "홈" ? (
           <Home />
-        ) : currentCategory === "특수 무기 스텟" ? (
+        ) : currentCategory === "특수 무기 스탯" ? (
           <WeaponCardView data={allData[currentCategory] || []} />
         ) : currentCategory === "DPS/DPM 계산기" ? (
-          <DpsCalculator weaponData={allData["특수 무기 스텟"] || []} />
+          <DpsCalculator
+            weaponData={allData["특수 무기 스탯"] || []}
+            classWeaponData={allData["클래스 무기 스탯"] || []}
+          />
         ) : (
           <>
             <h1>{currentCategory} 데이터</h1>
