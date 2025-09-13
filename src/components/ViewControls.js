@@ -12,7 +12,7 @@ function ViewControls({
 }) {
   return (
     <div className="view-controls">
-      <h1>특수 무기 스텟</h1>
+      <h1>특수 무기 스탯</h1>
       <div className="controls-group">
         <div className="sort-controls">
           <label htmlFor="sort-select">정렬:</label>

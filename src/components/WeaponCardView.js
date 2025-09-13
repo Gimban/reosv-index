@@ -59,7 +59,7 @@ function WeaponCardView({ data }) {
   }, [isAllMode, gradeFilter, sortedGrades]);
 
   if (Object.keys(groupedWeapons).length === 0) {
-    return <p>특수 무기 스텟 데이터를 불러오는 중이거나 데이터가 없습니다.</p>;
+    return <p>특수 무기 스탯 데이터를 불러오는 중이거나 데이터가 없습니다.</p>;
   }
 
   return (
