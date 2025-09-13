@@ -1,7 +1,7 @@
 import React from "react";
 import "./Sidebar.css";
 
-function Sidebar({ gidMap, onSelectCategory }) {
+function Sidebar({ gidMap, onSelectCategory, theme, setTheme }) {
   // GID_MAP을 기반으로 메뉴 구조를 동적으로 생성합니다.
   const menu = React.useMemo(() => {
     const menuStructure = {
@@ -62,6 +62,31 @@ function Sidebar({ gidMap, onSelectCategory }) {
           </li>
         ))}
       </ul>
+      <div className="theme-switcher">
+        <span className="theme-switcher-title">테마</span>
+        <div className="theme-options">
+          <label>
+            <input
+              type="radio"
+              name="theme"
+              value="light"
+              checked={theme === "light"}
+              onChange={(e) => setTheme(e.target.value)}
+            />
+            라이트
+          </label>
+          <label>
+            <input
+              type="radio"
+              name="theme"
+              value="dark"
+              checked={theme === "dark"}
+              onChange={(e) => setTheme(e.target.value)}
+            />
+            다크
+          </label>
+        </div>
+      </div>
     </div>
   );
 }

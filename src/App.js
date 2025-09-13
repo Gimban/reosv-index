@@ -28,6 +28,7 @@ const createCsvUrl = (gid) => {
 function App() {
   const [allData, setAllData] = useState({});
   const [currentCategory, setCurrentCategory] = useState("홈");
+  const [theme, setTheme] = useState("dark"); // 'dark'를 기본값으로 설정
 
   useEffect(() => {
     async function fetchAllData() {
@@ -52,8 +53,13 @@ function App() {
   }, []);
 
   return (
-    <div className="App-container">
-      <Sidebar gidMap={GID_MAP} onSelectCategory={setCurrentCategory} />
+    <div className={`App-container theme-${theme}`}>
+      <Sidebar
+        gidMap={GID_MAP}
+        onSelectCategory={setCurrentCategory}
+        theme={theme}
+        setTheme={setTheme}
+      />
       <div className="content-container">
         {currentCategory === "홈" ? (
           <Home />
