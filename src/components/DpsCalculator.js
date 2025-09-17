@@ -2,6 +2,7 @@ import React, { useState, useCallback, useMemo } from "react";
 import PlayerStatsBlock from "./calculator/PlayerStatsBlock";
 import AccessoryStatsBlock from "./calculator/AccessoryStatsBlock";
 import ClassWeaponBlock from "./calculator/ClassWeaponBlock";
+import DivineShardBlock from "./calculator/DivineShardBlock";
 import WeaponSelectionBlock from "./calculator/WeaponSelectionBlock";
 import CalculationResultBlock from "./calculator/CalculationResultBlock";
 import { calculateWeaponStats } from "./calculator/calculationHelpers";
@@ -18,6 +19,8 @@ function DpsCalculator({ weaponData, classWeaponData }) {
   const [accessoryStats, setAccessoryStats] = useState(null);
   const [weaponStats, setWeaponStats] = useState(null);
   const [classWeaponStats, setClassWeaponStats] = useState(null);
+  const [divineShardStats, setDivineShardStats] = useState(null);
+
 
   // 자식 컴포넌트의 스탯이 변경될 때마다 호출될 콜백 함수
   const handlePlayerStatsChange = useCallback((stats) => {
@@ -36,25 +39,39 @@ function DpsCalculator({ weaponData, classWeaponData }) {
     setClassWeaponStats(stats);
   }, []);
 
+  const handleDivineShardStatsChange = useCallback((stats) => {
+    setDivineShardStats(stats);
+  }, []);
+
   const totalStatDamageIncrease = useMemo(() => {
-    if (!playerStats || !accessoryStats) return 0;
+    if (!playerStats || !accessoryStats || !divineShardStats) return 0;
 
     const combinedAttackPoints =
       (playerStats.attackPoints || 0) + (accessoryStats.finalDmgStat || 0);
     const combinedHealthPoints =
       (playerStats.healthPoints || 0) + (accessoryStats.maxHpStat || 0);
 
-    return (
+      // 플레이어 스탯(레벨)으로 인한 증가량 + 신력의 파편으로 인한 최종 데미지 증가량
+    const playerLevelDamageIncrease =
       combinedAttackPoints * DAMAGE_PER_ATTACK_POINT +
-      combinedHealthPoints * DAMAGE_PER_HEALTH_POINT
+      combinedHealthPoints * DAMAGE_PER_HEALTH_POINT;
+
+    return (
+      playerLevelDamageIncrease + (divineShardStats.finalDamage || 0)
     );
-  }, [playerStats, accessoryStats]);
+  }, [playerStats, accessoryStats, divineShardStats]);
 
   const allCalculations = useMemo(() => {
     const numDestinyWeapons = weaponStats?.destinySelections?.length || 0;
     const totalSlots = 8 + numDestinyWeapons;
 
-    if (!playerStats || !accessoryStats || !weaponStats || !classWeaponStats) {
+    if (
+      !playerStats ||
+      !accessoryStats ||
+      !weaponStats ||
+      !classWeaponStats ||
+      !divineShardStats
+    ) {
       return {
         perWeaponStats: Array(totalSlots).fill(EMPTY_WEAPON_STATS),
         finalResults: null,
@@ -106,12 +123,18 @@ function DpsCalculator({ weaponData, classWeaponData }) {
     // 3. 몬스터 종류별 최종 결과 계산
     const finalResults = {
       normal: {
-        dps: totalBaseDps * (1 + (accessoryStats.normalMonsterDmg || 0) / 100),
-        dpm: totalBaseDpm * (1 + (accessoryStats.normalMonsterDmg || 0) / 100),
+        totalBaseDps,
+        totalBaseDpm,
+        monsterDmg: accessoryStats.normalMonsterDmg || 0,
+        finalDps: totalBaseDps * (1 + (accessoryStats.normalMonsterDmg || 0) / 100),
+        finalDpm: totalBaseDpm * (1 + (accessoryStats.normalMonsterDmg || 0) / 100),
       },
       boss: {
-        dps: totalBaseDps * (1 + (accessoryStats.bossMonsterDmg || 0) / 100),
-        dpm: totalBaseDpm * (1 + (accessoryStats.bossMonsterDmg || 0) / 100),
+        totalBaseDps,
+        totalBaseDpm,
+        monsterDmg: accessoryStats.bossMonsterDmg || 0,
+        finalDps: totalBaseDps * (1 + (accessoryStats.bossMonsterDmg || 0) / 100),
+        finalDpm: totalBaseDpm * (1 + (accessoryStats.bossMonsterDmg || 0) / 100),
       },
     };
 
@@ -121,6 +144,7 @@ function DpsCalculator({ weaponData, classWeaponData }) {
     accessoryStats,
     weaponStats,
     classWeaponStats,
+    divineShardStats,
     totalStatDamageIncrease,
   ]);
 
@@ -134,6 +158,7 @@ function DpsCalculator({ weaponData, classWeaponData }) {
         onStatsChange={handlePlayerStatsChange}
       />
       <AccessoryStatsBlock onStatsChange={handleAccessoryStatsChange} />
+      <DivineShardBlock onStatsChange={handleDivineShardStatsChange} />
       <ClassWeaponBlock
         classWeaponData={classWeaponData}
         accessoryStats={accessoryStats}

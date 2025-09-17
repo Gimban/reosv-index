@@ -1,47 +1,30 @@
 .result-block {
-  background-color: #e8f5e9; /* Light green background */
-  border-color: #a5d6a7;
+  background-color: #e9ecef;
 }
 
 .result-grid {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: 1fr;
   gap: 20px;
 }
 
-@media (max-width: 768px) {
+@media (min-width: 600px) {
   .result-grid {
-    grid-template-columns: 1fr;
+    grid-template-columns: 1fr 1fr;
   }
 }
 
-.result-category {
-  background-color: #ffffff;
-  padding: 15px;
-  border-radius: 6px;
-  border: 1px solid #ddd;
-}
-
-.result-category h3 {
+.formula-container h4 {
   margin-top: 0;
-  margin-bottom: 15px;
-  text-align: center;
-  color: #388e3c;
+  margin-bottom: 10px;
+  color: #495057;
 }
 
-.result-item {
-  display: flex;
-  justify-content: space-between;
-  padding: 8px 0;
-  font-size: 1.1em;
-  border-bottom: 1px solid #eee;
+.formula-item {
+  margin-bottom: 8px;
 }
 
-.result-item:last-child {
-  border-bottom: none;
-}
-
-.result-item .value {
+.formula-label {
   font-weight: bold;
-  color: #1b5e20;
+  margin-right: 8px;
 }

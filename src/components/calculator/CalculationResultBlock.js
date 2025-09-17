@@ -1,46 +1,50 @@
 import React from "react";
 import "./CalculationResultBlock.css";
 
+function CalculationFormula({ title, result }) {
+  if (!result) return null;
+
+  const { totalBaseDps, totalBaseDpm, monsterDmg, finalDps, finalDpm } = result;
+
+  return (
+    <div className="formula-container">
+      <h4>{title}</h4>
+      <div className="formula-item">
+        <span className="formula-label">DPS:</span>
+        <span className="formula-expression">
+          {totalBaseDps.toLocaleString(undefined, { maximumFractionDigits: 1 })} (기본) × (1 + {monsterDmg}%) = <strong>{finalDps.toLocaleString(undefined, { maximumFractionDigits: 1 })}</strong>
+        </span>
+      </div>
+      <div className="formula-item">
+        <span className="formula-label">DPM:</span>
+        <span className="formula-expression">
+          {totalBaseDpm.toLocaleString(undefined, { maximumFractionDigits: 1 })} (기본) × (1 + {monsterDmg}%) = <strong>{finalDpm.toLocaleString(undefined, { maximumFractionDigits: 1 })}</strong>
+        </span>
+      </div>
+    </div>
+  );
+}
+
 function CalculationResultBlock({ results }) {
-  const formatNumber = (num) =>
-    (num || 0).toLocaleString(undefined, {
-      minimumFractionDigits: 2,
-      maximumFractionDigits: 2,
-    });
+  if (!results) {
+    return (
+      <div className="calculator-block result-block">
+        <h2>최종 계산 결과</h2>
+        <p>스탯과 무기를 모두 입력해주세요.</p>
+      </div>
+    );
+  }
 
   return (
     <div className="calculator-block result-block">
       <h2>최종 계산 결과</h2>
-      {!results ? (
-        <p>스탯과 무기를 모두 입력해주세요.</p>
-      ) : (
-        <div className="result-grid">
-          <div className="result-category">
-            <h3>일반 몬스터</h3>
-            <div className="result-item">
-              <span className="label">총 DPS</span>
-              <span className="value">{formatNumber(results.normal?.dps)}</span>
-            </div>
-            <div className="result-item">
-              <span className="label">총 DPM</span>
-              <span className="value">{formatNumber(results.normal?.dpm)}</span>
-            </div>
-          </div>
-          <div className="result-category">
-            <h3>보스 몬스터</h3>
-            <div className="result-item">
-              <span className="label">총 DPS</span>
-              <span className="value">{formatNumber(results.boss?.dps)}</span>
-            </div>
-            <div className="result-item">
-              <span className="label">총 DPM</span>
-              <span className="value">{formatNumber(results.boss?.dpm)}</span>
-            </div>
-          </div>
-        </div>
-      )}
+      <div className="result-grid">
+        <CalculationFormula title="일반 몬스터" result={results.normal} />
+        <CalculationFormula title="보스 몬스터" result={results.boss} />
+      </div>
     </div>
   );
 }
 
 export default CalculationResultBlock;
+
