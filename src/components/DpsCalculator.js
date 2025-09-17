@@ -21,7 +21,6 @@ function DpsCalculator({ weaponData, classWeaponData }) {
   const [classWeaponStats, setClassWeaponStats] = useState(null);
   const [divineShardStats, setDivineShardStats] = useState(null);
 
-
   // 자식 컴포넌트의 스탯이 변경될 때마다 호출될 콜백 함수
   const handlePlayerStatsChange = useCallback((stats) => {
     setPlayerStats(stats);
@@ -51,14 +50,12 @@ function DpsCalculator({ weaponData, classWeaponData }) {
     const combinedHealthPoints =
       (playerStats.healthPoints || 0) + (accessoryStats.maxHpStat || 0);
 
-      // 플레이어 스탯(레벨)으로 인한 증가량 + 신력의 파편으로 인한 최종 데미지 증가량
+    // 플레이어 스탯(레벨)으로 인한 증가량 + 신력의 파편으로 인한 최종 데미지 증가량
     const playerLevelDamageIncrease =
       combinedAttackPoints * DAMAGE_PER_ATTACK_POINT +
       combinedHealthPoints * DAMAGE_PER_HEALTH_POINT;
 
-    return (
-      playerLevelDamageIncrease + (divineShardStats.finalDamage || 0)
-    );
+    return playerLevelDamageIncrease + (divineShardStats.finalDamage || 0);
   }, [playerStats, accessoryStats, divineShardStats]);
 
   const allCalculations = useMemo(() => {
@@ -80,6 +77,7 @@ function DpsCalculator({ weaponData, classWeaponData }) {
 
     // 2. 각 무기별 스탯 계산
     const perWeaponStats = [];
+    const dpsSources = [];
     let totalBaseDps = 0;
     let totalBaseDpm = 0;
 
@@ -93,6 +91,12 @@ function DpsCalculator({ weaponData, classWeaponData }) {
         totalStatDamageIncrease
       );
       perWeaponStats.push(calcs);
+      if (calcs.dps > 0) {
+        dpsSources.push({
+          name: weapon ? weapon[0]["이름"] : `슬롯 ${index + 1}`,
+          dps: calcs.dps,
+        });
+      }
       totalBaseDps += calcs.dps || 0;
       totalBaseDpm += calcs.dpm || 0;
     });
@@ -111,12 +115,25 @@ function DpsCalculator({ weaponData, classWeaponData }) {
           : EMPTY_WEAPON_STATS;
 
         perWeaponStats.push(calcs);
+        if (calcs.dps > 0) {
+          dpsSources.push({
+            name: selection.weapon[0]["이름"],
+            dps: calcs.dps,
+          });
+        }
+
         totalBaseDps += calcs.dps || 0;
         totalBaseDpm += calcs.dpm || 0;
       });
     }
 
     // 클래스 무기 DPS 추가
+    if (classWeaponStats.totalDps > 0) {
+      dpsSources.push({
+        name: "클래스 무기",
+        dps: classWeaponStats.totalDps,
+      });
+    }
     totalBaseDps += classWeaponStats.totalDps || 0;
     totalBaseDpm += classWeaponStats.totalDpm || 0;
 
@@ -126,16 +143,21 @@ function DpsCalculator({ weaponData, classWeaponData }) {
         totalBaseDps,
         totalBaseDpm,
         monsterDmg: accessoryStats.normalMonsterDmg || 0,
-        finalDps: totalBaseDps * (1 + (accessoryStats.normalMonsterDmg || 0) / 100),
-        finalDpm: totalBaseDpm * (1 + (accessoryStats.normalMonsterDmg || 0) / 100),
+        finalDps:
+          totalBaseDps * (1 + (accessoryStats.normalMonsterDmg || 0) / 100),
+        finalDpm:
+          totalBaseDpm * (1 + (accessoryStats.normalMonsterDmg || 0) / 100),
       },
       boss: {
         totalBaseDps,
         totalBaseDpm,
         monsterDmg: accessoryStats.bossMonsterDmg || 0,
-        finalDps: totalBaseDps * (1 + (accessoryStats.bossMonsterDmg || 0) / 100),
-        finalDpm: totalBaseDpm * (1 + (accessoryStats.bossMonsterDmg || 0) / 100),
+        finalDps:
+          totalBaseDps * (1 + (accessoryStats.bossMonsterDmg || 0) / 100),
+        finalDpm:
+          totalBaseDpm * (1 + (accessoryStats.bossMonsterDmg || 0) / 100),
       },
+      dpsSources,
     };
 
     return { perWeaponStats, finalResults };
