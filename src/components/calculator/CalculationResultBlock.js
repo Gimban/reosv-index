@@ -12,13 +12,21 @@ function CalculationFormula({ title, result }) {
       <div className="formula-item">
         <span className="formula-label">DPS:</span>
         <span className="formula-expression">
-          {totalBaseDps.toLocaleString(undefined, { maximumFractionDigits: 1 })} (기본) × (1 + {monsterDmg}%) = <strong>{finalDps.toLocaleString(undefined, { maximumFractionDigits: 1 })}</strong>
+          {totalBaseDps.toLocaleString(undefined, { maximumFractionDigits: 1 })}
+          (기본) × (100% + {monsterDmg}%(일반 몬스터 대상 데미지 %)) ={" "}
+          <strong>
+            {finalDps.toLocaleString(undefined, { maximumFractionDigits: 1 })}
+          </strong>
         </span>
       </div>
       <div className="formula-item">
         <span className="formula-label">DPM:</span>
         <span className="formula-expression">
-          {totalBaseDpm.toLocaleString(undefined, { maximumFractionDigits: 1 })} (기본) × (1 + {monsterDmg}%) = <strong>{finalDpm.toLocaleString(undefined, { maximumFractionDigits: 1 })}</strong>
+          {totalBaseDpm.toLocaleString(undefined, { maximumFractionDigits: 1 })}
+          (기본) × (100% + {monsterDmg}%(보스 몬스터 대상 데미지 %)) ={" "}
+          <strong>
+            {finalDpm.toLocaleString(undefined, { maximumFractionDigits: 1 })}
+          </strong>
         </span>
       </div>
     </div>
@@ -47,4 +55,3 @@ function CalculationResultBlock({ results }) {
 }
 
 export default CalculationResultBlock;
-

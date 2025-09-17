@@ -103,7 +103,9 @@ export const calculateWeaponStats = (
     dpm,
     formula: {
       grade,
-      statAdjustedDamage,
+      baseDamage,
+      hits,
+      totalStatDamageIncrease,
       baseCooldown,
       specialWeaponDmg: grade !== "운명" ? specialWeaponDmg : 0,
       gradeDmg: gradeDmgValue,
@@ -171,8 +173,9 @@ export const calculateClassSkillStats = (
     dps,
     dpm,
     formula: {
-      statAdjustedBaseDamage,
-      statAdjustedBasicDmgInc,
+      baseDamage: parsedDamage,
+      totalStatDamageIncrease,
+      classBasicDmgInc: skillType === "좌클릭" ? classBasicDmgInc : 0,
       baseCooldown: parsedCooldown,
       classSkillDmgInc: skillType !== "좌클릭" ? classSkillDmgInc : 0,
       cooldownReduction,

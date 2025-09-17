@@ -155,15 +155,14 @@ function ClassWeaponBlock({
     activeClass,
   ]);
 
-  // 5. 부모 컴포넌트로 상태 전달
   useEffect(() => {
     onStatsChange(totalCalculatedStats);
   }, [totalCalculatedStats, onStatsChange]);
 
-  const formatNumber = (num) =>
+  const formatNumber = (num, digits = 2) =>
     (num || 0).toLocaleString(undefined, {
-      minimumFractionDigits: 2,
-      maximumFractionDigits: 2,
+      minimumFractionDigits: digits,
+      maximumFractionDigits: digits,
     });
 
   return (
@@ -273,42 +272,75 @@ function ClassWeaponBlock({
                         </div>
                         {formula && isActive && (
                           <div className="formula-display">
-                            {skill === "좌클릭" &&
-                              formula.statAdjustedBasicDmgInc > 0 && (
+                            {(() => {
+                              const damageParts = [];
+                              if (skill === "좌클릭") {
+                                if (formula.classBasicDmgInc > 0) {
+                                  damageParts.push(
+                                    `(${formatNumber(
+                                      formula.baseDamage,
+                                      0
+                                    )}(기본) + ${formatNumber(
+                                      formula.classBasicDmgInc,
+                                      2
+                                    )}(클래스 기본 공격 +))`
+                                  );
+                                } else {
+                                  damageParts.push(
+                                    `${formatNumber(
+                                      formula.baseDamage,
+                                      0
+                                    )}(기본)`
+                                  );
+                                }
+                              } else {
+                                damageParts.push(
+                                  `${formatNumber(formula.baseDamage, 0)}(기본)`
+                                );
+                              }
+
+                              if (formula.totalStatDamageIncrease > 0) {
+                                damageParts.push(
+                                  `(100% + ${formatNumber(
+                                    formula.totalStatDamageIncrease,
+                                    2
+                                  )}%(최종 데미지 %))`
+                                );
+                              }
+
+                              if (
+                                skill !== "좌클릭" &&
+                                formula.classSkillDmgInc > 0
+                              ) {
+                                damageParts.push(
+                                  `(100% + ${formatNumber(
+                                    formula.classSkillDmgInc,
+                                    2
+                                  )}%(클래스 스킬 데미지 %))`
+                                );
+                              }
+
+                              if (damageParts.length <= 1) return null;
+
+                              const damageFormulaStr = damageParts.join(" × ");
+
+                              return (
                                 <div className="formula-item small-text">
                                   <span className="formula-label">피해량:</span>
                                   <span className="formula-expression">
-                                    {formatNumber(
-                                      formula.statAdjustedBaseDamage
-                                    )}{" "}
-                                    +{" "}
-                                    {formatNumber(
-                                      formula.statAdjustedBasicDmgInc
-                                    )}{" "}
-                                    ={" "}
+                                    {damageFormulaStr} ={" "}
                                     <strong>{formatNumber(totalDamage)}</strong>
                                   </span>
                                 </div>
-                              )}
-                            {skill !== "좌클릭" &&
-                              formula.classSkillDmgInc > 0 && (
-                                <div className="formula-item small-text">
-                                  <span className="formula-label">피해량:</span>
-                                  <span className="formula-expression">
-                                    {formatNumber(
-                                      formula.statAdjustedBaseDamage
-                                    )}{" "}
-                                    × (100 + {formula.classSkillDmgInc}%) ={" "}
-                                    <strong>{formatNumber(totalDamage)}</strong>
-                                  </span>
-                                </div>
-                              )}
+                              );
+                            })()}
                             {formula.cooldownReduction > 0 && (
                               <div className="formula-item small-text">
                                 <span className="formula-label">쿨타임:</span>
                                 <span className="formula-expression">
-                                  {formatNumber(formula.baseCooldown, 2)}초 ×
-                                  (100 - {formula.cooldownReduction}%) ={" "}
+                                  {formatNumber(formula.baseCooldown, 2)}
+                                  초(기본) × (100% - {formula.cooldownReduction}
+                                  %(쿨타임 감소 %)) ={" "}
                                   <strong>
                                     {formatNumber(finalCooldown, 2)}초
                                   </strong>

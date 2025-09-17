@@ -2,7 +2,7 @@ import React, { useState, useEffect, useCallback, useMemo } from "react";
 import WeaponSelectionModal from "./WeaponSelectionModal";
 import "./WeaponSelectionBlock.css";
 
-const NUM_WEAPON_SLOTS = 8;
+const NUM_WEAPON_SLOTS = 12;
 
 const getCssClassForGrade = (grade) => {
   const gradeMap = {
@@ -29,8 +29,41 @@ const StatDisplay = ({ stats, enabled = true }) => {
       maximumFractionDigits: digits,
     });
 
-  const damageBonusValue =
-    (formula?.specialWeaponDmg || 0) + (formula?.gradeDmg || 0);
+  const damageParts = [];
+  if (formula.baseDamage > 0) {
+    let baseDamageStr = `${formatNum(formula.baseDamage, 0)}(기본)`;
+    if (formula.hits > 1) {
+      baseDamageStr = `(${baseDamageStr} × ${formula.hits}(타수))`;
+    }
+    damageParts.push(baseDamageStr);
+  }
+
+  if (formula.totalStatDamageIncrease > 0) {
+    damageParts.push(
+      `(100% + ${formatNum(
+        formula.totalStatDamageIncrease,
+        2
+      )}%(최종 데미지 %))`
+    );
+  }
+
+  const accessoryBonuses = [];
+  if (formula.specialWeaponDmg > 0) {
+    accessoryBonuses.push(
+      `${formatNum(formula.specialWeaponDmg, 2)}%(특수 무기 데미지 %)`
+    );
+  }
+  if (formula.gradeDmg > 0) {
+    accessoryBonuses.push(
+      `${formatNum(formula.gradeDmg, 2)}%(등급 무기 데미지 %)`
+    );
+  }
+  if (accessoryBonuses.length > 0) {
+    damageParts.push(`(100% + ${accessoryBonuses.join(" + ")})`);
+  }
+
+  const damageFormulaStr = damageParts.join(" × ");
+  const showDamageFormula = damageParts.length > 1;
 
   return (
     <>
@@ -54,13 +87,12 @@ const StatDisplay = ({ stats, enabled = true }) => {
       </div>
       {formula && (
         <div className={`formula-display ${!enabled ? "disabled-stats" : ""}`}>
-          {damageBonusValue > 0 && (
+          {showDamageFormula && (
             <div className="formula-item small-text">
               <span className="formula-label">피해량:</span>
               <span className="formula-expression">
-                {formatNum(formula.statAdjustedDamage, 0)} × (100 +{" "}
-                {damageBonusValue}
-                %) = <strong>{formatNum(stats.totalDamage, 0)}</strong>
+                {damageFormulaStr} ={" "}
+                <strong>{formatNum(stats.totalDamage, 0)}</strong>
               </span>
             </div>
           )}
@@ -68,9 +100,10 @@ const StatDisplay = ({ stats, enabled = true }) => {
             <div className="formula-item small-text">
               <span className="formula-label">쿨타임:</span>
               <span className="formula-expression">
-                {formatNum(formula.baseCooldown, 2)}초 × (100 -{" "}
+                {formatNum(formula.baseCooldown, 2)}초(기본) × (100% -{" "}
                 {formula.cooldownReduction}
-                %) = <strong>{formatNum(stats.cooldown, 2)}초</strong>
+                %(쿨타임 감소 %)) ={" "}
+                <strong>{formatNum(stats.cooldown, 2)}초</strong>
               </span>
             </div>
           )}
