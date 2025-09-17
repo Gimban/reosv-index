@@ -1,8 +1,21 @@
-import React, { useState, useCallback } from "react";
+import React, {
+  useState,
+  useCallback,
+  useRef,
+  useMemo,
+  useEffect,
+} from "react";
 import EnhancementWeaponSelectionModal from "./enhancement/EnhancementWeaponSelectionModal";
 import EnhancementControls from "./enhancement/EnhancementControls";
 import EnhancementLog from "./enhancement/EnhancementLog";
+import AutoEnhancementControls from "./enhancement/AutoEnhancementControls";
+import {
+  getEnhancementInfo,
+  performEnhancement as performEnhancementLogic,
+} from "./enhancement/enhancementHelper";
 import "./EnhancementSimulator.css";
+
+const parseNum = (val) => Number(String(val || "0").replace(/,/g, ""));
 
 function EnhancementSimulator({
   weaponData,
@@ -16,6 +29,27 @@ function EnhancementSimulator({
   const [selectedWeapon, setSelectedWeapon] = useState(null);
   const [currentLevel, setCurrentLevel] = useState(0);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isAutoEnhancing, setIsAutoEnhancing] = useState(false);
+  const [isAutoPaused, setIsAutoPaused] = useState(false);
+  const [autoEnhanceStrategy, setAutoEnhanceStrategy] = useState(null);
+
+  const autoEnhanceTimer = useRef(null);
+  // This ref will hold all state and functions needed by the loop,
+  // preventing stale closures and massive dependency arrays.
+  const enhancementStateRef = useRef({});
+  useEffect(() => {
+    enhancementStateRef.current = {
+      isAutoEnhancing,
+      isAutoPaused,
+      currentLevel,
+      autoEnhanceStrategy,
+      selectedWeapon,
+      guaranteedCostData,
+      probabilisticCostData,
+      handleEnhancementAttempt,
+      stopAutoEnhancement,
+    };
+  });
 
   const handleWeaponSelect = useCallback(
     (weaponGroup) => {
@@ -23,8 +57,9 @@ function EnhancementSimulator({
       setCurrentLevel(0);
       setHistory([]);
       setIsModalOpen(false);
+      stopAutoEnhancement(); // 무기 변경 시 자동 강화 중단
     },
-    [setHistory]
+    [setHistory] // eslint-disable-line react-hooks/exhaustive-deps,
   );
 
   const handleResetLogs = useCallback(() => {
@@ -37,8 +72,9 @@ function EnhancementSimulator({
         consumedWeapons: {},
       });
       setHistory([]);
+      stopAutoEnhancement();
     }
-  }, [setLogs, setHistory]);
+  }, [setLogs, setHistory]); // eslint-disable-line react-hooks/exhaustive-deps,
 
   const handleResetEnhancement = useCallback(() => {
     if (
@@ -48,8 +84,9 @@ function EnhancementSimulator({
     ) {
       setCurrentLevel(0);
       setHistory([]);
+      stopAutoEnhancement();
     }
-  }, [setHistory]);
+  }, [setHistory]); // eslint-disable-line react-hooks/exhaustive-deps,
 
   const handleEnhancementAttempt = useCallback(
     (result) => {
@@ -77,11 +114,144 @@ function EnhancementSimulator({
         };
       });
 
-      const historyMessage = `[+${result.fromLevel} → +${result.newLevel}] ${result.outcome}`;
-      setHistory((prev) => [historyMessage, ...prev].slice(0, 20));
+      const historyEntry = {
+        message: `[+${result.fromLevel} → +${result.newLevel}] ${result.outcome}`,
+        outcome: result.outcome,
+      };
+      setHistory((prev) => [historyEntry, ...prev].slice(0, 20));
     },
     [setLogs, setHistory]
   );
+
+  const getHistoryItemClass = (outcome) => {
+    if (!outcome) return "";
+    if (outcome.includes("성공")) {
+      return "history-success";
+    }
+    if (outcome.includes("리셋 (방지됨)") || outcome.includes("실패")) {
+      return "history-failure";
+    }
+    if (outcome.includes("하락")) {
+      return "history-downgrade";
+    }
+    if (outcome.includes("리셋")) {
+      return "history-reset";
+    }
+    return "";
+  };
+
+  const stopAutoEnhancement = useCallback(() => {
+    setIsAutoEnhancing(false);
+    setIsAutoPaused(false);
+    setAutoEnhanceStrategy(null);
+    if (autoEnhanceTimer.current) {
+      clearTimeout(autoEnhanceTimer.current);
+      autoEnhanceTimer.current = null;
+    }
+  }, []);
+
+  const startAutoEnhancement = useCallback((strategy) => {
+    setIsAutoEnhancing(true);
+    setIsAutoPaused(false);
+    setAutoEnhanceStrategy(strategy);
+  }, []);
+
+  const pauseAutoEnhancement = useCallback(() => {
+    setIsAutoPaused((prev) => !prev);
+  }, []);
+
+  // The function that runs a single step of the auto-enhancement loop.
+  // It's defined with useCallback but has no dependencies, as it reads everything from a ref.
+  const runAutoEnhanceStep = useCallback(() => {
+    const state = enhancementStateRef.current;
+
+    if (
+      !state.isAutoEnhancing ||
+      state.isAutoPaused ||
+      !state.autoEnhanceStrategy
+    ) {
+      return;
+    }
+
+    if (state.currentLevel >= state.autoEnhanceStrategy.targetLevel) {
+      state.stopAutoEnhancement();
+      return;
+    }
+
+    const nextLevel = state.currentLevel + 1;
+    const weaponGrade = state.selectedWeapon[0]["등급"];
+    const enhancementInfo = getEnhancementInfo(
+      weaponGrade,
+      nextLevel,
+      state.guaranteedCostData,
+      state.probabilisticCostData
+    );
+
+    let type;
+    let options = { downgradeProtection: false, resetProtection: false };
+
+    if (
+      enhancementInfo.guaranteed &&
+      state.autoEnhanceStrategy.guaranteedLevels.has(nextLevel)
+    ) {
+      type = "guaranteed";
+    } else if (enhancementInfo.probabilistic) {
+      type = "probabilistic";
+    } else if (enhancementInfo.guaranteed) {
+      type = "guaranteed";
+    } else {
+      alert("더 이상 강화할 수 없어 자동 강화를 중단합니다.");
+      state.stopAutoEnhancement();
+      return;
+    }
+
+    if (type === "probabilistic") {
+      if (state.autoEnhanceStrategy.downgradeProtectLevels.has(nextLevel)) {
+        options.downgradeProtection = true;
+      }
+      if (state.autoEnhanceStrategy.resetProtectLevels.has(nextLevel)) {
+        options.resetProtection = true;
+      }
+    }
+
+    const result = performEnhancementLogic(
+      type,
+      enhancementInfo,
+      options,
+      state.currentLevel,
+      state.selectedWeapon
+    );
+
+    if (result) {
+      state.handleEnhancementAttempt(result);
+      // Schedule the next step. The state update from handleEnhancementAttempt
+      // will be picked up in the next iteration via the ref.
+      autoEnhanceTimer.current = setTimeout(runAutoEnhanceStep, 50);
+    } else {
+      alert("강화 정보가 없어 자동 강화를 중단합니다.");
+      state.stopAutoEnhancement();
+    }
+  }, []);
+
+  // This effect starts/stops/pauses the loop.
+  useEffect(() => {
+    if (isAutoEnhancing && !isAutoPaused) {
+      // Start the timer only if it's not already running
+      if (!autoEnhanceTimer.current) {
+        autoEnhanceTimer.current = setTimeout(runAutoEnhanceStep, 50);
+      }
+    } else {
+      // Clear timer if paused or stopped
+      clearTimeout(autoEnhanceTimer.current);
+      autoEnhanceTimer.current = null;
+    }
+
+    // Cleanup on unmount
+    return () => {
+      clearTimeout(autoEnhanceTimer.current);
+      autoEnhanceTimer.current = null;
+    };
+  }, [isAutoEnhancing, isAutoPaused, runAutoEnhanceStep]);
 
   const weaponGrade = selectedWeapon ? selectedWeapon[0]["등급"] : null;
   const gradeClass =
@@ -93,6 +263,15 @@ function EnhancementSimulator({
       전설: "grade-legendary",
       필멸: "grade-mortal",
     }[weaponGrade] || "";
+
+  const maxEnhancementLevel = useMemo(() => {
+    if (!selectedWeapon) return 0;
+    const weaponGrade = selectedWeapon[0]["등급"];
+    const levels = [...guaranteedCostData, ...probabilisticCostData]
+      .filter((d) => d["등급"] === weaponGrade)
+      .map((d) => parseNum(d["강화 차수"]));
+    return levels.length > 0 ? Math.max(...levels) : 0;
+  }, [selectedWeapon, guaranteedCostData, probabilisticCostData]);
 
   return (
     <div className="enhancement-simulator">
@@ -132,9 +311,25 @@ function EnhancementSimulator({
               guaranteedCostData={guaranteedCostData}
               probabilisticCostData={probabilisticCostData}
               onEnhance={handleEnhancementAttempt}
+              isAutoEnhancing={isAutoEnhancing}
             />
           ) : (
             <p className="guide-text">먼저 시뮬레이션할 무기를 선택해주세요.</p>
+          )}
+
+          {selectedWeapon && (
+            <AutoEnhancementControls
+              key={selectedWeapon[0]["이름"]}
+              maxLevel={maxEnhancementLevel}
+              onStart={startAutoEnhancement}
+              onPause={pauseAutoEnhancement}
+              onStop={stopAutoEnhancement}
+              isAutoEnhancing={isAutoEnhancing}
+              isAutoPaused={isAutoPaused}
+              probabilisticCostData={probabilisticCostData}
+              guaranteedCostData={guaranteedCostData}
+              weaponGrade={weaponGrade}
+            />
           )}
         </div>
 
@@ -144,7 +339,9 @@ function EnhancementSimulator({
             <h3>최근 시도 기록 (최대 20개)</h3>
             <ul>
               {history.map((item, index) => (
-                <li key={index}>{item}</li>
+                <li key={index} className={getHistoryItemClass(item.outcome)}>
+                  {item.message}
+                </li>
               ))}
             </ul>
           </div>
@@ -154,6 +351,8 @@ function EnhancementSimulator({
       {isModalOpen && (
         <EnhancementWeaponSelectionModal
           weaponData={weaponData}
+          guaranteedCostData={guaranteedCostData}
+          probabilisticCostData={probabilisticCostData}
           onClose={() => setIsModalOpen(false)}
           onSelect={handleWeaponSelect}
         />

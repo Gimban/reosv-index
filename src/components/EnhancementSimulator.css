@@ -135,6 +135,22 @@
   border-bottom: none;
 }
 
+.enhancement-history li.history-success {
+  color: #2ecc71; /* green */
+}
+
+.enhancement-history li.history-failure {
+  color: #f1c40f; /* yellow */
+}
+
+.enhancement-history li.history-downgrade {
+  color: #e74c3c; /* light red */
+}
+
+.enhancement-history li.history-reset {
+  color: #c0392b; /* dark red */
+}
+
 /* Grade colors */
 .grade-common {
   color: #ffffff;
