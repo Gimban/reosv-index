@@ -211,3 +211,33 @@
 .class-weapon-card.class-frost .class-card-header h3 {
   color: #00bfff;
 }
+
+.formula-display {
+  font-size: 0.8em;
+  color: #888;
+  margin: 4px 10px 8px 10px;
+  padding-top: 4px;
+  border-top: 1px solid #444;
+}
+
+.formula-item {
+  display: flex;
+  justify-content: space-between;
+  line-height: 1.4;
+}
+
+.formula-label {
+  font-weight: bold;
+  margin-right: 5px;
+  color: #aaa;
+}
+
+.formula-expression {
+  text-align: right;
+  flex-grow: 1;
+  font-family: "Courier New", Courier, monospace;
+}
+
+.small-text {
+  font-size: 0.9em;
+}

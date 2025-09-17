@@ -96,3 +96,93 @@
   color: #333;
   white-space: nowrap;
 }
+
+.formula-display {
+  font-size: 0.8em;
+  color: #888;
+  margin: 4px 10px 8px 10px;
+  padding-top: 4px;
+  border-top: 1px solid #444;
+}
+
+.formula-item {
+  display: flex;
+  justify-content: space-between;
+  line-height: 1.4;
+}
+
+.formula-label {
+  font-weight: bold;
+  margin-right: 5px;
+  color: #aaa;
+}
+
+.formula-expression {
+  text-align: right;
+  flex-grow: 1;
+  font-family: "Courier New", Courier, monospace;
+}
+
+.small-text {
+  font-size: 0.9em;
+}
+
+/* Grade-specific colors */
+.grade-normal {
+  color: #d0d0d0;
+}
+.grade-uncommon {
+  color: #3aae41;
+}
+.grade-rare {
+  color: #498edf;
+}
+.grade-heroic {
+  color: #a03ae9;
+  font-weight: bold;
+}
+.grade-legendary {
+  color: #eec20f;
+  font-weight: bold;
+}
+.grade-mortal {
+  color: #b02222;
+  font-weight: bold;
+}
+.grade-boss {
+  color: #fcbec9;
+}
+.grade-destiny {
+  color: #4068de;
+  font-weight: bold;
+}
+
+/*Dark theme Overrides*/
+.theme-dark .grade-normal {
+  color: #d0d0d0;
+}
+.theme-dark .grade-uncommon {
+  color: #3aae41;
+}
+.theme-dark .grade-rare {
+  color: #498edf;
+}
+.theme-dark .grade-heroic {
+  color: #a03ae9;
+  font-weight: bold;
+}
+.theme-dark .grade-legendary {
+  color: #eec20f;
+  font-weight: bold;
+}
+.theme-dark .grade-mortal {
+  color: #b02222;
+  font-weight: bold;
+}
+.theme-dark .grade-boss {
+  color: #fcbec9;
+}
+.theme-dark .grade-destiny {
+  color: #4068de;
+  font-weight: bold;
+}

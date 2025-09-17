@@ -4,42 +4,79 @@ import "./WeaponSelectionBlock.css";
 
 const NUM_WEAPON_SLOTS = 8;
 
+const getCssClassForGrade = (grade) => {
+  const gradeMap = {
+    일반: "grade-normal",
+    고급: "grade-uncommon",
+    희귀: "grade-rare",
+    영웅: "grade-heroic",
+    전설: "grade-legendary",
+    필멸: "grade-mortal",
+    보스: "grade-boss",
+    운명: "grade-destiny",
+  };
+  return gradeMap[grade] || "";
+};
+
 const StatDisplay = ({ stats, enabled = true }) => {
   if (!stats || stats.dps === 0) return null;
+  const { formula } = stats;
   const wrapperClass = `weapon-slot-stats ${!enabled ? "disabled-stats" : ""}`;
+
+  const formatNum = (num, digits = 0) =>
+    (num || 0).toLocaleString(undefined, {
+      minimumFractionDigits: digits,
+      maximumFractionDigits: digits,
+    });
+
+  const damageBonusValue =
+    (formula?.specialWeaponDmg || 0) + (formula?.gradeDmg || 0);
+
   return (
-    <div className={wrapperClass}>
-      <div className="stat-item">
-        <span className="label">총딜</span>
-        <span className="value">
-          {stats.totalDamage.toLocaleString(undefined, {
-            maximumFractionDigits: 0,
-          })}
-        </span>
+    <>
+      <div className={wrapperClass}>
+        <div className="stat-item">
+          <span className="label">총딜</span>
+          <span className="value">{formatNum(stats.totalDamage, 0)}</span>
+        </div>
+        <div className="stat-item">
+          <span className="label">쿨</span>
+          <span className="value">{stats.cooldown.toFixed(2)}초</span>
+        </div>
+        <div className="stat-item">
+          <span className="label">DPS</span>
+          <span className="value">{formatNum(stats.dps, 2)}</span>
+        </div>
+        <div className="stat-item">
+          <span className="label">DPM</span>
+          <span className="value">{formatNum(stats.dpm, 2)}</span>
+        </div>
       </div>
-      <div className="stat-item">
-        <span className="label">쿨</span>
-        <span className="value">{stats.cooldown.toFixed(2)}초</span>
-      </div>
-      <div className="stat-item">
-        <span className="label">DPS</span>
-        <span className="value">
-          {stats.dps.toLocaleString(undefined, {
-            minimumFractionDigits: 2,
-            maximumFractionDigits: 2,
-          })}
-        </span>
-      </div>
-      <div className="stat-item">
-        <span className="label">DPM</span>
-        <span className="value">
-          {stats.dpm.toLocaleString(undefined, {
-            minimumFractionDigits: 2,
-            maximumFractionDigits: 2,
-          })}
-        </span>
-      </div>
-    </div>
+      {formula && (
+        <div className={`formula-display ${!enabled ? "disabled-stats" : ""}`}>
+          {damageBonusValue > 0 && (
+            <div className="formula-item small-text">
+              <span className="formula-label">피해량:</span>
+              <span className="formula-expression">
+                {formatNum(formula.statAdjustedDamage, 0)} × (100 +{" "}
+                {damageBonusValue}
+                %) = <strong>{formatNum(stats.totalDamage, 0)}</strong>
+              </span>
+            </div>
+          )}
+          {formula.cooldownReduction > 0 && (
+            <div className="formula-item small-text">
+              <span className="formula-label">쿨타임:</span>
+              <span className="formula-expression">
+                {formatNum(formula.baseCooldown, 2)}초 × (100 -{" "}
+                {formula.cooldownReduction}
+                %) = <strong>{formatNum(stats.cooldown, 2)}초</strong>
+              </span>
+            </div>
+          )}
+        </div>
+      )}
+    </>
   );
 };
 
@@ -178,6 +215,8 @@ function WeaponSelectionBlock({ weaponData, onStatsChange, calculatedStats }) {
         <div className="weapon-selection-grid">
           {destinyWeapons.map((weaponGroup, index) => {
             const weaponName = weaponGroup[0]["이름"];
+            const grade = weaponGroup[0]["등급"];
+            const gradeClass = getCssClassForGrade(grade);
             const isEnabled = destinyWeaponEnabled[weaponName] || false;
             const minEnh = Number(weaponGroup[0]["강화 차수"]);
             const maxEnh = Number(
@@ -195,7 +234,9 @@ function WeaponSelectionBlock({ weaponData, onStatsChange, calculatedStats }) {
                     }
                     title={`${weaponName} DPS 계산에 포함`}
                   />
-                  <span className="weapon-name-display">{weaponName}</span>
+                  <span className={`weapon-name-display ${gradeClass}`}>
+                    {weaponName}
+                  </span>
                   <input
                     type="number"
                     value={destinyEnhancements[weaponName] || 1}
@@ -221,6 +262,8 @@ function WeaponSelectionBlock({ weaponData, onStatsChange, calculatedStats }) {
       <div className="weapon-selection-grid">
         {Array.from({ length: NUM_WEAPON_SLOTS }).map((_, index) => {
           const weaponGroup = selectedWeapons[index];
+          const grade = weaponGroup ? weaponGroup[0]["등급"] : null;
+          const gradeClass = getCssClassForGrade(grade);
           const minEnh = weaponGroup ? Number(weaponGroup[0]["강화 차수"]) : 0;
           const maxEnh = weaponGroup
             ? Number(weaponGroup[weaponGroup.length - 1]["강화 차수"])
@@ -231,7 +274,7 @@ function WeaponSelectionBlock({ weaponData, onStatsChange, calculatedStats }) {
               <div className="weapon-slot-main">
                 <button
                   onClick={() => handleOpenModal(index)}
-                  className="select-weapon-btn"
+                  className={`select-weapon-btn ${gradeClass}`}
                 >
                   {selectedWeapons[index]
                     ? selectedWeapons[index][0]["이름"]

@@ -244,27 +244,80 @@ function ClassWeaponBlock({
               <div className="class-skill-list">
                 {statRow &&
                   SKILL_TYPES.map((skill) => {
-                    const damage = statRow[`${skill} 피해량`];
-                    const cooldown = statRow[`${skill} 쿨타임`];
-                    if (!damage || damage === "0") return null;
+                    const baseDamage = statRow[`${skill} 피해량`];
+                    const baseCooldown = statRow[`${skill} 쿨타임`];
+                    if (!baseDamage || baseDamage === "0") return null;
 
-                    const { dps } = calculateClassSkillStats(
-                      damage,
-                      cooldown,
+                    const {
+                      dps,
+                      totalDamage,
+                      cooldown: finalCooldown,
+                      formula,
+                    } = calculateClassSkillStats(
+                      baseDamage,
+                      baseCooldown,
                       accessoryStats,
                       totalStatDamageIncrease,
                       skill
                     );
 
                     return (
-                      <div key={skill} className="skill-stat-item">
-                        <span className="skill-name">{skill}</span>
-                        <div className="skill-details">
-                          <span>피해량: {damage}</span>
-                          <span>쿨타임: {cooldown}초</span>
-                          <span>DPS: {formatNumber(dps)}</span>
+                      <React.Fragment key={skill}>
+                        <div className="skill-stat-item">
+                          <span className="skill-name">{skill}</span>
+                          <div className="skill-details">
+                            <span>피해량: {baseDamage}</span>
+                            <span>쿨타임: {baseCooldown}초</span>
+                            <span>DPS: {formatNumber(dps)}</span>
+                          </div>
                         </div>
-                      </div>
+                        {formula && isActive && (
+                          <div className="formula-display">
+                            {skill === "좌클릭" &&
+                              formula.statAdjustedBasicDmgInc > 0 && (
+                                <div className="formula-item small-text">
+                                  <span className="formula-label">피해량:</span>
+                                  <span className="formula-expression">
+                                    {formatNumber(
+                                      formula.statAdjustedBaseDamage
+                                    )}{" "}
+                                    +{" "}
+                                    {formatNumber(
+                                      formula.statAdjustedBasicDmgInc
+                                    )}{" "}
+                                    ={" "}
+                                    <strong>{formatNumber(totalDamage)}</strong>
+                                  </span>
+                                </div>
+                              )}
+                            {skill !== "좌클릭" &&
+                              formula.classSkillDmgInc > 0 && (
+                                <div className="formula-item small-text">
+                                  <span className="formula-label">피해량:</span>
+                                  <span className="formula-expression">
+                                    {formatNumber(
+                                      formula.statAdjustedBaseDamage
+                                    )}{" "}
+                                    × (100 + {formula.classSkillDmgInc}%) ={" "}
+                                    <strong>{formatNumber(totalDamage)}</strong>
+                                  </span>
+                                </div>
+                              )}
+                            {formula.cooldownReduction > 0 && (
+                              <div className="formula-item small-text">
+                                <span className="formula-label">쿨타임:</span>
+                                <span className="formula-expression">
+                                  {formatNumber(formula.baseCooldown, 2)}초 ×
+                                  (100 - {formula.cooldownReduction}%) ={" "}
+                                  <strong>
+                                    {formatNumber(finalCooldown, 2)}초
+                                  </strong>
+                                </span>
+                              </div>
+                            )}
+                          </div>
+                        )}
+                      </React.Fragment>
                     );
                   })}
               </div>
