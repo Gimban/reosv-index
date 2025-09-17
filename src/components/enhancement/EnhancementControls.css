@@ -1,0 +1,118 @@
+.enhancement-controls {
+  display: flex;
+  flex-direction: row;
+  gap: 20px;
+}
+
+.enhancement-option {
+  padding: 20px;
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  background-color: var(--background-color-light);
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-height: 380px;
+}
+
+.enhancement-option h3 {
+  margin-top: 0;
+  border-bottom: 1px solid var(--border-color);
+  padding-bottom: 10px;
+}
+
+.enhancement-option.guaranteed {
+  border-left: 5px solid #3498db;
+}
+
+.enhancement-option.probabilistic {
+  border-left: 5px solid #e67e22;
+}
+
+.cost-list {
+  list-style-type: none;
+  padding: 0;
+  margin: 15px 0;
+}
+
+.cost-list li {
+  margin-bottom: 5px;
+}
+
+.prob-info {
+  display: flex;
+  gap: 20px;
+  margin: 15px 0;
+  font-weight: bold;
+}
+
+.prob-info p {
+  margin: 0;
+}
+
+.prob-info .prob-success {
+  color: #2ecc71;
+} /* Success */
+.prob-info .prob-failure {
+  color: #f1c40f;
+} /* Failure */
+.prob-info .prob-downgrade {
+  color: #e74c3c;
+} /* Downgrade */
+.prob-info .prob-reset {
+  color: #c0392b;
+} /* Reset */
+
+.prob-options {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin: 15px 0;
+}
+
+.prob-options label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+}
+
+.enhancement-option button {
+  width: 100%;
+  padding: 12px;
+  font-size: 16px;
+  font-weight: bold;
+  cursor: pointer;
+  border-radius: 5px;
+  border: none;
+  color: white;
+  transition: opacity 0.2s;
+  margin-top: auto;
+}
+
+.enhancement-option.guaranteed button {
+  background-color: #3498db;
+}
+
+.enhancement-option.probabilistic button {
+  background-color: #e67e22;
+}
+
+.enhancement-option button:hover {
+  opacity: 0.85;
+}
+
+.enhancement-option button:disabled {
+  background-color: #95a5a6;
+  cursor: not-allowed;
+  opacity: 0.7;
+}
+
+.no-info-container {
+  flex-grow: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  color: var(--text-color-secondary);
+}

@@ -1,0 +1,57 @@
+.enhancement-log {
+  background-color: var(--background-color-light);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  padding: 15px;
+}
+
+.enhancement-log h3 {
+  margin-top: 0;
+  border-bottom: 1px solid var(--border-color);
+  padding-bottom: 10px;
+  margin-bottom: 10px;
+}
+
+.enhancement-log ul {
+  list-style-type: none;
+  padding: 0;
+  margin: 0 0 20px 0;
+}
+
+.enhancement-log li {
+  display: flex;
+  justify-content: space-between;
+  padding: 4px 0;
+  font-size: 14px;
+}
+
+.log-name {
+  color: var(--text-color-secondary);
+}
+
+.log-amount {
+  font-weight: bold;
+}
+
+.no-log-text {
+  color: var(--text-color-secondary);
+  font-size: 14px;
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.reset-log-button {
+  width: 100%;
+  padding: 10px;
+  background-color: #c0392b;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: background-color 0.2s;
+}
+
+.reset-log-button:hover {
+  background-color: #e74c3c;
+}

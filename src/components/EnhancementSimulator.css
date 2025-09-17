@@ -1,0 +1,156 @@
+.enhancement-simulator {
+  padding: 20px;
+  color: var(--text-color);
+}
+
+.enhancement-simulator h1 {
+  border-bottom: 2px solid var(--border-color);
+  padding-bottom: 10px;
+  margin-bottom: 20px;
+}
+
+.simulator-main-layout {
+  display: grid;
+  grid-template-columns: 1fr 350px;
+  gap: 30px;
+}
+
+.simulator-controls-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.weapon-selection-area {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  padding: 15px;
+  background-color: var(--background-color-light);
+  border-radius: 8px;
+  border: 1px solid var(--border-color);
+}
+
+.weapon-selection-area .select-weapon-btn {
+  padding: 10px 20px;
+  font-size: 16px;
+  font-weight: bold;
+  cursor: pointer;
+  border-radius: 5px;
+  border: 1px solid var(--border-color);
+  background-color: var(--button-bg);
+  color: var(--button-text);
+  transition: background-color 0.2s;
+}
+
+.weapon-selection-area .select-weapon-btn:hover {
+  background-color: var(--button-hover-bg);
+}
+
+.current-weapon-display {
+  flex-grow: 1;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.current-weapon-display h2 {
+  margin: 0;
+  font-size: 24px;
+  margin-bottom: 5px;
+}
+
+.current-level-text {
+  margin: 0;
+  font-size: 18px;
+}
+
+.current-level-text span {
+  font-weight: bold;
+  color: var(--accent-color);
+  font-size: 22px;
+}
+
+.guide-text {
+  text-align: center;
+  padding: 40px;
+  font-size: 18px;
+  color: var(--text-color-secondary);
+  background-color: var(--background-color-light);
+  border: 2px dashed var(--border-color);
+  border-radius: 8px;
+}
+
+.simulator-log-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.enhancement-history {
+  background-color: var(--background-color-light);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  padding: 15px;
+}
+
+.reset-enhancement-btn {
+  padding: 8px 16px;
+  font-size: 14px;
+  background-color: #c0392b;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+  margin-left: 20px;
+}
+
+.reset-enhancement-btn:hover {
+  background-color: #e74c3c;
+}
+
+.enhancement-history h3 {
+  margin-top: 0;
+  border-bottom: 1px solid var(--border-color);
+  padding-bottom: 10px;
+  margin-bottom: 10px;
+}
+
+.enhancement-history ul {
+  list-style-type: none;
+  padding: 0;
+  margin: 0;
+  max-height: 300px;
+  overflow-y: auto;
+  font-size: 14px;
+}
+
+.enhancement-history li {
+  padding: 4px 0;
+  border-bottom: 1px solid var(--border-color-light);
+}
+
+.enhancement-history li:last-child {
+  border-bottom: none;
+}
+
+/* Grade colors */
+.grade-common {
+  color: #ffffff;
+}
+.grade-uncommon {
+  color: #1eff00;
+}
+.grade-rare {
+  color: #0070dd;
+}
+.grade-heroic {
+  color: #a335ee;
+}
+.grade-legendary {
+  color: #ff8000;
+}
+.grade-mortal {
+  color: #f75757;
+}

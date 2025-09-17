@@ -10,6 +10,7 @@ function Sidebar({ gidMap, onSelectCategory, theme, setTheme }) {
       },
       계산기: {
         "DPS/DPM 계산기": "DPS/DPM 계산기",
+        "강화 시뮬레이터": "강화 시뮬레이터",
       },
       무기: {},
       방어구: {},
