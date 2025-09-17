@@ -304,32 +304,31 @@ function EnhancementSimulator({
           </div>
 
           {selectedWeapon ? (
-            <EnhancementControls
-              key={selectedWeapon[0]["이름"]} // 무기 변경 시 컨트롤러 리셋
-              weapon={selectedWeapon}
-              currentLevel={currentLevel}
-              guaranteedCostData={guaranteedCostData}
-              probabilisticCostData={probabilisticCostData}
-              onEnhance={handleEnhancementAttempt}
-              isAutoEnhancing={isAutoEnhancing}
-            />
+            <>
+              <EnhancementControls
+                key={`${selectedWeapon[0]["이름"]}-manual`} // 무기 변경 시 컨트롤러 리셋
+                weapon={selectedWeapon}
+                currentLevel={currentLevel}
+                guaranteedCostData={guaranteedCostData}
+                probabilisticCostData={probabilisticCostData}
+                onEnhance={handleEnhancementAttempt}
+                isAutoEnhancing={isAutoEnhancing}
+              />
+              <AutoEnhancementControls
+                key={`${selectedWeapon[0]["이름"]}-auto`}
+                maxLevel={maxEnhancementLevel}
+                onStart={startAutoEnhancement}
+                onPause={pauseAutoEnhancement}
+                onStop={stopAutoEnhancement}
+                isAutoEnhancing={isAutoEnhancing}
+                isAutoPaused={isAutoPaused}
+                probabilisticCostData={probabilisticCostData}
+                guaranteedCostData={guaranteedCostData}
+                weaponGrade={weaponGrade}
+              />
+            </>
           ) : (
             <p className="guide-text">먼저 시뮬레이션할 무기를 선택해주세요.</p>
-          )}
-
-          {selectedWeapon && (
-            <AutoEnhancementControls
-              key={selectedWeapon[0]["이름"]}
-              maxLevel={maxEnhancementLevel}
-              onStart={startAutoEnhancement}
-              onPause={pauseAutoEnhancement}
-              onStop={stopAutoEnhancement}
-              isAutoEnhancing={isAutoEnhancing}
-              isAutoPaused={isAutoPaused}
-              probabilisticCostData={probabilisticCostData}
-              guaranteedCostData={guaranteedCostData}
-              weaponGrade={weaponGrade}
-            />
           )}
         </div>
 
