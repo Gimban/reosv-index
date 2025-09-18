@@ -1,0 +1,26 @@
+.table-container {
+  width: 100%;
+  overflow-x: auto; /* 가로 스크롤이 필요할 경우 */
+  margin-top: 20px;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse; /* 테두리 겹침 방지 */
+  border: 1px solid #dee2e6;
+}
+
+th, td {
+  border: 1px solid #dee2e6; /* 셀 테두리 */
+  padding: 8px 12px;
+  text-align: left;
+  vertical-align: middle;
+}
+
+thead th,
+.theme-dark thead th {
+  background-color: #63aef9;
+  font-weight: bold;
+  position: sticky; /* 헤더 고정 */
+  top: 0;
+}

@@ -1,4 +1,5 @@
 import React from 'react';
+import './DataTable.css';
 
 function DataTable({ data }) {
   // 데이터가 로딩되지 않았을 때
