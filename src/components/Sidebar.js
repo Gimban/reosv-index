@@ -1,7 +1,9 @@
-import React from "react";
+import React, { useState } from "react";
 import "./Sidebar.css";
 
 function Sidebar({ gidMap, onSelectCategory, theme, setTheme }) {
+  const [isRawDataOpen, setIsRawDataOpen] = useState(false);
+
   // GID_MAP을 기반으로 메뉴 구조를 동적으로 생성합니다.
   const menu = React.useMemo(() => {
     const menuStructure = {
@@ -40,10 +42,28 @@ function Sidebar({ gidMap, onSelectCategory, theme, setTheme }) {
       <h2>목차</h2>
       <ul>
         {Object.keys(menu).map((mainCategory) => (
-          <li key={mainCategory}>
-            <span className="main-category-title">{mainCategory}</span>
+          <li
+            key={mainCategory}
+            className={mainCategory === "미가공 데이터" ? "collapsible" : ""}
+          >
+            <span
+              className="main-category-title"
+              onClick={() => {
+                if (mainCategory === "미가공 데이터") {
+                  setIsRawDataOpen(!isRawDataOpen);
+                }
+              }}
+              role="button"
+              tabIndex={0}
+            >
+              <span>{mainCategory}</span>
+              {mainCategory === "미가공 데이터" && (
+                <span className="collapse-icon">{isRawDataOpen ? "▼" : "▶"}</span>
+              )}
+            </span>
             {/* 하위 목차 렌더링 */}
-            {Object.keys(menu[mainCategory]).length > 0 && (
+            {Object.keys(menu[mainCategory]).length > 0 &&
+              (mainCategory !== "미가공 데이터" || isRawDataOpen) && (
               <ul>
                 {Object.keys(menu[mainCategory]).map((subCategory) => (
                   <li key={subCategory}>

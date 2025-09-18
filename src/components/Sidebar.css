@@ -57,6 +57,9 @@
   margin-bottom: 5px;
   font-size: 1.1em;
   transition: color 0.3s;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
 
 .category-button {
@@ -98,4 +101,9 @@
   display: flex;
   align-items: center;
   gap: 5px;
+}
+
+.collapse-icon {
+  font-size: 0.8em;
+  transition: transform 0.2s ease-in-out;
 }
