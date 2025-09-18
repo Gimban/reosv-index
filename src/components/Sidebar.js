@@ -8,28 +8,28 @@ function Sidebar({ gidMap, onSelectCategory, theme, setTheme }) {
       홈: {
         홈: "홈",
       },
+      무기: {
+        "클래스 무기 스탯": "클래스 무기 스탯",
+        "클래스 무기 강화 비용": "클래스 무기 강화 비용",
+        "특수 무기 스탯": "특수 무기 스탯",
+      },
+      방어구: {
+        "방어구 강화 비용": "방어구 강화 비용",
+      },
       계산기: {
         "DPS/DPM 계산기": "DPS/DPM 계산기",
         "강화 시뮬레이터": "강화 시뮬레이터",
       },
-      무기: {},
-      방어구: {},
-      기타: {},
+      "미가공 데이터": {},
     };
 
     for (const categoryName in gidMap) {
-      if (categoryName.includes("무기")) {
-        menuStructure["무기"][categoryName] = categoryName;
-      } else if (categoryName.includes("방어구")) {
-        menuStructure["방어구"][categoryName] = categoryName;
-      } else {
-        menuStructure["기타"][categoryName] = categoryName;
-      }
+      menuStructure["미가공 데이터"][categoryName] = categoryName;
     }
 
     // 내용이 없는 카테고리는 숨깁니다.
-    if (Object.keys(menuStructure["기타"]).length === 0) {
-      delete menuStructure["기타"];
+    if (Object.keys(menuStructure["미가공 데이터"]).length === 0) {
+      delete menuStructure["미가공 데이터"];
     }
 
     return menuStructure;
@@ -51,7 +51,7 @@ function Sidebar({ gidMap, onSelectCategory, theme, setTheme }) {
                       type="button"
                       className="category-button"
                       onClick={() => {
-                        onSelectCategory(subCategory);
+                        onSelectCategory(subCategory, mainCategory);
                       }}
                     >
                       {subCategory}

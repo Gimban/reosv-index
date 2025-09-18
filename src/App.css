@@ -302,3 +302,7 @@ body {
 .theme-dark .class-none-option input[type="radio"]:checked::after {
   color: #121212;
 }
+
+.full-height-view {
+  height: 100%;
+}

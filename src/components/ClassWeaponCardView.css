@@ -1,0 +1,189 @@
+.class-weapon-view {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  padding: 20px;
+  box-sizing: border-box;
+}
+
+.class-weapon-controls {
+  margin-bottom: 20px;
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+.class-weapon-controls h2 {
+  margin: 0;
+}
+
+.class-weapon-card-view-container {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 20px;
+  flex-grow: 1;
+}
+
+.class-weapon-card {
+  border: 1px solid #444;
+  border-radius: 8px;
+  background-color: #2c2c2c;
+  color: #f0f0f0;
+  padding: 15px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.class-weapon-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+}
+
+.class-weapon-card-header {
+  border-bottom: 1px solid #555;
+  padding-bottom: 10px;
+  margin-bottom: 10px;
+  text-align: center;
+}
+
+.class-weapon-card-header h3 {
+  margin: 0;
+  font-size: 1.5em;
+  text-align: center;
+}
+
+.class-weapon-card-body {
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.skill-list {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.skill-item {
+  font-size: 1em;
+  border-left: 3px solid;
+  padding-left: 10px;
+}
+
+.skill-item strong {
+  display: block;
+  margin-bottom: 5px;
+  font-size: 1.1em;
+}
+
+.skill-details {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 5px 10px;
+  font-size: 0.9em;
+  color: #ccc;
+}
+
+.class-weapon-card-footer {
+  border-top: 1px solid #555;
+  padding-top: 10px;
+  margin-top: 15px;
+  text-align: right;
+}
+
+.total-dps-dpm {
+  font-size: 1.1em;
+}
+
+.total-dps-dpm strong {
+  color: #a9d18e;
+}
+
+.no-stats {
+  text-align: center;
+  color: #888;
+  font-size: 1.1em;
+}
+
+/* Individual & Global Controls */
+.selector {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.selector button {
+  font-size: 1.2em;
+  padding: 0 8px;
+  cursor: pointer;
+}
+
+.individual-controls {
+  display: flex;
+  justify-content: center;
+  gap: 15px;
+  margin-top: 10px;
+}
+
+/* --- Light Theme --- */
+.theme-light .class-weapon-card {
+  background-color: #f9f9f9;
+  border-color: #ddd;
+  color: #333;
+}
+
+.theme-light .class-weapon-card-header {
+  border-bottom-color: #ddd;
+}
+
+.theme-light .class-weapon-card-header h3 {
+  color: #111;
+}
+
+.theme-light .class-weapon-card-body .skill-item strong {
+  color: #005a9c; /* Dark blue for skill names */
+}
+
+.theme-light .class-weapon-card-body .skill-details {
+  color: #555;
+}
+
+.theme-light .class-weapon-card-footer {
+  border-top-color: #ddd;
+}
+
+.theme-light .total-dps-dpm strong {
+  color: #006400; /* Dark green for total labels */
+}
+
+.theme-light .total-dps-dpm span {
+  color: #111;
+}
+
+.theme-light .class-weapon-controls h2 {
+  color: #333;
+}
+
+.theme-light .selector,
+.theme-light .control-group label {
+  color: #333;
+}
+
+.theme-light .selector button {
+  background-color: #f0f0f0;
+  border-color: #ccc;
+  color: #333;
+}
+
+.theme-light .selector button:hover {
+  background-color: #e0e0e0;
+}
+
+.theme-light .no-stats {
+  color: #999;
+}
