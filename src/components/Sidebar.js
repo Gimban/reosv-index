@@ -1,7 +1,14 @@
 import React, { useState } from "react";
 import "./Sidebar.css";
 
-function Sidebar({ gidMap, onSelectCategory, theme, setTheme }) {
+function Sidebar({
+  gidMap,
+  onSelectCategory,
+  currentCategory,
+  parentCategory,
+  theme,
+  setTheme,
+}) {
   const [isRawDataOpen, setIsRawDataOpen] = useState(false);
 
   // GID_MAP을 기반으로 메뉴 구조를 동적으로 생성합니다.
@@ -35,7 +42,7 @@ function Sidebar({ gidMap, onSelectCategory, theme, setTheme }) {
     }
 
     return menuStructure;
-  }, [gidMap]);
+  }, [gidMap]); // currentCategory와 parentCategory는 메뉴 구조 생성에 영향을 주지 않으므로 deps에 불필요
 
   return (
     <div className="sidebar">
@@ -69,7 +76,12 @@ function Sidebar({ gidMap, onSelectCategory, theme, setTheme }) {
                   <li key={subCategory}>
                     <button
                       type="button"
-                      className="category-button"
+                      className={`category-button ${
+                        currentCategory === subCategory &&
+                        (parentCategory === mainCategory || (mainCategory === '홈' && !parentCategory))
+                          ? "active"
+                          : ""
+                      }`}
                       onClick={() => {
                         onSelectCategory(subCategory, mainCategory);
                       }}

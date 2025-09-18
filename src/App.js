@@ -114,6 +114,8 @@ function App() {
       <Sidebar
         gidMap={GID_MAP}
         onSelectCategory={handleSelectCategory}
+        currentCategory={currentCategory}
+        parentCategory={parentCategory}
         theme={theme}
         setTheme={setTheme}
       />
