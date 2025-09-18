@@ -1,10 +1,17 @@
 .view-controls {
+  position: sticky;
+  top: 0;
+  z-index: 11; /* 필터보다 위에 있도록 z-index 조정 */
   display: flex;
   justify-content: space-between;
   align-items: center;
   border-bottom: 2px solid #eee;
-  padding-bottom: 10px;
+  padding: 10px 20px;
   margin-bottom: 20px;
+  /* 배경색이 App.css의 테마에 의해 제어되도록 margin을 조정합니다. */
+  margin-left: -20px;
+  margin-right: -20px;
+  margin-top: -20px;
 }
 
 .view-controls h1 {
@@ -38,12 +45,19 @@
 }
 
 .grade-filter-controls {
+  position: sticky;
+  /* view-controls의 높이만큼 아래에 위치하도록 top 설정 (대략적인 값) */
+  top: 75px; 
+  z-index: 10;
   display: flex;
   flex-wrap: wrap;
   align-items: center;
   gap: 10px 15px;
-  padding: 10px;
+  padding: 10px 20px;
   background-color: #f8f9fa;
+  /* view-controls와 동일하게 좌우 여백 조정 */
+  margin-left: -20px;
+  margin-right: -20px;
   border-radius: 8px;
   margin-bottom: 20px;
   border: 1px solid #dee2e6;

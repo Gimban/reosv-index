@@ -7,6 +7,8 @@ function ViewControls({
   setSortEnhancement,
   showDescription,
   setShowDescription,
+  showUngrouped,
+  setShowUngrouped,
   globalEnhancement,
   setGlobalEnhancement,
 }) {
@@ -61,6 +63,12 @@ function ViewControls({
             onChange={(e) => setShowDescription(e.target.checked)}
           />
           설명 보기
+        </label>
+      </div>
+      <div className="controls-group">
+        <label>
+          <input type="checkbox" checked={!showUngrouped} onChange={(e) => setShowUngrouped(!e.target.checked)} />
+          등급별 보기
         </label>
       </div>
     </div>

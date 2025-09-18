@@ -121,5 +121,26 @@ export function useWeaponData(data, sortOption, sortEnhancement) {
     return sorted;
   }, [groupedWeapons, sortOption, sortEnhancement]);
 
-  return { groupedWeapons, sortedGrades, sortedGroupedWeapons };
+  const allWeaponsSorted = useMemo(() => {
+    const allWeaponGroups = Object.values(groupedWeapons).flat();
+
+    if (sortOption === "기본") {
+      // 기본 정렬일 경우, 등급 순으로 정렬된 그룹을 그대로 합칩니다.
+      return sortedGrades.flatMap(grade => sortedGroupedWeapons[grade] || []);
+    }
+
+    // '총 피해량' 또는 'DPS' 정렬
+    return allWeaponGroups.sort((groupA, groupB) => {
+      const weaponA = findWeaponForSort(groupA, sortEnhancement);
+      const weaponB = findWeaponForSort(groupB, sortEnhancement);
+      const metricsA = getWeaponMetrics(weaponA);
+      const metricsB = getWeaponMetrics(weaponB);
+
+      if (sortOption === "총 피해량") return metricsB.totalDamage - metricsA.totalDamage;
+      if (sortOption === "DPS") return metricsB.dps - metricsA.dps;
+      return 0;
+    });
+  }, [groupedWeapons, sortedGrades, sortedGroupedWeapons, sortOption, sortEnhancement]);
+
+  return { groupedWeapons, sortedGrades, sortedGroupedWeapons, allWeaponsSorted };
 }

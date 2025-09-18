@@ -292,6 +292,22 @@ body {
   border-bottom: 1px solid #444;
 }
 
+.theme-light .view-controls {
+  background-color: #fcfcfc; /* 라이트 테마 배경색과 동일하게 설정 */
+  border-bottom: 2px solid #eee;
+}
+
+.theme-dark .grade-filter-controls {
+  background-color: #1e1e1e;
+  border: 1px solid #444;
+  color: #ccc;
+}
+
+.theme-dark .view-controls {
+  background-color: #1e1e1e;
+  border-bottom: 1px solid #444;
+}
+
 .theme-dark .class-card-header input[type="radio"]:checked,
 .theme-dark .class-none-option input[type="radio"]:checked {
   border-color: #90caf9;

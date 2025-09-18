@@ -12,13 +12,16 @@ function WeaponCardView({ data }) {
   const [sortEnhancement, setSortEnhancement] = useState(0);
   const [globalEnhancement, setGlobalEnhancement] = useState("개별");
   const [gradeFilter, setGradeFilter] = useState({});
+  const [showUngrouped, setShowUngrouped] = useState(false);
 
   // 데이터 처리 로직 (커스텀 훅)
-  const { groupedWeapons, sortedGrades, sortedGroupedWeapons } = useWeaponData(
-    data,
-    sortOption,
-    sortEnhancement
-  );
+  const {
+    groupedWeapons,
+    sortedGrades,
+    sortedGroupedWeapons,
+    allWeaponsSorted,
+  } = useWeaponData(data, sortOption, sortEnhancement);
+
 
   useEffect(() => {
     // 데이터 로드 시 등급 필터 상태 초기화
@@ -58,6 +61,12 @@ function WeaponCardView({ data }) {
       : sortedGrades.filter((grade) => gradeFilter[grade]);
   }, [isAllMode, gradeFilter, sortedGrades]);
 
+  const allSortedWeapons = useMemo(() => {
+    if (!showUngrouped) return [];    
+    // useWeaponData 훅에서 이미 모든 정렬 로직이 적용된 배열을 사용합니다.
+    return allWeaponsSorted;
+  }, [showUngrouped, allWeaponsSorted]);
+
   if (Object.keys(groupedWeapons).length === 0) {
     return <p>특수 무기 스탯 데이터를 불러오는 중이거나 데이터가 없습니다.</p>;
   }
@@ -71,21 +80,38 @@ function WeaponCardView({ data }) {
         setSortEnhancement={setSortEnhancement}
         showDescription={showDescription}
         setShowDescription={setShowDescription}
+        showUngrouped={showUngrouped}
+        setShowUngrouped={setShowUngrouped}
         globalEnhancement={globalEnhancement}
         setGlobalEnhancement={setGlobalEnhancement}
       />
 
-      <GradeFilterControls
-        sortedGrades={sortedGrades}
-        isAllMode={isAllMode}
-        handleShowAllClick={handleShowAllClick}
-        gradeFilter={gradeFilter}
-        handleGradeFilterChange={handleGradeFilterChange}
-      />
+      {!showUngrouped && (
+        <GradeFilterControls
+          sortedGrades={sortedGrades}
+          isAllMode={isAllMode}
+          handleShowAllClick={handleShowAllClick}
+          gradeFilter={gradeFilter}
+          handleGradeFilterChange={handleGradeFilterChange}
+        />
+      )}
 
-      {filteredGrades.map((grade) => (
-        <section key={grade} className="grade-section">
-          <h2>{grade}</h2>
+      {showUngrouped ? (
+        <div className="cards-container ungrouped">
+          {allSortedWeapons.map((weaponGroup) => (
+            <WeaponCard
+              key={weaponGroup[0]["이름"]}
+              weaponData={weaponGroup}
+              grade={weaponGroup[0]["등급"]}
+              showDescription={showDescription}
+              globalEnhancement={globalEnhancement}
+            />
+          ))}
+        </div>
+      ) : (
+        filteredGrades.map((grade) => (
+          <section key={grade} className="grade-section">
+            <h2>{grade}</h2>
           <div className="cards-container">
             {sortedGroupedWeapons[grade].map((weaponGroup) => (
               <WeaponCard
@@ -98,7 +124,8 @@ function WeaponCardView({ data }) {
             ))}
           </div>
         </section>
-      ))}
+      ))
+    )}
     </div>
   );
 }
