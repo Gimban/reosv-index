@@ -68,7 +68,12 @@ function EnhancementSimulator({
     );
     if (confirmReset) {
       setLogs({
-        materials: { 골드: 0, "무형의 파편": 0, "정교한 강화석": 0 },
+        materials: {
+          골드: 0,
+          "무형의 파편": 0,
+          "정교한 강화석": 0,
+          "미가공 강화 원석": 0,
+        },
         consumedWeapons: {},
       });
       setHistory([]);

@@ -79,6 +79,7 @@ function EnhancementControls({
       { name: "골드", value: parseNum(data["골드"]) },
       { name: "무형의 파편", value: parseNum(data["무형의 파편"]) },
       { name: "정교한 강화석", value: parseNum(data["정교한 강화석"]) },
+      { name: "미가공 강화 원석", value: parseNum(data["미가공 강화 원석"]) },
     ];
     return (
       <ul className="cost-list">

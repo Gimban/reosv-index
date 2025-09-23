@@ -8,13 +8,28 @@ function WeaponSelectionModal({ weaponData, onClose, onSelect }) {
     GRADE_ORDER.reduce((acc, grade) => ({ ...acc, [grade]: false }), {})
   );
   const [isAllMode, setIsAllMode] = useState(true);
+  const [hideDeleted, setHideDeleted] = useState(true);
 
   const processedWeapons = useMemo(() => {
     if (!weaponData || weaponData.length === 0) {
       return {};
     }
 
-    const weaponsByName = weaponData.reduce((acc, weapon) => {
+    // "삭제됨" 비고가 있는 무기를 필터링하는 로직
+    let dataToProcess = weaponData;
+    if (hideDeleted) {
+      const deletedWeaponNames = new Set();
+      weaponData.forEach((weapon) => {
+        if (weapon["비고"]?.includes("삭제됨")) {
+          deletedWeaponNames.add(weapon["이름"]);
+        }
+      });
+      dataToProcess = weaponData.filter(
+        (weapon) => !deletedWeaponNames.has(weapon["이름"])
+      );
+    }
+
+    const weaponsByName = dataToProcess.reduce((acc, weapon) => {
       const name = weapon["이름"];
       if (!name) return acc;
       if (!acc[name]) acc[name] = [];
@@ -40,7 +55,7 @@ function WeaponSelectionModal({ weaponData, onClose, onSelect }) {
     }, {});
 
     return weaponsByGrade;
-  }, [weaponData]);
+  }, [weaponData, hideDeleted]);
 
   const sortedGrades = useMemo(() => {
     return Object.keys(processedWeapons).sort((a, b) => {
@@ -123,6 +138,14 @@ function WeaponSelectionModal({ weaponData, onClose, onSelect }) {
                 </label>
               ) : null
             )}
+            <label>
+              <input
+                type="checkbox"
+                checked={hideDeleted}
+                onChange={(e) => setHideDeleted(e.target.checked)}
+              />
+              삭제된 무기 숨기기
+            </label>
           </div>
           <div className="weapon-list">
             {filteredGrades.map((grade) => (

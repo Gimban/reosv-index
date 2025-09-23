@@ -31,6 +31,7 @@ export function performEnhancement(
       골드: parseNum(guaranteed["골드"]),
       "무형의 파편": parseNum(guaranteed["무형의 파편"]),
       "정교한 강화석": parseNum(guaranteed["정교한 강화석"]),
+      "미가공 강화 원석": parseNum(guaranteed["미가공 강화 원석"]),
     };
     result = {
       ...result,
@@ -47,6 +48,7 @@ export function performEnhancement(
       골드: parseNum(probabilistic["골드"]),
       "무형의 파편": parseNum(probabilistic["무형의 파편"]),
       "정교한 강화석": parseNum(probabilistic["정교한 강화석"]),
+      "미가공 강화 원석": parseNum(probabilistic["미가공 강화 원석"]),
     };
 
     if (probOptions.downgradeProtection) {

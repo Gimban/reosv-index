@@ -11,6 +11,8 @@ function ViewControls({
   setShowUngrouped,
   globalEnhancement,
   setGlobalEnhancement,
+  hideDeleted,
+  setHideDeleted,
 }) {
   return (
     <div className="view-controls">
@@ -67,8 +69,20 @@ function ViewControls({
       </div>
       <div className="controls-group">
         <label>
-          <input type="checkbox" checked={!showUngrouped} onChange={(e) => setShowUngrouped(!e.target.checked)} />
+          <input
+            type="checkbox"
+            checked={!showUngrouped}
+            onChange={(e) => setShowUngrouped(!e.target.checked)}
+          />
           등급별 보기
+        </label>
+        <label>
+          <input
+            type="checkbox"
+            checked={hideDeleted}
+            onChange={(e) => setHideDeleted(e.target.checked)}
+          />
+          삭제된 무기 숨기기
         </label>
       </div>
     </div>

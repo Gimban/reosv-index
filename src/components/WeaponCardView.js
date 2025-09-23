@@ -7,12 +7,28 @@ import "./WeaponCardView.css";
 
 function WeaponCardView({ data }) {
   // 상태 관리
-  const [showDescription, setShowDescription] = useState(false);
+  const [showDescription, setShowDescription] = useState(true);
   const [sortOption, setSortOption] = useState("기본");
   const [sortEnhancement, setSortEnhancement] = useState(0);
   const [globalEnhancement, setGlobalEnhancement] = useState("개별");
   const [gradeFilter, setGradeFilter] = useState({});
   const [showUngrouped, setShowUngrouped] = useState(false);
+  const [hideDeleted, setHideDeleted] = useState(true);
+
+  // "삭제됨" 비고가 있는 무기를 필터링하는 로직
+  const filteredData = useMemo(() => {
+    if (!data) return [];
+    if (!hideDeleted) return data;
+
+    const deletedWeaponNames = new Set();
+    data.forEach((weapon) => {
+      if (weapon["비고"]?.includes("삭제됨")) {
+        deletedWeaponNames.add(weapon["이름"]);
+      }
+    });
+
+    return data.filter((weapon) => !deletedWeaponNames.has(weapon["이름"]));
+  }, [data, hideDeleted]);
 
   // 데이터 처리 로직 (커스텀 훅)
   const {
@@ -20,8 +36,7 @@ function WeaponCardView({ data }) {
     sortedGrades,
     sortedGroupedWeapons,
     allWeaponsSorted,
-  } = useWeaponData(data, sortOption, sortEnhancement);
-
+  } = useWeaponData(filteredData, sortOption, sortEnhancement);
 
   useEffect(() => {
     // 데이터 로드 시 등급 필터 상태 초기화
@@ -62,7 +77,7 @@ function WeaponCardView({ data }) {
   }, [isAllMode, gradeFilter, sortedGrades]);
 
   const allSortedWeapons = useMemo(() => {
-    if (!showUngrouped) return [];    
+    if (!showUngrouped) return [];
     // useWeaponData 훅에서 이미 모든 정렬 로직이 적용된 배열을 사용합니다.
     return allWeaponsSorted;
   }, [showUngrouped, allWeaponsSorted]);
@@ -84,6 +99,8 @@ function WeaponCardView({ data }) {
         setShowUngrouped={setShowUngrouped}
         globalEnhancement={globalEnhancement}
         setGlobalEnhancement={setGlobalEnhancement}
+        hideDeleted={hideDeleted}
+        setHideDeleted={setHideDeleted}
       />
 
       {!showUngrouped && (
@@ -112,20 +129,20 @@ function WeaponCardView({ data }) {
         filteredGrades.map((grade) => (
           <section key={grade} className="grade-section">
             <h2>{grade}</h2>
-          <div className="cards-container">
-            {sortedGroupedWeapons[grade].map((weaponGroup) => (
-              <WeaponCard
-                key={weaponGroup[0]["이름"]}
-                weaponData={weaponGroup}
-                grade={grade}
-                showDescription={showDescription}
-                globalEnhancement={globalEnhancement}
-              />
-            ))}
-          </div>
-        </section>
-      ))
-    )}
+            <div className="cards-container">
+              {sortedGroupedWeapons[grade].map((weaponGroup) => (
+                <WeaponCard
+                  key={weaponGroup[0]["이름"]}
+                  weaponData={weaponGroup}
+                  grade={grade}
+                  showDescription={showDescription}
+                  globalEnhancement={globalEnhancement}
+                />
+              ))}
+            </div>
+          </section>
+        ))
+      )}
     </div>
   );
 }
