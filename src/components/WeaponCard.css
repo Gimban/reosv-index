@@ -231,3 +231,14 @@
   border-style: solid;
   border-color: #333 transparent transparent transparent;
 }
+
+.image-placeholder {
+  background-color: #333;
+}
+
+.image-placeholder img {
+  width: 120%;
+  height: 120%;
+  object-fit: contain;
+  display: block;
+}
