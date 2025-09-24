@@ -1,7 +1,13 @@
 import React, { useState, useMemo, useEffect } from "react";
 import "./WeaponCard.css";
 
-function WeaponCard({ weaponData, grade, showDescription, globalEnhancement }) {
+function WeaponCard({
+  weaponData,
+  grade,
+  showDescription,
+  globalEnhancement,
+  imageSrc,
+}) {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isHovered, setIsHovered] = useState(false);
 
@@ -190,7 +196,11 @@ function WeaponCard({ weaponData, grade, showDescription, globalEnhancement }) {
       )}
       <div className={`card-top ${getGradeClassName(grade)}`}>
         <div className="image-placeholder">
-          <span>이미지</span>
+           {imageSrc ? (
+            <img src={imageSrc} alt={name} />
+          ) : (
+            <span>이미지</span>
+          )}
         </div>
         <div className="weapon-name-section">
           <span className="weapon-name">{name}</span>

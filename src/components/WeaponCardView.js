@@ -5,6 +5,18 @@ import GradeFilterControls from "./GradeFilterControls";
 import { useWeaponData } from "../hooks/useWeaponData";
 import "./WeaponCardView.css";
 
+// src/images 폴더와 하위 폴더의 모든 png 파일을 불러옵니다.
+function importAll(r) {
+  let images = {};
+  r.keys().forEach((item) => {
+    // './subfolder/image.png' -> 'image'
+    const key = item.substring(item.lastIndexOf("/") + 1, item.lastIndexOf("."));
+    images[key] = r(item);
+  });
+  return images;
+}
+const weaponImages = importAll(require.context("../images", true, /\.png$/));
+
 function WeaponCardView({ data }) {
   // 상태 관리
   const [showDescription, setShowDescription] = useState(true);
@@ -121,6 +133,9 @@ function WeaponCardView({ data }) {
               weaponData={weaponGroup}
               grade={weaponGroup[0]["등급"]}
               showDescription={showDescription}
+              imageSrc={
+                weaponImages[weaponGroup[0]["이미지 파일"]?.replace(".png", "")]
+              }
               globalEnhancement={globalEnhancement}
             />
           ))}
@@ -136,6 +151,9 @@ function WeaponCardView({ data }) {
                   weaponData={weaponGroup}
                   grade={grade}
                   showDescription={showDescription}
+                  imageSrc={
+                    weaponImages[weaponGroup[0]["이미지 파일"]?.replace(".png", "")]
+                  }
                   globalEnhancement={globalEnhancement}
                 />
               ))}
