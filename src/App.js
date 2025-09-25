@@ -123,6 +123,7 @@ function App() {
             weaponData={allData["특수 무기 스탯"] || []}
             classWeaponData={allData["클래스 무기 스탯"] || []}
             accessoryBaseData={allData["장신구 기본 옵션"] || []}
+            accessoryPotentialOptionData={allData["장신구 잠재 옵션"] || []}
           />
         );
       case "강화 시뮬레이터":

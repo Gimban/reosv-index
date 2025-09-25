@@ -14,7 +14,12 @@ const DAMAGE_PER_ATTACK_POINT = 0.65; // 공격력 1포인트당 데미지 증�
 const DAMAGE_PER_HEALTH_POINT = 0.4; // 체력 1포인트당 데미지 증가량 (%)
 const EMPTY_WEAPON_STATS = { totalDamage: 0, cooldown: 0, dps: 0, dpm: 0 };
 
-function DpsCalculator({ weaponData, classWeaponData, accessoryBaseData }) {
+function DpsCalculator({
+  weaponData,
+  classWeaponData,
+  accessoryBaseData,
+  accessoryPotentialOptionData,
+}) {
   const [playerStats, setPlayerStats] = useState(null);
   const [accessoryStats, setAccessoryStats] = useState(null);
   const [weaponStats, setWeaponStats] = useState(null);
@@ -182,6 +187,7 @@ function DpsCalculator({ weaponData, classWeaponData, accessoryBaseData }) {
       <AccessoryStatsBlock
         onStatsChange={handleAccessoryStatsChange}
         accessoryBaseData={accessoryBaseData}
+        accessoryPotentialOptionData={accessoryPotentialOptionData}
       />
       <DivineShardBlock onStatsChange={handleDivineShardStatsChange} />
       <ClassWeaponBlock

@@ -27,6 +27,10 @@
   font-size: 1.1em;
 }
 
+.theme-dark .accessory-fieldset legend {
+  color: #e4e4e4;
+}
+
 .sub-options {
   display: flex;
   flex-direction: column;
@@ -177,7 +181,6 @@
   text-align: right;
   padding: 2px 4px;
   font-size: 0.8rem;
-  -moz-appearance: textfield; /* Firefox */
 }
 
 .option-input::-webkit-outer-spin-button,
@@ -257,4 +260,75 @@
   border-color: #c5a3ff;
   background: linear-gradient(160deg, #2a2a2a 85%, #4a3a5a);
   box-shadow: 0 0 5px rgba(197, 163, 255, 0.5);
+}
+
+.potential-options {
+  margin-top: 10px;
+  border-top: 1px solid #444;
+  padding-top: 10px;
+}
+
+.potential-options h4 {
+  margin: 0 0 5px 0;
+  font-size: 13px;
+  color: #ccc;
+}
+
+.potential-option-row {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  margin-bottom: 5px;
+}
+
+.potential-option-row select {
+  flex-basis: 80px;
+  background-color: #333;
+  color: white;
+  border: 1px solid #555;
+  border-radius: 4px;
+  padding: 4px;
+}
+
+.select-potential-option-btn {
+  flex-grow: 1;
+  background-color: #444;
+  border: 1px solid #666;
+  color: #ddd;
+  padding: 5px;
+  border-radius: 4px;
+  cursor: pointer;
+  text-align: left;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.select-potential-option-btn:disabled {
+  background-color: #2a2a2a;
+  color: #666;
+  cursor: not-allowed;
+}
+
+/* For AccessoryPotentialOptionModal */
+.accessory-list-simple {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  max-height: 400px;
+  overflow-y: auto;
+}
+
+.simple-option-btn {
+  width: 100%;
+  padding: 8px;
+  background-color: #3a3a3a;
+  border: 1px solid #555;
+  color: white;
+  cursor: pointer;
+  text-align: left;
+}
+
+.simple-option-btn:hover {
+  background-color: #4a4a4a;
 }

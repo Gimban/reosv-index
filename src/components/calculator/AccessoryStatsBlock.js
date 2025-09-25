@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useCallback, useMemo } from "react";
 import AccessorySelectionModal from "./AccessorySelectionModal";
+import AccessoryPotentialOptionModal from "./AccessoryPotentialOptionModal";
 import "./AccessoryStatsBlock.css";
 
 // const parseStat = (val) => parseFloat(String(val || "0").replace(/,/g, ""));
@@ -78,7 +79,19 @@ const tempestBraceletData = {
   ],
 };
 
-function AccessoryStatsBlock({ onStatsChange, accessoryBaseData }) {
+const POTENTIAL_OPTION_GRADES = ["없음", "일반", "고급", "희귀", "영웅"];
+const GRADE_TO_COLUMN_MAP_POTENTIAL = {
+  일반: "일반",
+  고급: "고급",
+  희귀: "희귀",
+  영웅: "영웅",
+};
+
+function AccessoryStatsBlock({
+  onStatsChange,
+  accessoryBaseData,
+  accessoryPotentialOptionData,
+}) {
   const [uiMode, setUiMode] = useState("direct");
 
   // --- States for 'direct' mode ---
@@ -119,8 +132,19 @@ function AccessoryStatsBlock({ onStatsChange, accessoryBaseData }) {
     ring2: { ...initialOptions },
   });
 
+  const [potentialOptions, setPotentialOptions] = useState({
+    pendant: { grade: "없음", options: [null, null, null] },
+    earring: { grade: "없음", options: [null, null, null] },
+    ring1: { grade: "없음", options: [null, null, null] },
+    ring2: { grade: "없음", options: [null, null, null] },
+    bracelet: { grade: "없음", options: [null, null, null] },
+  });
+
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingSlot, setEditingSlot] = useState(null); // 'pendant', 'earring', 'ring1', 'ring2'
+
+  const [isPotentialModalOpen, setIsPotentialModalOpen] = useState(false);
+  const [editingPotentialSlot, setEditingPotentialSlot] = useState(null); // { slotKey: 'pendant', index: 0 }
 
   // Calculate stats from selected items and update 'direct' mode states
   useEffect(() => {
@@ -188,6 +212,35 @@ function AccessoryStatsBlock({ onStatsChange, accessoryBaseData }) {
       // "최대 체력 증가 +"는 데미지 계산에 포함되지 않는 스탯입니다.
     }
 
+    // 3. Process Potential Options
+    Object.entries(potentialOptions).forEach(([slotKey, slotData]) => {
+      if (slotKey === "bracelet" && !isBraceletEnabled) {
+        return; // 팔찌가 비활성화 상태이면 잠재 옵션을 계산에 포함하지 않음
+      }
+      const { grade, options } = slotData;
+      if (grade === "없음") return;
+
+      options.forEach((option) => {
+        if (option) {
+          const optionName = option["옵션"];
+          const gradeColumn = GRADE_TO_COLUMN_MAP_POTENTIAL[grade];
+          const statValue = parseFloat(
+            String(option[gradeColumn] || "0").replace(/,/g, "")
+          );
+          const targetStatKey = STAT_MAP[optionName];
+
+          if (targetStatKey && statValue > 0) {
+            if (targetStatKey.includes(".")) {
+              const [parent, child] = targetStatKey.split(".");
+              newStats[parent][child] += statValue;
+            } else {
+              newStats[targetStatKey] += statValue;
+            }
+          }
+        }
+      });
+    });
+
     // Update the direct input states
     setClassBasicDmgInc(newStats.classBasicDmgInc);
     setClassSkillDmgInc(newStats.classSkillDmgInc);
@@ -206,6 +259,7 @@ function AccessoryStatsBlock({ onStatsChange, accessoryBaseData }) {
     selectedRing2,
     isBraceletEnabled,
     slotOptions,
+    potentialOptions,
   ]);
 
   // --- Handlers for 'direct' mode ---
@@ -291,12 +345,52 @@ function AccessoryStatsBlock({ onStatsChange, accessoryBaseData }) {
           ...prev,
           [editingSlot]: { ...initialOptions },
         }));
+        // Also reset potential options for the slot
+        setPotentialOptions((prev) => ({
+          ...prev,
+          [editingSlot]: { grade: "없음", options: [null, null, null] },
+        }));
       }
       setIsModalOpen(false);
       setEditingSlot(null);
     },
     [editingSlot, initialOptions]
   );
+
+  const handleOpenPotentialModal = (slotKey, index) => {
+    setEditingPotentialSlot({ slotKey, index });
+    setIsPotentialModalOpen(true);
+  };
+
+  const handleClosePotentialModal = useCallback(() => {
+    setIsPotentialModalOpen(false);
+    setEditingPotentialSlot(null);
+  }, []);
+
+  const handleSelectPotentialOption = useCallback(
+    (option) => {
+      if (editingPotentialSlot) {
+        const { slotKey, index } = editingPotentialSlot;
+        setPotentialOptions((prev) => {
+          const newOptions = [...prev[slotKey].options];
+          newOptions[index] = option;
+          return {
+            ...prev,
+            [slotKey]: { ...prev[slotKey], options: newOptions },
+          };
+        });
+      }
+      handleClosePotentialModal();
+    },
+    [editingPotentialSlot, handleClosePotentialModal]
+  );
+
+  const handlePotentialGradeChange = useCallback((slotKey, grade) => {
+    setPotentialOptions((prev) => ({
+      ...prev,
+      [slotKey]: { ...prev[slotKey], grade: grade },
+    }));
+  }, []);
 
   // --- Render functions ---
   const handleOptionChange = useCallback((slotKey, optionType, value) => {
@@ -308,6 +402,62 @@ function AccessoryStatsBlock({ onStatsChange, accessoryBaseData }) {
       },
     }));
   }, []);
+
+  const renderPotentialOptionSlot = (slotKey) => {
+    const slotData = potentialOptions[slotKey];
+    const { grade, options } = slotData;
+
+    return (
+      <div className="potential-options">
+        <div className="potential-options-header">
+          <h4>잠재 옵션</h4>
+          <select
+            value={grade}
+            onChange={(e) =>
+              handlePotentialGradeChange(slotKey, e.target.value)
+            }
+          >
+            {POTENTIAL_OPTION_GRADES.map((g) => (
+              <option key={g} value={g}>
+                {g}
+              </option>
+            ))}
+          </select>
+        </div>
+        {grade !== "없음" && (
+          <div className="potential-options-body">
+            {options.map((option, index) => {
+              const statValue =
+                option && grade !== "없음"
+                  ? parseFloat(
+                      String(
+                        option[GRADE_TO_COLUMN_MAP_POTENTIAL[grade]] || "0"
+                      ).replace(/,/g, "")
+                    )
+                  : 0;
+              return (
+                <div key={index} className="potential-option-row">
+                  <button
+                    onClick={() => handleOpenPotentialModal(slotKey, index)}
+                    className={`select-potential-option-btn ${
+                      isUsefulStat(option?.["옵션"]) ? "useful-stat" : ""
+                    }`}
+                  >
+                    {option ? option["옵션"] : "옵션 선택"}
+                  </button>
+                  {option && (
+                    <span className="potential-option-value">
+                      +{statValue.toLocaleString()}
+                    </span>
+                  )}
+                </div>
+              );
+            })}
+          </div>
+        )}
+      </div>
+    );
+  };
 
   const renderItemSlot = (slotKey, item, onOpenModal) => {
     const selectedItem = item;
@@ -337,33 +487,36 @@ function AccessoryStatsBlock({ onStatsChange, accessoryBaseData }) {
           <span className="accessory-slot-name">{displayName}</span>
         </button>
         {selectedItem && (
-          <div className="accessory-options">
-            {Object.entries(optionTiers).map(([tier, tierName]) => {
-              const optionName = selectedItem[tierName];
-              if (!optionName) return null;
-              return (
-                <div key={tier} className="option-row">
-                  <label
-                    className={`option-label ${
-                      isUsefulStat(optionName) ? "useful-stat" : "other-stat"
-                    }`}
-                    title={optionName}
-                  >
-                    {optionName}
-                  </label>
-                  <input
-                    type="number"
-                    className="option-input"
-                    value={slotOptions[slotKey][tier]}
-                    onChange={(e) =>
-                      handleOptionChange(slotKey, tier, e.target.value)
-                    }
-                    min="0"
-                  />
-                </div>
-              );
-            })}
-          </div>
+          <>
+            <div className="accessory-options">
+              {Object.entries(optionTiers).map(([tier, tierName]) => {
+                const optionName = selectedItem[tierName];
+                if (!optionName) return null;
+                return (
+                  <div key={tier} className="option-row">
+                    <label
+                      className={`option-label ${
+                        isUsefulStat(optionName) ? "useful-stat" : "other-stat"
+                      }`}
+                      title={optionName}
+                    >
+                      {optionName}
+                    </label>
+                    <input
+                      type="number"
+                      className="option-input"
+                      value={slotOptions[slotKey][tier]}
+                      onChange={(e) =>
+                        handleOptionChange(slotKey, tier, e.target.value)
+                      }
+                      min="0"
+                    />
+                  </div>
+                );
+              })}
+            </div>
+            {renderPotentialOptionSlot(slotKey)}
+          </>
         )}
       </div>
     );
@@ -375,7 +528,11 @@ function AccessoryStatsBlock({ onStatsChange, accessoryBaseData }) {
     const imageSrc = accessoryImages[imageFileName];
 
     return (
-      <div className="accessory-slot bracelet-slot grade-destiny inactive">
+      <div
+        className={`accessory-slot bracelet-slot grade-destiny ${
+          !isBraceletEnabled ? "inactive" : ""
+        }`}
+      >
         <div className="accessory-slot-btn">
           {imageSrc ? (
             <img src={imageSrc} alt={tempestBraceletData["이름"]} />
@@ -415,6 +572,7 @@ function AccessoryStatsBlock({ onStatsChange, accessoryBaseData }) {
             );
           })}
         </div>
+        {isBraceletEnabled && renderPotentialOptionSlot("bracelet")}
       </div>
     );
   };
@@ -644,6 +802,15 @@ function AccessoryStatsBlock({ onStatsChange, accessoryBaseData }) {
           onClose={() => setIsModalOpen(false)}
           onSelect={handleSelectAccessory}
           slotType={editingSlot.replace(/\d/g, "")} // 'ring1' -> 'ring'
+        />
+      )}
+
+      {isPotentialModalOpen && (
+        <AccessoryPotentialOptionModal
+          potentialOptionData={accessoryPotentialOptionData}
+          onClose={handleClosePotentialModal}
+          onSelect={handleSelectPotentialOption}
+          isUsefulStat={isUsefulStat}
         />
       )}
     </div>
