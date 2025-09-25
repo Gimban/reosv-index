@@ -1,6 +1,17 @@
 import React, { useState, useMemo, useEffect } from "react";
 import "../calculator/WeaponSelectionModal.css"; // 스타일 재사용
 
+function importAll(r) {
+  let images = {};
+  r.keys().forEach((item) => {
+    // './subfolder/image.png' -> 'image'
+    const key = item.substring(item.lastIndexOf("/") + 1, item.lastIndexOf("."));
+    images[key] = r(item);
+  });
+  return images;
+}
+const weaponImages = importAll(require.context("../../images", true, /\.png$/));
+
 const ALLOWED_GRADES = ["필멸", "전설", "영웅", "희귀", "고급", "일반"];
 
 // 강화 시뮬레이터에서 제외할 무기 목록 (하드코딩)
@@ -145,15 +156,22 @@ function EnhancementWeaponSelectionModal({ weaponData, onClose, onSelect }) {
               <div key={grade} className="grade-group">
                 <h3>{grade}</h3>
                 <div className="weapon-items">
-                  {processedWeapons[grade].map((weaponGroup) => (
-                    <button
-                      key={weaponGroup[0]["이름"]}
-                      className="weapon-item-button"
-                      onClick={() => onSelect(weaponGroup)}
-                    >
-                      {weaponGroup[0]["이름"]}
-                    </button>
-                  ))}
+                  {processedWeapons[grade].map((weaponGroup) => {
+                    const weaponName = weaponGroup[0]["이름"];
+                    const imageFileName =
+                      weaponGroup[0]["이미지 파일"]?.replace(".png", "") || "";
+                    const imageSrc = weaponImages[imageFileName];
+                    return (
+                      <button
+                        key={weaponName}
+                        className="weapon-item-button"
+                        onClick={() => onSelect(weaponGroup)}
+                      >
+                        {imageSrc && <img src={imageSrc} alt={weaponName} />}
+                        <span>{weaponName}</span>
+                      </button>
+                    );
+                  })}
                 </div>
               </div>
             ))}

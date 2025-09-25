@@ -1,6 +1,18 @@
 import React, { useState, useMemo, useEffect } from "react";
 import "./WeaponSelectionModal.css";
 
+// src/images 폴더와 하위 폴더의 모든 png 파일을 불러옵니다.
+function importAll(r) {
+  let images = {};
+  r.keys().forEach((item) => {
+    // './subfolder/image.png' -> 'image'
+    const key = item.substring(item.lastIndexOf("/") + 1, item.lastIndexOf("."));
+    images[key] = r(item);
+  });
+  return images;
+}
+const weaponImages = importAll(require.context("../../images", true, /\.png$/));
+
 const GRADE_ORDER = ["필멸", "전설", "영웅", "희귀", "고급", "일반", "보스"];
 
 function WeaponSelectionModal({ weaponData, onClose, onSelect }) {
@@ -152,15 +164,22 @@ function WeaponSelectionModal({ weaponData, onClose, onSelect }) {
               <div key={grade} className="grade-group">
                 <h3>{grade}</h3>
                 <div className="weapon-items">
-                  {processedWeapons[grade].map((weaponGroup) => (
-                    <button
-                      key={weaponGroup[0]["이름"]}
-                      className="weapon-item-button"
-                      onClick={() => onSelect(weaponGroup)}
-                    >
-                      {weaponGroup[0]["이름"]}
-                    </button>
-                  ))}
+                  {processedWeapons[grade].map((weaponGroup) => {
+                    const weaponName = weaponGroup[0]["이름"];
+                    const imageFileName =
+                      weaponGroup[0]["이미지 파일"]?.replace(".png", "") || "";
+                    const imageSrc = weaponImages[imageFileName];
+                    return (
+                      <button
+                        key={weaponName}
+                        className="weapon-item-button"
+                        onClick={() => onSelect(weaponGroup)}
+                      >
+                        {imageSrc && <img src={imageSrc} alt={weaponName} />}
+                        <span>{weaponName}</span>
+                      </button>
+                    );
+                  })}
                 </div>
               </div>
             ))}
