@@ -1,7 +1,7 @@
 {
   "files": {
-    "main.css": "/reosv-index/static/css/main.6d8029ec.css",
-    "main.js": "/reosv-index/static/js/main.c22a3170.js",
+    "main.css": "/reosv-index/static/css/main.95f12160.css",
+    "main.js": "/reosv-index/static/js/main.1e3f45d1.js",
     "static/media/upgrade_valhalla.png": "/reosv-index/static/media/upgrade_valhalla.c2aded5e6f7926e04490.png",
     "static/media/upgrade_olympus.png": "/reosv-index/static/media/upgrade_olympus.597af0ed42d8b5bf1e33.png",
     "static/media/awakened_valhalla.png": "/reosv-index/static/media/awakened_valhalla.73b673944a5edf394563.png",
@@ -68,11 +68,11 @@
     "static/media/warrior3.png": "/reosv-index/static/media/warrior3.e12f8d4d33b43f2c9f52.png",
     "static/media/blitz_dagger.png": "/reosv-index/static/media/blitz_dagger.02a3d9a9088e214fa14b.png",
     "index.html": "/reosv-index/index.html",
-    "main.6d8029ec.css.map": "/reosv-index/static/css/main.6d8029ec.css.map",
-    "main.c22a3170.js.map": "/reosv-index/static/js/main.c22a3170.js.map"
+    "main.95f12160.css.map": "/reosv-index/static/css/main.95f12160.css.map",
+    "main.1e3f45d1.js.map": "/reosv-index/static/js/main.1e3f45d1.js.map"
   },
   "entrypoints": [
-    "static/css/main.6d8029ec.css",
-    "static/js/main.c22a3170.js"
+    "static/css/main.95f12160.css",
+    "static/js/main.1e3f45d1.js"
   ]
 }
