@@ -1,6 +1,5 @@
 .dps-calculator-container {
   padding: 20px;
-  max-width: 800px;
   margin: 0 auto;
 }
 
@@ -14,7 +13,11 @@
   border: 1px solid #dee2e6;
   border-radius: 8px;
   padding: 20px;
-  margin-bottom: 20px;
+  margin-bottom: 20px; /* 블록 간 간격 복원 */
+  max-width: 800px; /* Default width for all blocks */
+  margin-left: auto; /* Center the block */
+  margin-right: auto; /* Center the block */
+  transition: max-width 0.3s ease-in-out; /* Smooth transition for block's own width */
 }
 
 .calculator-block h2 {

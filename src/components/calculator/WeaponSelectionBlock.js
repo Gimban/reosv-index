@@ -114,6 +114,7 @@ const StatDisplay = ({ stats, enabled = true }) => {
 };
 
 function WeaponSelectionBlock({ weaponData, onStatsChange, calculatedStats }) {
+  // NUM_WEAPON_SLOTS is for normal slots only.
   const [selectedWeapons, setSelectedWeapons] = useState(
     Array(NUM_WEAPON_SLOTS).fill(null)
   );
@@ -155,46 +156,6 @@ function WeaponSelectionBlock({ weaponData, onStatsChange, calculatedStats }) {
     [editingSlotIndex, handleCloseModal]
   );
 
-  const handleEnhancementChange = (index, value) => {
-    const weaponGroup = selectedWeapons[index];
-    if (!weaponGroup) return;
-
-    const minEnh = Number(weaponGroup[0]["강화 차수"]);
-    const maxEnh = Number(weaponGroup[weaponGroup.length - 1]["강화 차수"]);
-
-    const numValue = parseFloat(value) || 0;
-    const clampedValue = Math.max(minEnh, Math.min(maxEnh, numValue));
-
-    const newEnhancements = [...enhancements];
-    newEnhancements[index] = clampedValue;
-    setEnhancements(newEnhancements);
-  };
-
-  const handleDestinyEnhancementChange = (weaponName, value) => {
-    const weaponGroup = destinyWeapons.find(
-      (group) => group[0]["이름"] === weaponName
-    );
-    if (!weaponGroup) return;
-
-    const minEnh = Number(weaponGroup[0]["강화 차수"]);
-    const maxEnh = Number(weaponGroup[weaponGroup.length - 1]["강화 차수"]);
-
-    const numValue = parseFloat(value) || 0;
-    const clampedValue = Math.max(minEnh, Math.min(maxEnh, numValue));
-
-    setDestinyEnhancements((prev) => ({
-      ...prev,
-      [weaponName]: clampedValue,
-    }));
-  };
-
-  const handleDestinyEnableChange = (weaponName, isChecked) => {
-    setDestinyWeaponEnabled((prev) => ({
-      ...prev,
-      [weaponName]: isChecked,
-    }));
-  };
-
   const destinyWeapons = useMemo(() => {
     if (!weaponData) return [];
 
@@ -218,6 +179,46 @@ function WeaponSelectionBlock({ weaponData, onStatsChange, calculatedStats }) {
 
     return destinyGroups;
   }, [weaponData]);
+
+  const handleEnhancementChange = (index, value) => {
+    const weaponGroup = selectedWeapons[index];
+    if (!weaponGroup) return;
+
+    const minEnh = Number(weaponGroup[0]["강화 차수"]);
+    const maxEnh = Number(weaponGroup[weaponGroup.length - 1]["강화 차수"]);
+
+    const numValue = parseFloat(value) || 0;
+    const clampedValue = Math.max(minEnh, Math.min(maxEnh, numValue));
+
+    const newEnhancements = [...enhancements];
+    newEnhancements[index] = clampedValue;
+    setEnhancements(newEnhancements);
+  };
+
+  const handleDestinyEnhancementChange = (weaponName, value) => {
+    const weaponGroup = (destinyWeapons || []).find(
+      (group) => group[0]["이름"] === weaponName
+    );
+    if (!weaponGroup) return;
+
+    const minEnh = Number(weaponGroup[0]["강화 차수"]);
+    const maxEnh = Number(weaponGroup[weaponGroup.length - 1]["강화 차수"]);
+
+    const numValue = parseFloat(value) || 0;
+    const clampedValue = Math.max(minEnh, Math.min(maxEnh, numValue));
+
+    setDestinyEnhancements((prev) => ({
+      ...prev,
+      [weaponName]: clampedValue,
+    }));
+  };
+
+  const handleDestinyEnableChange = (weaponName, isChecked) => {
+    setDestinyWeaponEnabled((prev) => ({
+      ...prev,
+      [weaponName]: isChecked,
+    }));
+  };
 
   useEffect(() => {
     const stats = {
@@ -250,7 +251,7 @@ function WeaponSelectionBlock({ weaponData, onStatsChange, calculatedStats }) {
             const weaponName = weaponGroup[0]["이름"];
             const grade = weaponGroup[0]["등급"];
             const gradeClass = getCssClassForGrade(grade);
-            const isEnabled = destinyWeaponEnabled[weaponName] || false;
+            const isEnabled = !!destinyWeaponEnabled[weaponName];
             const minEnh = Number(weaponGroup[0]["강화 차수"]);
             const maxEnh = Number(
               weaponGroup[weaponGroup.length - 1]["강화 차수"]
@@ -272,7 +273,7 @@ function WeaponSelectionBlock({ weaponData, onStatsChange, calculatedStats }) {
                   </span>
                   <input
                     type="number"
-                    value={destinyEnhancements[weaponName] || 1}
+                    value={destinyEnhancements[weaponName] || 0}
                     onChange={(e) =>
                       handleDestinyEnhancementChange(weaponName, e.target.value)
                     }
@@ -295,6 +296,7 @@ function WeaponSelectionBlock({ weaponData, onStatsChange, calculatedStats }) {
       <div className="weapon-selection-grid">
         {Array.from({ length: NUM_WEAPON_SLOTS }).map((_, index) => {
           const weaponGroup = selectedWeapons[index];
+
           const grade = weaponGroup ? weaponGroup[0]["등급"] : null;
           const gradeClass = getCssClassForGrade(grade);
           const minEnh = weaponGroup ? Number(weaponGroup[0]["강화 차수"]) : 0;

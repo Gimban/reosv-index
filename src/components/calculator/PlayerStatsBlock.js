@@ -7,6 +7,7 @@ function PlayerStatsBlock({
   damagePerHealth,
   onStatsChange,
 }) {
+  // Internal state for interactive mode
   const [level, setLevel] = useState(1);
   const [statDistribution, setStatDistribution] = useState("allAttack");
   const [moveSpeedPoints, setMoveSpeedPoints] = useState(0);

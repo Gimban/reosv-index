@@ -14,7 +14,7 @@ const DAMAGE_PER_ATTACK_POINT = 0.65; // 공격력 1포인트당 데미지 증�
 const DAMAGE_PER_HEALTH_POINT = 0.4; // 체력 1포인트당 데미지 증가량 (%)
 const EMPTY_WEAPON_STATS = { totalDamage: 0, cooldown: 0, dps: 0, dpm: 0 };
 
-function DpsCalculator({ weaponData, classWeaponData }) {
+function DpsCalculator({ weaponData, classWeaponData, accessoryBaseData }) {
   const [playerStats, setPlayerStats] = useState(null);
   const [accessoryStats, setAccessoryStats] = useState(null);
   const [weaponStats, setWeaponStats] = useState(null);
@@ -43,7 +43,7 @@ function DpsCalculator({ weaponData, classWeaponData }) {
   }, []);
 
   const totalStatDamageIncrease = useMemo(() => {
-    if (!playerStats || !accessoryStats || !divineShardStats) return 0;
+    if (!playerStats || !accessoryStats) return 0;
 
     const combinedAttackPoints =
       (playerStats.attackPoints || 0) + (accessoryStats.finalDmgStat || 0);
@@ -55,7 +55,7 @@ function DpsCalculator({ weaponData, classWeaponData }) {
       combinedAttackPoints * DAMAGE_PER_ATTACK_POINT +
       combinedHealthPoints * DAMAGE_PER_HEALTH_POINT;
 
-    return playerLevelDamageIncrease + (divineShardStats.finalDamage || 0);
+    return playerLevelDamageIncrease + (divineShardStats?.finalDamage || 0);
   }, [playerStats, accessoryStats, divineShardStats]);
 
   const allCalculations = useMemo(() => {
@@ -179,7 +179,10 @@ function DpsCalculator({ weaponData, classWeaponData }) {
         damagePerHealth={DAMAGE_PER_HEALTH_POINT}
         onStatsChange={handlePlayerStatsChange}
       />
-      <AccessoryStatsBlock onStatsChange={handleAccessoryStatsChange} />
+      <AccessoryStatsBlock
+        onStatsChange={handleAccessoryStatsChange}
+        accessoryBaseData={accessoryBaseData}
+      />
       <DivineShardBlock onStatsChange={handleDivineShardStatsChange} />
       <ClassWeaponBlock
         classWeaponData={classWeaponData}

@@ -46,3 +46,215 @@
   width: 80px;
   margin-left: 10px;
 }
+
+.calculator-block.wide-block {
+  max-width: 1500px; /* Make this specific block wider */
+}
+
+.accessory-block-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  margin-bottom: 1rem;
+}
+
+.accessory-block-header h2 {
+  margin: 0;
+}
+
+.ui-mode-toggle {
+  display: flex;
+  gap: 1rem;
+}
+
+.ui-mode-toggle label {
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.accessory-item-selection-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 1rem;
+  width: 100%;
+}
+
+.accessory-slot {
+  border-radius: 4px;
+  padding: 0.5rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.25rem;
+  min-height: 120px;
+  justify-content: space-between;
+}
+
+.accessory-slot-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  background: none;
+  border: none;
+  cursor: pointer;
+  width: 100%;
+  padding: 0.5rem;
+  border-radius: 4px;
+  transition: background-color 0.2s;
+}
+
+.accessory-image-placeholder,
+.accessory-slot-btn img {
+  width: 64px;
+  height: 64px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 4px;
+  object-fit: contain;
+}
+
+.accessory-slot-btn img {
+  border: none;
+}
+
+.accessory-slot-name {
+  font-size: 0.9rem;
+  word-break: keep-all;
+  text-align: center;
+  margin-top: auto;
+}
+
+.bracelet-slot .accessory-slot-btn {
+  cursor: default;
+}
+.bracelet-slot .accessory-slot-btn:hover {
+  background-color: transparent;
+}
+
+.enable-bracelet-label {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  cursor: pointer;
+  margin-top: auto;
+}
+
+.accessory-options {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-top: 8px;
+  padding-top: 8px;
+  border-top: 1px solid #444;
+}
+
+.option-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  font-size: 0.8rem;
+}
+
+.option-label {
+  flex-grow: 1;
+  text-align: left;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  margin-right: 4px;
+}
+
+.option-input {
+  width: 50px;
+  border-radius: 3px;
+  text-align: right;
+  padding: 2px 4px;
+  font-size: 0.8rem;
+  -moz-appearance: textfield; /* Firefox */
+}
+
+.option-input::-webkit-outer-spin-button,
+.option-input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+.option-row.fixed .option-value {
+  width: 50px;
+  text-align: right;
+  padding: 2px 4px;
+  font-weight: bold;
+}
+
+/* --- Theme-specific styles --- */
+
+/* Light Theme */
+.theme-light .accessory-slot {
+  border: 1px solid #dee2e6;
+  background-color: #f8f9fa;
+}
+.theme-light .accessory-slot-btn {
+  color: #212529;
+}
+.theme-light .accessory-slot-btn:hover {
+  background-color: #e9ecef;
+}
+.theme-light .accessory-image-placeholder {
+  border: 1px dashed #ced4da;
+  background-color: #e9ecef;
+}
+.theme-light .option-input {
+  background-color: #fff;
+  color: #212529;
+  border: 1px solid #ced4da;
+}
+.theme-light .useful-stat {
+  color: #0d6efd;
+}
+.theme-light .other-stat {
+  color: #6c757d;
+}
+.theme-light .bracelet-slot.grade-destiny {
+  border-color: #8c52ff;
+  background: linear-gradient(160deg, #f8f9fa 85%, #e9d8ff);
+  box-shadow: 0 0 5px rgba(140, 82, 255, 0.4);
+}
+
+/* Dark Theme */
+.theme-dark .accessory-slot {
+  border: 1px solid #444;
+  background-color: #2a2a2a;
+}
+.theme-dark .accessory-slot-btn {
+  color: #eee;
+}
+.theme-dark .accessory-slot-btn:hover {
+  background-color: #3a3a3a;
+}
+.theme-dark .accessory-image-placeholder {
+  border: 1px dashed #666;
+  background-color: #222;
+}
+.theme-dark .option-input {
+  background-color: #1e1e1e;
+  color: #eee;
+  border: 1px solid #555;
+}
+.theme-dark .useful-stat {
+  color: #66d9ef;
+}
+.theme-dark .other-stat {
+  color: #888;
+}
+.theme-dark .bracelet-slot.grade-destiny {
+  border-color: #c5a3ff;
+  background: linear-gradient(160deg, #2a2a2a 85%, #4a3a5a);
+  box-shadow: 0 0 5px rgba(197, 163, 255, 0.5);
+}

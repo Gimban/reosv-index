@@ -65,7 +65,7 @@ function ClassWeaponBlock({
 
   // 2. 선택 상태 관리
   const [selections, setSelections] = useState({});
-  const [activeClass, setActiveClass] = useState(null);
+  const [activeClass, setActiveClass] = useState(null); // null means '사용 안 함'
 
   useEffect(() => {
     const initialSelections = {};
@@ -74,7 +74,6 @@ function ClassWeaponBlock({
     }
     setSelections(initialSelections);
     if (classNames.length > 0) {
-      // 첫 번째 클래스를 기본 활성 클래스로 설정
       setActiveClass((current) => current || classNames[0]);
     }
   }, [classNames]);
@@ -113,13 +112,14 @@ function ClassWeaponBlock({
       !accessoryStats ||
       totalStatDamageIncrease === null ||
       !activeClass ||
-      !selections[activeClass]
+      !selections?.[activeClass]
     ) {
       return { totalDps: 0, totalDpm: 0 };
     }
 
     const className = activeClass;
     const selection = selections[className];
+
     const classInfo = processedClassData[className];
     const adv = classInfo.advancements[selection.advIndex];
     const enh = classInfo.enhancementsByAdv[adv]?.[selection.enhIndex];
@@ -156,7 +156,7 @@ function ClassWeaponBlock({
   ]);
 
   useEffect(() => {
-    onStatsChange(totalCalculatedStats);
+    if (onStatsChange) onStatsChange(totalCalculatedStats);
   }, [totalCalculatedStats, onStatsChange]);
 
   const formatNumber = (num, digits = 2) =>
@@ -167,7 +167,7 @@ function ClassWeaponBlock({
 
   return (
     <div className="calculator-block">
-      <div className="class-block-header">
+      <div className="class-block-header" style={{ display: "flex" }}>
         <h2>클래스 무기</h2>
         <label className="class-none-option">
           <span>사용 안 함</span>
@@ -181,13 +181,16 @@ function ClassWeaponBlock({
       </div>
       <div className="class-weapon-grid">
         {classNames.map((className) => {
-          const selection = selections[className];
+          const selection = selections?.[className];
           const isActive = className === activeClass;
           if (!selection) return null;
 
           const classInfo = processedClassData[className];
-          const adv = classInfo.advancements[selection.advIndex];
-          const enh = classInfo.enhancementsByAdv[adv]?.[selection.enhIndex];
+          if (!classInfo) return null;
+
+          const adv = classInfo.advancements[selection?.advIndex || 0];
+          const enh =
+            classInfo.enhancementsByAdv[adv]?.[selection?.enhIndex || 0];
           const statRow =
             enh !== undefined
               ? classInfo.data.find(
@@ -357,21 +360,23 @@ function ClassWeaponBlock({
           );
         })}
       </div>
-      <div className="class-weapon-total-result">
-        <h4>클래스 무기 총합</h4>
-        <div className="result-item">
-          <span className="label">총 DPS</span>
-          <span className="value">
-            {formatNumber(totalCalculatedStats.totalDps)}
-          </span>
+      {activeClass && (
+        <div className="class-weapon-total-result">
+          <h4>클래스 무기 총합</h4>
+          <div className="result-item">
+            <span className="label">총 DPS</span>
+            <span className="value">
+              {formatNumber(totalCalculatedStats.totalDps)}
+            </span>
+          </div>
+          <div className="result-item">
+            <span className="label">총 DPM</span>
+            <span className="value">
+              {formatNumber(totalCalculatedStats.totalDpm)}
+            </span>
+          </div>
         </div>
-        <div className="result-item">
-          <span className="label">총 DPM</span>
-          <span className="value">
-            {formatNumber(totalCalculatedStats.totalDpm)}
-          </span>
-        </div>
-      </div>
+      )}
     </div>
   );
 }

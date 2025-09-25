@@ -96,6 +96,14 @@
   margin-bottom: 15px;
 }
 
+.class-selector-row.static {
+  font-weight: bold;
+  font-size: 1.1em;
+}
+.selector-static {
+  text-align: center;
+}
+
 .selector {
   display: flex;
   align-items: center;

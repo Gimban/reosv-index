@@ -4,7 +4,7 @@ function DivineShardBlock({ onStatsChange }) {
   const [finalDamage, setFinalDamage] = useState(0);
 
   useEffect(() => {
-    onStatsChange({ finalDamage });
+    if (onStatsChange) onStatsChange({ finalDamage });
   }, [finalDamage, onStatsChange]);
 
   const handleInputChange = (e) => {
@@ -36,4 +36,3 @@ function DivineShardBlock({ onStatsChange }) {
 }
 
 export default DivineShardBlock;
-

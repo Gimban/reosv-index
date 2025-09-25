@@ -58,3 +58,32 @@
   min-width: 45px;
   text-align: right;
 }
+
+.save-image-container {
+  margin-top: 20px;
+  padding-top: 20px;
+  border-top: 1px solid var(--border-color);
+  text-align: center;
+}
+
+.save-image-btn {
+  padding: 10px 20px;
+  font-size: 1.1em;
+  font-weight: bold;
+  cursor: pointer;
+  border-radius: 5px;
+  border: none;
+  background-color: var(--accent-color);
+  color: var(--button-text-accent);
+  transition: background-color 0.2s;
+}
+
+.save-image-btn:hover:not(:disabled) {
+  opacity: 0.9;
+}
+
+.save-image-btn:disabled {
+  background-color: var(--disabled-bg);
+  color: var(--disabled-text);
+  cursor: not-allowed;
+}
