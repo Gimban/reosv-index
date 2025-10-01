@@ -3,6 +3,7 @@ import PlayerStatsBlock from "./calculator/PlayerStatsBlock";
 import AccessoryStatsBlock from "./calculator/AccessoryStatsBlock";
 import ClassWeaponBlock from "./calculator/ClassWeaponBlock";
 import DivineShardBlock from "./calculator/DivineShardBlock";
+import GuildBlock from "./calculator/GuildBlock";
 import WeaponSelectionBlock from "./calculator/WeaponSelectionBlock";
 import CalculationResultBlock from "./calculator/CalculationResultBlock";
 import { calculateWeaponStats } from "./calculator/calculationHelpers";
@@ -25,6 +26,7 @@ function DpsCalculator({
   const [weaponStats, setWeaponStats] = useState(null);
   const [classWeaponStats, setClassWeaponStats] = useState(null);
   const [divineShardStats, setDivineShardStats] = useState(null);
+  const [guildStats, setGuildStats] = useState(null);
 
   // 자식 컴포넌트의 스탯이 변경될 때마다 호출될 콜백 함수
   const handlePlayerStatsChange = useCallback((stats) => {
@@ -47,13 +49,21 @@ function DpsCalculator({
     setDivineShardStats(stats);
   }, []);
 
+  const handleGuildStatsChange = useCallback((stats) => {
+    setGuildStats(stats);
+  }, []);
+
   const totalStatDamageIncrease = useMemo(() => {
-    if (!playerStats || !accessoryStats) return 0;
+    if (!playerStats || !accessoryStats || !guildStats) return 0;
 
     const combinedAttackPoints =
-      (playerStats.attackPoints || 0) + (accessoryStats.finalDmgStat || 0);
+      (playerStats.attackPoints || 0) +
+      (accessoryStats.finalDmgStat || 0) +
+      (guildStats.finalDmgStat || 0);
     const combinedHealthPoints =
-      (playerStats.healthPoints || 0) + (accessoryStats.maxHpStat || 0);
+      (playerStats.healthPoints || 0) +
+      (accessoryStats.maxHpStat || 0) +
+      (guildStats.maxHpStat || 0);
 
     // 플레이어 스탯(레벨)으로 인한 증가량 + 신력의 파편으로 인한 최종 데미지 증가량
     const playerLevelDamageIncrease =
@@ -61,7 +71,7 @@ function DpsCalculator({
       combinedHealthPoints * DAMAGE_PER_HEALTH_POINT;
 
     return playerLevelDamageIncrease + (divineShardStats?.finalDamage || 0);
-  }, [playerStats, accessoryStats, divineShardStats]);
+  }, [playerStats, accessoryStats, divineShardStats, guildStats]);
 
   const allCalculations = useMemo(() => {
     const numDestinyWeapons = weaponStats?.destinySelections?.length || 0;
@@ -72,7 +82,8 @@ function DpsCalculator({
       !accessoryStats ||
       !weaponStats ||
       !classWeaponStats ||
-      !divineShardStats
+      !divineShardStats ||
+      !guildStats
     ) {
       return {
         perWeaponStats: Array(totalSlots).fill(EMPTY_WEAPON_STATS),
@@ -172,6 +183,7 @@ function DpsCalculator({
     weaponStats,
     classWeaponStats,
     divineShardStats,
+    guildStats,
     totalStatDamageIncrease,
   ]);
 
@@ -190,6 +202,7 @@ function DpsCalculator({
         accessoryPotentialOptionData={accessoryPotentialOptionData}
       />
       <DivineShardBlock onStatsChange={handleDivineShardStatsChange} />
+      <GuildBlock onStatsChange={handleGuildStatsChange} />
       <ClassWeaponBlock
         classWeaponData={classWeaponData}
         accessoryStats={accessoryStats}
