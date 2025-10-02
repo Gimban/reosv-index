@@ -20,6 +20,11 @@
   transition: max-width 0.3s ease-in-out; /* Smooth transition for block's own width */
 }
 
+/* 아이템 선택 모드에서 블록 너비를 확장하기 위한 스타일 */
+.calculator-block.wide-block {
+  max-width: 1200px;
+}
+
 .calculator-block h2 {
   margin-top: 0;
   border-bottom: 1px solid #ccc;
