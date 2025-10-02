@@ -37,6 +37,7 @@ function EhpPlayerStatsBlock({ onStatsChange }) {
     const isInputExceeded = usedPoints > totalPoints;
 
     return {
+      baseHp: 20, // 기본 체력 20으로 고정
       totalPoints,
       usedPoints,
       levelUpHp: levelUpHp,

@@ -5,6 +5,7 @@ import EhpAccessoryStatsBlock from "./ehp_calculator/EhpAccessoryStatsBlock";
 import EhpDivineShardBlock from "./ehp_calculator/EhpDivineShardBlock";
 import EhpGuildBlock from "./ehp_calculator/EhpGuildBlock";
 import EhpClassBlock from "./ehp_calculator/EhpClassBlock";
+import EhpResultBlock from "./ehp_calculator/EhpResultBlock";
 import "./DpsCalculator.css"; // 스타일은 DPS 계산기와 공유
 
 function EffectiveHpCalculator({
@@ -12,12 +13,12 @@ function EffectiveHpCalculator({
   accessoryPotentialOptionData,
   armorCostData,
 }) {
-  const [playerStats, setPlayerStats] = useState({ levelUpHp: 0, inputWarning: null });
-  const [armorStats, setArmorStats] = useState(null);
-  const [accessoryStats, setAccessoryStats] = useState(null);
-  const [divineShardStats, setDivineShardStats] = useState(null);
-  const [guildStats, setGuildStats] = useState(null);
-  const [classStats, setClassStats] = useState(null);
+  const [playerStats, setPlayerStats] = useState({ baseHp: 20, levelUpHp: 0 });
+  const [armorStats, setArmorStats] = useState({ flatHp: 0 });
+  const [accessoryStats, setAccessoryStats] = useState({ flatHp: 0, percentHp: 0, damageReduction: 0, hpStat: 0 });
+  const [divineShardStats, setDivineShardStats] = useState({ flatHp: 0 });
+  const [guildStats, setGuildStats] = useState({ hpStat: 0, damageReduction: 0 });
+  const [classStats, setClassStats] = useState({ hpWeight: 0 });
 
   const handlePlayerStatsChange = useCallback((stats) => {
     setPlayerStats(stats);
@@ -43,8 +44,6 @@ function EffectiveHpCalculator({
     setClassStats(stats);
   }, []);
 
-  // TODO: 실질 체력 계산 로직 구현
-
   return (
     <div className="dps-calculator-container">
       <h1>실질 체력 계산기</h1>
@@ -58,7 +57,14 @@ function EffectiveHpCalculator({
       <EhpDivineShardBlock onStatsChange={handleDivineShardStatsChange} />
       <EhpGuildBlock onStatsChange={handleGuildStatsChange} />
       <EhpClassBlock onStatsChange={handleClassStatsChange} />
-      {/* TODO: 계산 결과 표시 컴포넌트 추가 */}
+      <EhpResultBlock
+        playerStats={playerStats}
+        armorStats={armorStats}
+        accessoryStats={accessoryStats}
+        divineShardStats={divineShardStats}
+        guildStats={guildStats}
+        classStats={classStats}
+      />
     </div>
   );
 }

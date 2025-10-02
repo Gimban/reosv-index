@@ -1,0 +1,55 @@
+.ehp-result-block {
+    background-color: #f0f7f0;
+    border-color: #a5d6a7;
+}
+
+.theme-dark .ehp-result-block {
+    background-color: #1a2e1c;
+    border-color: #2e5c31;
+}
+
+.result-section {
+    margin-bottom: 20px;
+}
+
+.result-section:last-child {
+    margin-bottom: 0;
+}
+
+.result-section h3 {
+    margin: 0 0 10px 0;
+    font-size: 1.5em;
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+}
+
+.result-section h3 span {
+    color: #006400;
+    font-weight: bold;
+}
+
+.theme-dark .result-section h3 span {
+    color: #66bb6a;
+}
+
+.formula {
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 0.9em;
+    color: #555;
+    background-color: rgba(0,0,0,0.03);
+    padding: 10px;
+    border-radius: 4px;
+    word-break: break-all;
+    line-height: 1.6;
+}
+
+.theme-dark .formula {
+    color: #bbb;
+    background-color: rgba(255,255,255,0.05);
+}
+
+.formula sub {
+    font-size: 0.8em;
+    vertical-align: sub;
+}
