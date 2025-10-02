@@ -187,3 +187,79 @@
 .theme-light .no-stats {
   color: #999;
 }
+
+/* --- Dark Theme --- */
+.theme-dark .class-weapon-card {
+  background-color: #2a2a2a;
+}
+
+.theme-dark .class-weapon-card.inactive {
+  opacity: 0.5;
+}
+
+/* Class specific dark theme overrides */
+.theme-dark .class-weapon-card.class-warrior {
+  border-color: #daa520;
+  box-shadow: 0 0 8px rgba(218, 165, 32, 0.3);
+}
+.theme-dark .class-weapon-card.class-warrior .class-card-header h3 {
+  color: #ffd700;
+}
+.theme-dark .class-weapon-card.class-blade {
+  border-color: #8b0000;
+  box-shadow: 0 0 8px rgba(139, 0, 0, 0.4);
+}
+.theme-dark .class-weapon-card.class-blade .class-card-header h3 {
+  color: #dc143c;
+}
+.theme-dark .class-weapon-card.class-mage {
+  border-color: #8a2be2;
+  box-shadow: 0 0 8px rgba(138, 43, 226, 0.3);
+}
+.theme-dark .class-weapon-card.class-mage .class-card-header h3 {
+  color: #9370db;
+}
+.theme-dark .class-weapon-card.class-frost {
+  border-color: #00bfff;
+  box-shadow: 0 0 8px rgba(0, 191, 255, 0.4);
+}
+.theme-dark .class-weapon-card.class-frost .class-card-header h3 {
+  color: #87ceeb;
+}
+
+.theme-dark .selector button {
+  background-color: #333;
+  border-color: #555;
+  color: #e0e0e0;
+}
+.theme-dark .selector button:hover {
+  background-color: #444;
+}
+
+.theme-dark .skill-stat-item {
+  background-color: #1e1e1e;
+}
+
+.theme-dark .skill-details,
+.theme-dark .skill-stat-item .skill-name {
+  color: #ccc;
+}
+
+.theme-dark .class-weapon-total-result {
+  background-color: #2a2a2a;
+  border-top: 2px solid #555;
+}
+
+.theme-dark .class-weapon-total-result .result-item .value {
+  color: #f5f5f5;
+}
+
+.theme-dark .class-card-header input[type="radio"]:checked,
+.theme-dark .class-none-option input[type="radio"]:checked {
+  border-color: #90caf9;
+  background-color: #90caf9;
+}
+.theme-dark .class-card-header input[type="radio"]:checked::after,
+.theme-dark .class-none-option input[type="radio"]:checked::after {
+  color: #121212;
+}

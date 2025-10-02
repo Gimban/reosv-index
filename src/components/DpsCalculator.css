@@ -86,3 +86,129 @@
   color: #dc3545;
   font-weight: bold;
 }
+
+/* EhpClassBlock specific styles */
+.class-selection-buttons {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px;
+  width: 100%;
+}
+
+.class-button {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 15px 10px;
+  border: 2px solid #ccc;
+  border-radius: 8px;
+  cursor: pointer;
+  text-align: center;
+  font-size: 1.1em;
+  font-weight: bold;
+  transition: background-color 0.2s, border-color 0.2s;
+}
+
+.class-button:hover {
+  background-color: #e9ecef;
+}
+
+.class-button.active {
+  background-color: #e7f1ff;
+  color: #0056b3;
+  border-color: #007bff;
+}
+
+/* Class-specific active styles */
+.class-button.class-warrior.active {
+  background-color: #fff8e1;
+  color: #c59000;
+  border-color: gold;
+}
+.class-button.class-blade.active {
+  background-color: #fbe9e7;
+  color: #b02222;
+  border-color: brown;
+}
+.class-button.class-mage.active {
+  background-color: #f3e5f5;
+  color: #8a2be2;
+  border-color: #9370db;
+}
+.class-button.class-frost.active {
+  background-color: #e1f5fe;
+  color: #0083b0;
+  border-color: #87ceeb;
+}
+
+
+/* Hide the actual radio button */
+.class-button input[type="radio"] {
+  display: none;
+}
+
+/* --- AccessoryStatsBlock specific dark theme --- */
+.theme-dark .accessory-fieldset {
+  border-color: #444;
+}
+
+.theme-dark .sub-options label {
+  background-color: #2a2a2a;
+  border-color: #555;
+}
+
+/* --- Dark Theme --- */
+.theme-dark .calculator-block {
+  background-color: #1e1e1e;
+  border-color: #444;
+}
+
+.theme-dark h1,
+.theme-dark h2,
+.theme-dark h3,
+.theme-dark h4,
+.theme-dark legend {
+  color: #f5f5f5;
+}
+
+.theme-dark input[type="number"],
+.theme-dark select {
+  background-color: #333;
+  color: #e0e0e0;
+  border: 1px solid #555;
+  border-radius: 4px;
+}
+
+.theme-dark .radio-options label,
+.theme-dark .form-group label {
+  color: #b0b0b0;
+}
+
+.theme-dark .calculation-summary {
+  background-color: #2a2a2a;
+  border-top: 1px solid #444;
+}
+
+/* EHP Class Button Dark Theme */
+.theme-dark .class-button {
+  background-color: #2a2a2a;
+  border-color: #555;
+  color: #b0b0b0;
+}
+.theme-dark .class-button:hover {
+  background-color: #3a3a3a;
+  border-color: #777;
+  color: #f0f0f0;
+}
+.theme-dark .class-button.active {
+  color: #fff; /* 활성화 시 텍스트 색상을 밝게 */
+}
+.theme-dark .class-button.class-warrior.active { background-color: #4d3c1a; border-color: gold; }
+.theme-dark .class-button.class-blade.active { background-color: #4d1a1a; border-color: brown; }
+.theme-dark .class-button.class-mage.active { background-color: #492a6b; border-color: #9370db; }
+.theme-dark .class-button.class-frost.active { background-color: #1a4a5f; border-color: #87ceeb; }
+
+.theme-dark .result-block {
+  background-color: #1a2e1c;
+  border-color: #2e5c31;
+}

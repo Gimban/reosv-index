@@ -144,6 +144,7 @@ function App() {
           <EffectiveHpCalculator
             accessoryBaseData={allData["장신구 기본 옵션"] || []}
             accessoryPotentialOptionData={allData["장신구 잠재 옵션"] || []}
+            armorCostData={allData["방어구 강화 비용"] || []}
           />
         );
       default:

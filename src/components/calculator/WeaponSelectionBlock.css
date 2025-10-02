@@ -8,35 +8,35 @@
 .weapon-slot {
   display: flex;
   flex-direction: column;
-  align-items: stretch;
   gap: 12px;
-  border: 1px solid #ccc;
   padding: 10px;
-  border-radius: 5px;
   background-color: #fff;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  align-items: stretch;
 }
 
 .weapon-slot-main {
   display: flex;
-  gap: 10px;
   align-items: center;
+  gap: 10px;
 }
 
 .enable-checkbox {
-  margin-right: 5px;
   flex-shrink: 0;
+  margin-right: 5px;
   cursor: pointer;
 }
 
 .weapon-slot .select-weapon-btn,
 .destiny-slot .select-weapon-btn {
   flex-grow: 1;
-  text-align: left;
+  padding: 8px;
   background-color: #f0f0f0;
   border: 1px solid #ccc;
-  padding: 8px;
   border-radius: 4px;
   cursor: pointer;
+  text-align: left;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -53,11 +53,11 @@
 }
 
 .destiny-weapon-block {
-  border: 1px solid #ddd;
   padding: 15px;
+  background-color: #fff8e1;
+  border: 1px solid #ddd;
   border-radius: 8px;
   margin-bottom: 20px;
-  background-color: #fff8e1; /* 운명 등급 느낌을 주는 연한 노란색 */
 }
 
 .destiny-weapon-block h3 {
@@ -68,12 +68,12 @@
 }
 
 .weapon-slot-stats {
-  border-top: 1px solid #e0e0e0;
-  padding-top: 10px;
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 5px 10px;
   font-size: 0.85em;
+  border-top: 1px solid #e0e0e0;
+  padding-top: 10px;
 }
 
 .disabled-stats {
@@ -100,7 +100,7 @@
 .formula-display {
   font-size: 0.8em;
   color: #888;
-  margin: 4px 10px 8px 10px;
+  margin: 4px 10px 8px;
   padding-top: 4px;
   border-top: 1px solid #444;
 }
@@ -112,14 +112,13 @@
 }
 
 .formula-label {
-  font-weight: bold;
   margin-right: 5px;
   color: #aaa;
 }
 
 .formula-expression {
-  text-align: right;
   flex-grow: 1;
+  text-align: right;
   font-family: "Courier New", Courier, monospace;
 }
 
@@ -127,62 +126,68 @@
   font-size: 0.9em;
 }
 
-/* Grade-specific colors */
-.grade-normal {
-  color: #d0d0d0;
-}
-.grade-uncommon {
-  color: #3aae41;
-}
-.grade-rare {
-  color: #498edf;
-}
-.grade-heroic {
-  color: #a03ae9;
-  font-weight: bold;
-}
-.grade-legendary {
-  color: #eec20f;
-  font-weight: bold;
-}
-.grade-mortal {
-  color: #b02222;
-  font-weight: bold;
-}
-.grade-boss {
-  color: #fcbec9;
-}
-.grade-destiny {
-  color: #4068de;
-  font-weight: bold;
+/* --- Dark Theme --- */
+.theme-dark .destiny-weapon-block {
+  background-color: #3a321e;
 }
 
-/*Dark theme Overrides*/
-.theme-dark .grade-normal {
-  color: #d0d0d0;
+.theme-dark .destiny-weapon-block h3 {
+  color: #ffd700;
 }
-.theme-dark .grade-uncommon {
-  color: #3aae41;
+
+.theme-dark .weapon-slot {
+  background-color: #2a2a2a;
+  border-color: #555;
 }
-.theme-dark .grade-rare {
-  color: #498edf;
+
+.theme-dark .weapon-name-display,
+.theme-dark .select-weapon-btn {
+  background-color: #333;
+  color: #e0e0e0;
+  border-color: #555;
 }
-.theme-dark .grade-heroic {
-  color: #a03ae9;
-  font-weight: bold;
+.theme-dark .weapon-name-display:hover,
+.theme-dark .select-weapon-btn:hover {
+  background-color: #444;
 }
-.theme-dark .grade-legendary {
-  color: #eec20f;
-  font-weight: bold;
+
+.theme-dark .stat-item .label {
+  color: #aaa;
 }
-.theme-dark .grade-mortal {
-  color: #b02222;
-  font-weight: bold;
+.theme-dark .stat-item .value {
+  color: #f0f0f0;
 }
-.theme-dark .grade-boss {
-  color: #fcbec9;
+
+.theme-dark .modal-content {
+  background: #2a2a2a;
+  color: #e0e0e0;
 }
-.theme-dark .grade-destiny {
-  color: #4068de;
-  font-weight: bold;
+.theme-dark .modal-header {
+  border-bottom-color: #444;
+}
+.theme-dark .close-button {
+  color: #ccc;
+}
+.theme-dark .deselect-button {
+  background-color: #444;
+  border-color: #666;
+  color: #e0e0e0;
+}
+.theme-dark .deselect-button:hover {
+  background-color: #555;
+}
+.theme-dark .filter-controls {
+  border-bottom-color: #444;
+}
+.theme-dark .grade-group h3 {
+  border-bottom-color: #555;
+}
+.theme-dark .weapon-item-button {
+  background-color: #333;
+  border-color: #555;
+  color: #e0e0e0;
+}
+.theme-dark .weapon-item-button:hover {
+  background-color: #444;
+  border-color: #777;
 }

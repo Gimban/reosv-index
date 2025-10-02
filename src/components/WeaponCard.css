@@ -242,3 +242,40 @@
   object-fit: contain;
   display: block;
 }
+
+/* --- Dark Theme --- */
+.theme-dark .weapon-card {
+  background-color: #2a2a2a;
+  border-color: #555;
+  color: #e0e0e0;
+}
+
+.theme-dark .card-top {
+  background-color: #333;
+}
+
+.theme-dark .enhancement-level {
+  color: #555;
+}
+
+.theme-dark .stats-list .stat-label {
+  color: #aaa;
+}
+
+.theme-dark .stats-list .stat-value {
+  color: #f0f0f0;
+}
+
+.theme-dark .derived-stat-item span {
+  color: #aaa;
+}
+
+.theme-dark .derived-stat-item strong {
+  color: #f0f0f0;
+}
+
+.theme-dark .description-tooltip {
+  background-color: #1e1e1e;
+  color: #e0e0e0;
+  border: 1px solid #555;
+}

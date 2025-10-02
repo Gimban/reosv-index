@@ -1,3 +1,29 @@
+.accessory-block-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.accessory-block-header h2 {
+  margin: 0;
+  border: none;
+  padding: 0;
+}
+
+.ui-mode-toggle {
+  display: flex;
+  gap: 15px;
+}
+
+.ui-mode-toggle label {
+  cursor: pointer;
+}
+
+.wide-block {
+  max-width: 1200px;
+}
+
 .accessory-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -12,23 +38,19 @@
 
 .accessory-fieldset {
   border: 1px solid #ddd;
-  padding: 20px;
   border-radius: 8px;
+  padding: 20px;
   display: flex;
   flex-direction: column;
   gap: 15px;
-  min-width: 0;
+  min-width: 0; /* Fix for grid layout issue in some browsers */
 }
 
 .accessory-fieldset legend {
-  padding: 0 10px;
   font-weight: bold;
-  color: #333;
   font-size: 1.1em;
-}
-
-.theme-dark .accessory-fieldset legend {
-  color: #e4e4e4;
+  padding: 0 10px;
+  color: #333;
 }
 
 .sub-options {
@@ -51,284 +73,140 @@
   margin-left: 10px;
 }
 
-.calculator-block.wide-block {
-  max-width: 1500px; /* Make this specific block wider */
-}
-
-.accessory-block-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  width: 100%;
-  margin-bottom: 1rem;
-}
-
-.accessory-block-header h2 {
-  margin: 0;
-}
-
-.ui-mode-toggle {
-  display: flex;
-  gap: 1rem;
-}
-
-.ui-mode-toggle label {
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  gap: 0.25rem;
-}
-
 .accessory-item-selection-grid {
   display: grid;
-  grid-template-columns: repeat(5, 1fr);
-  gap: 1rem;
-  width: 100%;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 20px;
 }
 
 .accessory-slot {
-  border-radius: 4px;
-  padding: 0.5rem;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 15px;
   display: flex;
   flex-direction: column;
-  align-items: center;
-  gap: 0.25rem;
-  min-height: 120px;
-  justify-content: space-between;
+  gap: 10px;
 }
 
 .accessory-slot-btn {
   display: flex;
-  flex-direction: column;
   align-items: center;
-  gap: 0.5rem;
+  gap: 10px;
   background: none;
   border: none;
   cursor: pointer;
-  width: 100%;
-  padding: 0.5rem;
-  border-radius: 4px;
-  transition: background-color 0.2s;
+  padding: 0;
+  text-align: left;
 }
 
 .accessory-image-placeholder,
 .accessory-slot-btn img {
-  width: 64px;
-  height: 64px;
+  width: 50px;
+  height: 50px;
+  border-radius: 4px;
+  flex-shrink: 0;
+}
+
+.accessory-image-placeholder {
+  background-color: #e0e0e0;
   display: flex;
   align-items: center;
   justify-content: center;
-  border-radius: 4px;
-  object-fit: contain;
-}
-
-.accessory-slot-btn img {
-  border: none;
+  font-size: 0.8em;
+  color: #888;
 }
 
 .accessory-slot-name {
-  font-size: 0.9rem;
-  word-break: keep-all;
-  text-align: center;
-  margin-top: auto;
-}
-
-.bracelet-slot .accessory-slot-btn {
-  cursor: default;
-}
-.bracelet-slot .accessory-slot-btn:hover {
-  background-color: transparent;
-}
-
-.enable-bracelet-label {
-  display: flex;
-  align-items: center;
-  gap: 0.25rem;
-  cursor: pointer;
-  margin-top: auto;
+  font-weight: bold;
+  font-size: 1.1em;
 }
 
 .accessory-options {
-  width: 100%;
   display: flex;
   flex-direction: column;
-  gap: 4px;
-  margin-top: 8px;
-  padding-top: 8px;
-  border-top: 1px solid #444;
+  gap: 8px;
+  margin-top: 10px;
 }
 
 .option-row {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  width: 100%;
-  font-size: 0.8rem;
+  font-size: 0.9em;
 }
 
 .option-label {
-  flex-grow: 1;
-  text-align: left;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  margin-right: 4px;
+  margin-right: 10px;
 }
 
 .option-input {
-  width: 50px;
-  border-radius: 3px;
+  width: 60px;
   text-align: right;
-  padding: 2px 4px;
-  font-size: 0.8rem;
 }
 
-.option-input::-webkit-outer-spin-button,
-.option-input::-webkit-inner-spin-button {
-  -webkit-appearance: none;
-  margin: 0;
-}
-
-.option-row.fixed .option-value {
-  width: 50px;
-  text-align: right;
-  padding: 2px 4px;
+.useful-stat {
   font-weight: bold;
+  color: #0056b3;
 }
 
-/* --- Theme-specific styles --- */
-
-/* Light Theme */
-.theme-light .accessory-slot {
-  border: 1px solid #dee2e6;
-  background-color: #f8f9fa;
-}
-.theme-light .accessory-slot-btn {
-  color: #212529;
-}
-.theme-light .accessory-slot-btn:hover {
-  background-color: #e9ecef;
-}
-.theme-light .accessory-image-placeholder {
-  border: 1px dashed #ced4da;
-  background-color: #e9ecef;
-}
-.theme-light .option-input {
-  background-color: #fff;
-  color: #212529;
-  border: 1px solid #ced4da;
-}
-.theme-light .useful-stat {
-  color: #0d6efd;
-}
-.theme-light .other-stat {
+.other-stat {
   color: #6c757d;
-}
-.theme-light .bracelet-slot.grade-destiny {
-  border-color: #8c52ff;
-  background: linear-gradient(160deg, #f8f9fa 85%, #e9d8ff);
-  box-shadow: 0 0 5px rgba(140, 82, 255, 0.4);
-}
-
-/* Dark Theme */
-.theme-dark .accessory-slot {
-  border: 1px solid #444;
-  background-color: #2a2a2a;
-}
-.theme-dark .accessory-slot-btn {
-  color: #eee;
-}
-.theme-dark .accessory-slot-btn:hover {
-  background-color: #3a3a3a;
-}
-.theme-dark .accessory-image-placeholder {
-  border: 1px dashed #666;
-  background-color: #222;
-}
-.theme-dark .option-input {
-  background-color: #1e1e1e;
-  color: #eee;
-  border: 1px solid #555;
-}
-.theme-dark .useful-stat {
-  color: #66d9ef;
-}
-.theme-dark .other-stat {
-  color: #888;
-}
-.theme-dark .bracelet-slot.grade-destiny {
-  border-color: #c5a3ff;
-  background: linear-gradient(160deg, #2a2a2a 85%, #4a3a5a);
-  box-shadow: 0 0 5px rgba(197, 163, 255, 0.5);
 }
 
 .potential-options {
+  border-top: 1px dashed #ccc;
   margin-top: 10px;
-  border-top: 1px solid #444;
   padding-top: 10px;
 }
 
-.potential-options h4 {
-  margin: 0 0 5px 0;
-  font-size: 13px;
-  color: #ccc;
+.potential-options-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.potential-options-header h4 {
+  margin: 0;
+  font-size: 1em;
+}
+
+.potential-options-body {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
 }
 
 .potential-option-row {
   display: flex;
   align-items: center;
-  gap: 5px;
-  margin-bottom: 5px;
-}
-
-.potential-option-row select {
-  flex-basis: 80px;
-  background-color: #333;
-  color: white;
-  border: 1px solid #555;
-  border-radius: 4px;
-  padding: 4px;
+  justify-content: space-between;
 }
 
 .select-potential-option-btn {
   flex-grow: 1;
-  background-color: #444;
-  border: 1px solid #666;
-  color: #ddd;
-  padding: 5px;
+  text-align: left;
+  background-color: #f1f3f5;
+  border: 1px solid #dee2e6;
   border-radius: 4px;
+  padding: 4px 8px;
+  font-size: 0.9em;
   cursor: pointer;
-  text-align: left;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
 }
 
-.select-potential-option-btn:disabled {
-  background-color: #2a2a2a;
-  color: #666;
-  cursor: not-allowed;
+.potential-option-value {
+  font-weight: bold;
+  margin-left: 10px;
+  font-size: 0.9em;
 }
 
-/* For AccessoryPotentialOptionModal */
-.accessory-list-simple {
-  display: flex;
-  flex-direction: column;
-  gap: 5px;
-  max-height: 400px;
-  overflow-y: auto;
+.bracelet-slot.inactive {
+  opacity: 0.6;
 }
 
-.simple-option-btn {
-  width: 100%;
-  padding: 8px;
-  background-color: #3a3a3a;
-  border: 1px solid #555;
-  color: white;
+.enable-bracelet-label {
   cursor: pointer;
-  text-align: left;
-}
-
-.simple-option-btn:hover {
-  background-color: #4a4a4a;
 }

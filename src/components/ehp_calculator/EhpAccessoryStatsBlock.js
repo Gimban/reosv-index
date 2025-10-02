@@ -4,9 +4,10 @@ import React, { useState, useEffect } from "react";
 // 향후 DPS 계산기처럼 장신구 데이터를 기반으로 드롭다운 선택 기능을 추가할 수 있습니다.
 function EhpAccessoryStatsBlock({ onStatsChange, accessoryBaseData, accessoryPotentialOptionData }) {
   const [stats, setStats] = useState({
-    maxHp: 0,
-    maxHpPercent: 0,
+    flatHp: 0,
+    percentHp: 0,
     damageReduction: 0,
+    hpStat: 0,
   });
 
   useEffect(() => {
@@ -21,10 +22,14 @@ function EhpAccessoryStatsBlock({ onStatsChange, accessoryBaseData, accessoryPot
   return (
     <div className="calculator-block">
       <h2>장신구</h2>
+      <p style={{ fontSize: '0.8em', color: 'gray', marginTop: '-15px', marginBottom: '15px' }}>
+        '받는 피해 감소 +' 는 +α 로, 현재 계산에 사용되지 않습니다.
+      </p>
       <div className="form-grid">
-        <div className="form-group"><label>최대 체력</label><input type="number" name="maxHp" value={stats.maxHp} onChange={handleChange} /></div>
-        <div className="form-group"><label>최대 체력 %</label><input type="number" name="maxHpPercent" value={stats.maxHpPercent} onChange={handleChange} /></div>
-        <div className="form-group"><label>피해 감소 %</label><input type="number" name="damageReduction" value={stats.damageReduction} onChange={handleChange} /></div>
+        <div className="form-group"><label>최대 체력 증가 +</label><input type="number" name="flatHp" value={stats.flatHp} onChange={handleChange} /></div>
+        <div className="form-group"><label>최대 체력 증가 %</label><input type="number" name="percentHp" value={stats.percentHp} onChange={handleChange} /></div>
+        <div className="form-group"><label>받는 피해 감소 %</label><input type="number" name="damageReduction" value={stats.damageReduction} onChange={handleChange} /></div>
+        <div className="form-group"><label>최대 체력 스탯 증가 +</label><input type="number" name="hpStat" value={stats.hpStat} onChange={handleChange} /></div>
       </div>
     </div>
   );

@@ -77,6 +77,44 @@
   font-weight: bold;
 }
 
+/* --- Light Theme for ClassEnhancementCalculator --- */
+.theme-light .class-enhancement-calculator h1 {
+  color: #333;
+  border-bottom-color: #ccc;
+}
+
+.theme-light .calculator-controls fieldset {
+  background-color: #f9f9f9;
+  border-color: #ddd;
+}
+
+.theme-light .calculator-controls legend {
+  color: #333;
+}
+
+.theme-light .form-group label {
+  color: #555;
+}
+
+.theme-light .form-group select {
+  background-color: #fff;
+  color: #333;
+  border-color: #ccc;
+}
+
+.theme-light .calculator-results {
+  background-color: #f0f7f0;
+  border-color: #a5d6a7;
+}
+
+.theme-light .calculator-results h2 {
+  color: #006400;
+}
+
+.theme-light .cost-list li {
+  border-bottom-color: #e0e0e0;
+}
+
 .material-amount-list {
   display: flex;
   flex-direction: column;
