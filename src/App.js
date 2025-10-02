@@ -9,6 +9,7 @@ import ClassEnhancementCalculator from "./components/ClassEnhancementCalculator"
 import ArmorEnhancementCalculator from "./components/ArmorEnhancementCalculator";
 import DpsCalculator from "./components/DpsCalculator";
 import EnhancementSimulator from "./components/EnhancementSimulator";
+import EffectiveHpCalculator from "./components/EffectiveHpCalculator";
 import "./App.css";
 
 // 데이터를 불러올 CSV 링크
@@ -136,6 +137,13 @@ function App() {
             setLogs={setEnhancementLogs}
             history={enhancementHistory}
             setHistory={setEnhancementHistory}
+          />
+        );
+      case "실질 체력 계산기":
+        return (
+          <EffectiveHpCalculator
+            accessoryBaseData={allData["장신구 기본 옵션"] || []}
+            accessoryPotentialOptionData={allData["장신구 잠재 옵션"] || []}
           />
         );
       default:

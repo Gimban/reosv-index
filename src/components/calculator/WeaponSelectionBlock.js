@@ -242,7 +242,7 @@ function WeaponSelectionBlock({ weaponData, onStatsChange, calculatedStats }) {
 
   return (
     <div className="calculator-block">
-      <h2>무기 선택</h2>
+      <h2>특수 무기</h2>
 
       <div className="destiny-weapon-block">
         <h3>운명 무기</h3>

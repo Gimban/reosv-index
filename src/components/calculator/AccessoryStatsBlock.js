@@ -582,7 +582,7 @@ function AccessoryStatsBlock({
       className={`calculator-block ${uiMode === "item" ? "wide-block" : ""}`}
     >
       <div className="accessory-block-header">
-        <h2>장신구 스탯</h2>
+        <h2>장신구</h2>
         <div className="ui-mode-toggle">
           <label>
             <input
