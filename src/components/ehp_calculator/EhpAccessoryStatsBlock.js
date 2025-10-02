@@ -22,8 +22,8 @@ const accessoryImages = importAll(
 const EHP_USEFUL_STATS = new Set([
   "최대 체력 증가 +",
   "최대 체력 증가 %",
-  "받는 피해 감소 %",
-  "최대 체력 스탯 증가 +",
+  "받는 데미지 감소 %",
+  "체력 스탯 증가 +",
 ]);
 
 const isUsefulStat = (statName) => EHP_USEFUL_STATS.has(statName);
@@ -32,8 +32,8 @@ const isUsefulStat = (statName) => EHP_USEFUL_STATS.has(statName);
 const STAT_MAP = {
   "최대 체력 증가 +": "flatHp",
   "최대 체력 증가 %": "percentHp",
-  "받는 피해 감소 %": "damageReduction",
-  "최대 체력 스탯 증가 +": "hpStat",
+  "받는 데미지 감소 %": "damageReduction",
+  "체력 스탯 증가 +": "hpStat",
 };
 
 const POTENTIAL_OPTION_GRADES = ["없음", "일반", "고급", "희귀", "영웅"];
@@ -60,13 +60,25 @@ function EhpAccessoryStatsBlock({ onStatsChange, accessoryBaseData, accessoryPot
   const [directStats, setDirectStats] = useState({ flatHp: 0, percentHp: 0, damageReduction: 0, hpStat: 0 });
 
   // 아이템 선택 모드 상태
-  const [selectedItems, setSelectedItems] = useState({ pendant: null, earring: null, ring1: null, ring2: null });
+  const [selectedPendant, setSelectedPendant] = useState(null);
+  const [selectedEarring, setSelectedEarring] = useState(null);
+  const [selectedRing1, setSelectedRing1] = useState(null);
+  const [selectedRing2, setSelectedRing2] = useState(null);
   const [isBraceletEnabled, setIsBraceletEnabled] = useState(false);
+
+  const initialOptions = useMemo(
+    () => ({ normal: 0, rare: 0, heroic: 0, legendary: 0 }),
+    []
+  );
+
+  const [slotOptions, setSlotOptions] = useState({ pendant: { ...initialOptions }, earring: { ...initialOptions }, ring1: { ...initialOptions }, ring2: { ...initialOptions } });
+
   const [potentialOptions, setPotentialOptions] = useState({
     pendant: { grade: "없음", options: [null, null, null] },
     earring: { grade: "없음", options: [null, null, null] },
     ring1: { grade: "없음", options: [null, null, null] },
     ring2: { grade: "없음", options: [null, null, null] },
+    bracelet: { grade: "없음", options: [null, null, null] },
   });
 
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -78,18 +90,37 @@ function EhpAccessoryStatsBlock({ onStatsChange, accessoryBaseData, accessoryPot
   const itemStats = useMemo(() => {
     const newStats = { flatHp: 0, percentHp: 0, damageReduction: 0, hpStat: 0 };
 
+    const slots = [
+      { item: selectedPendant, slotKey: "pendant" },
+      { item: selectedEarring, slotKey: "earring" },
+      { item: selectedRing1, slotKey: "ring1" },
+      { item: selectedRing2, slotKey: "ring2" },
+    ];
+
+    const optionTypes = {
+      normal: "일반 옵션",
+      rare: "고급 옵션",
+      heroic: "희귀 옵션",
+      legendary: "영웅 옵션",
+    };
+
     // 1. 기본 장신구 옵션 처리
-    Object.entries(selectedItems).forEach(([slotKey, item]) => {
+    slots.forEach(({ item, slotKey }) => {
       if (!item) return;
-      // 기본 옵션 (장신구 기본 옵션 시트)
-      for (let i = 1; i <= 4; i++) {
-        const optionName = item[`옵션${i}`];
-        const optionValue = parseNum(item[`수치${i}`]);
+      const currentOptionValues = slotOptions[slotKey];
+      Object.entries(optionTypes).forEach(([type, columnName]) => {
+        const optionName = item[columnName];
+        const statValue = currentOptionValues[type];
         const targetStatKey = STAT_MAP[optionName];
-        if (targetStatKey && optionValue > 0) {
-          newStats[targetStatKey] += optionValue;
+        if (targetStatKey && statValue > 0) {
+          if (targetStatKey.includes(".")) {
+            const [parent, child] = targetStatKey.split(".");
+            newStats[parent][child] += statValue;
+          } else {
+            newStats[targetStatKey] += statValue;
+          }
         }
-      }
+      });
     });
 
     // 2. 팔찌 옵션 처리
@@ -102,11 +133,14 @@ function EhpAccessoryStatsBlock({ onStatsChange, accessoryBaseData, accessoryPot
       });
     }
 
-    // 2. 잠재 옵션 처리
+    // 3. 잠재 옵션 처리
     Object.entries(potentialOptions).forEach(([slotKey, slotData]) => {
       const { grade, options } = slotData;
+      // 팔찌가 아니면서, 선택된 아이템이 없으면 스킵
+      const currentItem = slots.find(s => s.slotKey === slotKey)?.item;
+      if (slotKey !== 'bracelet' && !currentItem) return;
       if (slotKey === "bracelet" && !isBraceletEnabled) return;
-      if (grade === "없음" || !selectedItems[slotKey]) return;
+      if (grade === "없음") return;
 
       options.forEach((option) => {
         if (option) {
@@ -123,7 +157,7 @@ function EhpAccessoryStatsBlock({ onStatsChange, accessoryBaseData, accessoryPot
     });
 
     return newStats;
-  }, [selectedItems, isBraceletEnabled, potentialOptions]);
+  }, [selectedPendant, selectedEarring, selectedRing1, selectedRing2, isBraceletEnabled, potentialOptions, slotOptions]);
 
   useEffect(() => {
     const stats = uiMode === "direct" ? directStats : itemStats;
@@ -138,14 +172,24 @@ function EhpAccessoryStatsBlock({ onStatsChange, accessoryBaseData, accessoryPot
   // --- 모달 핸들러 ---
   const handleOpenModal = (slot) => { setEditingSlot(slot); setIsModalOpen(true); };
   const handleSelectAccessory = useCallback((item) => {
+    switch (editingSlot) {
+      case "pendant": setSelectedPendant(item); break;
+      case "earring": setSelectedEarring(item); break;
+      case "ring1": setSelectedRing1(item); break;
+      case "ring2": setSelectedRing2(item); break;
+      default: break;
+    }
+    // 아이템 변경 시 잠재옵션 초기화
     if (editingSlot) {
-      setSelectedItems(prev => ({ ...prev, [editingSlot]: item }));
-      // 아이템 변경 시 잠재옵션 초기화
+      setSlotOptions((prev) => ({
+        ...prev,
+        [editingSlot]: { ...initialOptions },
+      }));
       setPotentialOptions(prev => ({ ...prev, [editingSlot]: { grade: "없음", options: [null, null, null] } }));
     }
     setIsModalOpen(false);
     setEditingSlot(null);
-  }, [editingSlot]);
+  }, [editingSlot, initialOptions]);
 
   const handleOpenPotentialModal = (slotKey, index) => { setEditingPotentialSlot({ slotKey, index }); setIsPotentialModalOpen(true); };
   const handleClosePotentialModal = useCallback(() => { setIsPotentialModalOpen(false); setEditingPotentialSlot(null); }, []);
@@ -166,57 +210,90 @@ function EhpAccessoryStatsBlock({ onStatsChange, accessoryBaseData, accessoryPot
   }, []);
 
   // --- 렌더링 함수 ---
+  const handleOptionChange = useCallback((slotKey, optionType, value) => {
+    setSlotOptions((prev) => ({
+      ...prev,
+      [slotKey]: {
+        ...prev[slotKey],
+        [optionType]: parseFloat(value) || 0,
+      },
+    }));
+  }, []);
+
+  const renderPotentialOptionSlot = (slotKey) => {
+    const slotData = potentialOptions[slotKey];
+    const { grade, options } = slotData;
+
+    return (
+      <div className="potential-options">
+        <div className="potential-options-header">
+          <h4>잠재 옵션</h4>
+          <select value={grade} onChange={(e) => handlePotentialGradeChange(slotKey, e.target.value)}>
+            {POTENTIAL_OPTION_GRADES.map((g) => <option key={g} value={g}>{g}</option>)}
+          </select>
+        </div>
+        {grade !== "없음" && (
+          <div className="potential-options-body">
+            {options.map((option, index) => {
+              const statValue = option ? parseNum(option[GRADE_TO_COLUMN_MAP_POTENTIAL[grade]]) : 0;
+              return (
+                <div key={index} className="potential-option-row">
+                  <button onClick={() => handleOpenPotentialModal(slotKey, index)} className={`select-potential-option-btn ${isUsefulStat(option?.["옵션"]) ? "useful-stat" : ""}`}>
+                    {option ? option["옵션"] : "옵션 선택"}
+                  </button>
+                  {option && <span className="potential-option-value">+{statValue.toLocaleString()}</span>}
+                </div>
+              );
+            })}
+          </div>
+        )}
+      </div>
+    );
+  };
+
   const renderItemSlot = (slotKey, item, onOpenModal) => {
-    const imageFileName = item ? item["이미지 파일"]?.replace(".png", "") : "";
+    const imageFileName = item ? item["이미지 파일"]?.replace(".png", "") : "";    
     const imageSrc = accessoryImages[imageFileName];
-    const displayName = item ? item["이름"] : "선택";
+    const displayName = item ? `${item["보석"] || ""} ${item["부위"] || ""}`.trim() : "선택";
+    const optionTiers = {
+      normal: "일반 옵션",
+      rare: "고급 옵션",
+      heroic: "희귀 옵션",
+      legendary: "영웅 옵션",
+    };
 
     return (
       <div className="accessory-slot">
         <button className="accessory-slot-btn" onClick={onOpenModal}>
-          {imageSrc ? <img src={imageSrc} alt={displayName} /> : <div className="accessory-image-placeholder">이미지</div>}
+          {imageSrc ? (<img src={imageSrc} alt={displayName} />) : (<div className="accessory-image-placeholder">이미지</div>)}
           <span className="accessory-slot-name">{displayName}</span>
         </button>
         {item && (
           <>
             <div className="accessory-options">
-              {[1, 2, 3, 4].map(i => {
-                const optionName = item[`옵션${i}`];
-                const optionValue = parseNum(item[`수치${i}`]);
+              {Object.entries(optionTiers).map(([tier, tierName]) => {
+                const optionName = item[tierName];
                 if (!optionName) return null;
                 return (
-                  <div key={i} className="option-row fixed">
-                    <span className={`option-label ${isUsefulStat(optionName) ? "useful-stat" : "other-stat"}`} title={optionName}>{optionName}</span>
-                    <span className="option-value">+{optionValue.toLocaleString()}</span>
+                  <div key={tier} className="option-row">
+                    <label
+                      className={`option-label ${ isUsefulStat(optionName) ? "useful-stat" : "other-stat" }`}
+                      title={optionName}
+                    >
+                      {optionName}
+                    </label>
+                    <input
+                      type="number"
+                      className="option-input"
+                      value={slotOptions[slotKey][tier]}
+                      onChange={(e) => handleOptionChange(slotKey, tier, e.target.value)}
+                      min="0"
+                    />
                   </div>
                 );
               })}
             </div>
-            {/* 잠재 옵션 렌더링 */}
-            <div className="potential-options">
-              <div className="potential-options-header">
-                <h4>잠재 옵션</h4>
-                <select value={potentialOptions[slotKey].grade} onChange={(e) => handlePotentialGradeChange(slotKey, e.target.value)}>
-                  {POTENTIAL_OPTION_GRADES.map((g) => <option key={g} value={g}>{g}</option>)}
-                </select>
-              </div>
-              {potentialOptions[slotKey].grade !== "없음" && (
-                <div className="potential-options-body">
-                  {potentialOptions[slotKey].options.map((option, index) => {
-                    const grade = potentialOptions[slotKey].grade;
-                    const statValue = option ? parseNum(option[GRADE_TO_COLUMN_MAP_POTENTIAL[grade]]) : 0;
-                    return (
-                      <div key={index} className="potential-option-row">
-                        <button onClick={() => handleOpenPotentialModal(slotKey, index)} className={`select-potential-option-btn ${isUsefulStat(option?.["옵션"]) ? "useful-stat" : ""}`}>
-                          {option ? option["옵션"] : "옵션 선택"}
-                        </button>
-                        {option && <span className="potential-option-value">+{statValue.toLocaleString()}</span>}
-                      </div>
-                    );
-                  })}
-                </div>
-              )}
-            </div>
+            {renderPotentialOptionSlot(slotKey)}
           </>
         )}
       </div>
@@ -257,7 +334,11 @@ function EhpAccessoryStatsBlock({ onStatsChange, accessoryBaseData, accessoryPot
             );
           })}
         </div>
-        {isBraceletEnabled && renderItemSlot("bracelet", () => {})}
+        {isBraceletEnabled && (
+          <div className="potential-options">
+            {renderPotentialOptionSlot("bracelet")}
+          </div>
+        )}
       </div>
     );
   };
@@ -284,11 +365,11 @@ function EhpAccessoryStatsBlock({ onStatsChange, accessoryBaseData, accessoryPot
         </div>
       ) : (
         <div className="accessory-item-selection-grid">
-          {renderItemSlot("pendant", selectedItems.pendant, () => handleOpenModal("pendant"))}
-          {renderItemSlot("earring", selectedItems.earring, () => handleOpenModal("earring"))}
+          {renderItemSlot("pendant", selectedPendant, () => handleOpenModal("pendant"))}
+          {renderItemSlot("earring", selectedEarring, () => handleOpenModal("earring"))}
           {renderBraceletSlot()}
-          {renderItemSlot("ring1", selectedItems.ring1, () => handleOpenModal("ring1"))}
-          {renderItemSlot("ring2", selectedItems.ring2, () => handleOpenModal("ring2"))}
+          {renderItemSlot("ring1", selectedRing1, () => handleOpenModal("ring1"))}
+          {renderItemSlot("ring2", selectedRing2, () => handleOpenModal("ring2"))}
         </div>
       )}
 
