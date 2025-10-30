@@ -34,7 +34,11 @@ function ViewControls({
           <select
             id="enhancement-select"
             value={sortEnhancement}
-            onChange={(e) => setSortEnhancement(Number(e.target.value))}
+            onChange={(e) => {
+              const value = Number(e.target.value);
+              setSortEnhancement(value);
+              setGlobalEnhancement(value);
+            }}
           >
             {[...Array(16).keys()].map((level) => (
               <option key={level} value={level}>
@@ -48,7 +52,13 @@ function ViewControls({
             value={globalEnhancement}
             onChange={(e) => {
               const value = e.target.value;
-              setGlobalEnhancement(value === "개별" ? "개별" : Number(value));
+              if (value === "개별") {
+                setGlobalEnhancement("개별");
+              } else {
+                const numValue = Number(value);
+                setGlobalEnhancement(numValue);
+                setSortEnhancement(numValue);
+              }
             }}
           >
             <option value="개별">개별 설정</option>
