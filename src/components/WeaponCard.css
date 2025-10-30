@@ -199,6 +199,15 @@
   margin-right: 10px;
 }
 
+.stat-value.description-text {
+  font-size: 0.8em;
+  color: var(--text-color-light);
+  white-space: pre-wrap; /* 줄바꿈을 유지합니다. */
+  text-align: center;
+  width: 100%;
+  padding: 5px 0;
+}
+
 .nav-arrow:hover {
   background-color: rgba(0, 0, 0, 0.6);
 }

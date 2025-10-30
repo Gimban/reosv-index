@@ -9,7 +9,6 @@ function WeaponCard({
   imageSrc,
 }) {
   const [currentIndex, setCurrentIndex] = useState(0);
-  const [isHovered, setIsHovered] = useState(false);
 
   useEffect(() => {
     if (globalEnhancement !== "개별" && weaponData.length > 0) {
@@ -186,14 +185,7 @@ function WeaponCard({
   };
 
   return (
-    <div
-      className="weapon-card"
-      onMouseEnter={() => setIsHovered(true)}
-      onMouseLeave={() => setIsHovered(false)}
-    >
-      {showDescription && isHovered && description && (
-        <div className="description-tooltip">{description}</div>
-      )}
+    <div className="weapon-card">
       <div className={`card-top ${getGradeClassName(grade)}`}>
         <div className="image-placeholder">
            {imageSrc ? (
@@ -209,6 +201,11 @@ function WeaponCard({
       </div>
       <div className="card-bottom">
         <ul className="stats-list">
+          {showDescription && description && (
+            <li>
+              <span className="stat-value description-text">{description}</span>
+            </li>
+          )}
           {formattedDamageValue && (
             <li>
               <span className="stat-label">피해량</span>
