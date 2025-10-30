@@ -28,6 +28,7 @@ function ViewControls({
             <option value="기본">기본</option>
             <option value="총 피해량">총 피해량</option>
             <option value="DPS">DPS</option>
+            <option value="마나 효율 (ME)">마나 효율 (ME)</option>
           </select>
           <label htmlFor="enhancement-select">강화 기준:</label>
           <select

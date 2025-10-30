@@ -2,18 +2,22 @@ import { useMemo } from "react";
 
 // 정렬에 필요한 계산을 위한 헬퍼 함수
 const getWeaponMetrics = (weapon) => {
-  if (!weapon) return { totalDamage: 0, dps: 0 };
+  if (!weapon) return { totalDamage: 0, dps: 0, manaEfficiency: 0 };
 
   const numericDamage = Number(
     String(weapon["피해량"] || "0").replace(/,/g, "")
   );
   const numericHits = Number(weapon["타수"] || "1");
   const numericCooldown = Number(weapon["쿨타임"] || "0");
+  const numericMana = Number(
+    String(weapon["마나"] || "0").replace(/,/g, "")
+  );
 
   const totalDamage = numericDamage * numericHits;
   const dps = numericCooldown > 0 ? totalDamage / numericCooldown : 0;
+  const manaEfficiency = numericMana > 0 ? totalDamage / numericMana : 0;
 
-  return { totalDamage, dps };
+  return { totalDamage, dps, manaEfficiency };
 };
 
 // 정렬 기준 강화 차수에 맞는 무기 데이터를 찾는 헬퍼 함수
@@ -115,6 +119,8 @@ export function useWeaponData(data, sortOption, sortEnhancement) {
         if (sortOption === "총 피해량")
           return metricsB.totalDamage - metricsA.totalDamage;
         if (sortOption === "DPS") return metricsB.dps - metricsA.dps;
+        if (sortOption === "마나 효율 (ME)")
+          return metricsB.manaEfficiency - metricsA.manaEfficiency;
         return 0;
       });
     }
@@ -138,6 +144,8 @@ export function useWeaponData(data, sortOption, sortEnhancement) {
 
       if (sortOption === "총 피해량") return metricsB.totalDamage - metricsA.totalDamage;
       if (sortOption === "DPS") return metricsB.dps - metricsA.dps;
+      if (sortOption === "마나 효율 (ME)")
+        return metricsB.manaEfficiency - metricsA.manaEfficiency;
       return 0;
     });
   }, [groupedWeapons, sortedGrades, sortedGroupedWeapons, sortOption, sortEnhancement]);
