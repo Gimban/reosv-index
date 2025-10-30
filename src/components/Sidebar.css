@@ -1,17 +1,93 @@
 .sidebar {
   width: 250px;
   background-color: #f8f9fa;
-  padding: 20px;
-  height: 100vh;
+  padding: 20px 0 20px 20px; /* 오른쪽 패딩 제거 */
   box-sizing: border-box;
-  overflow-y: auto;
   border-right: 1px solid #dee2e6;
-  position: sticky;
-  top: 0;
-  align-self: flext-start;
+  position: relative;
   display: flex;
   flex-direction: column;
   transition: background-color 0.3s, border-color 0.3s;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  position: relative;
+  height: 100vh;
+}
+
+.sidebar.collapsed {
+  width: 60px;
+}
+
+.sidebar-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  min-height: 30px; /* 헤더 높이 고정 */
+  padding-right: 20px; /* 오른쪽 패딩 추가 */
+}
+
+.sidebar.collapsed .sidebar-header {
+  justify-content: center;
+}
+
+.sidebar-toggle-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  z-index: 10;
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  padding: 5px;
+}
+
+.sidebar-toggle-btn img {
+  width: 24px;
+  height: 24px;
+  transition: transform 0.3s ease-in-out;
+}
+
+.sidebar.collapsed .sidebar-toggle-btn {
+  right: 10px;
+}
+
+.sidebar > ul,
+.sidebar > .theme-switcher {
+  transition: opacity 0.3s ease-in-out, visibility 0.3s ease-in-out;
+}
+
+.sidebar.collapsed > ul,
+.sidebar.collapsed > .theme-switcher {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+}
+
+.sidebar > ul {
+  flex-grow: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+  margin: 0;
+  padding-right: 17px; /* 스크롤바 공간 확보 (일반적인 스크롤바 너비) */
+  padding-left: 0;
+  list-style: none;
+}
+
+/* 웹킷 기반 브라우저 스크롤바 숨기기 */
+.sidebar > ul::-webkit-scrollbar {
+  width: 0;
+  background: transparent; /* 투명하게 만듦 */
+}
+.sidebar > ul {
+  -ms-overflow-style: none; /* IE and Edge */
+  scrollbar-width: none; /* Firefox */
 }
 
 .sidebar h2 {
@@ -88,6 +164,7 @@
   margin-top: auto;
   padding-top: 20px;
   border-top: 1px solid #ced4da;
+  padding-right: 20px; /* 오른쪽 패딩 추가 */
   transition: border-color 0.3s;
 }
 
@@ -135,4 +212,8 @@
 .theme-dark .sidebar .category-button:hover {
   background-color: #333;
   color: #fff;
+}
+
+.theme-dark .sidebar-toggle-btn img {
+  filter: invert(1);
 }

@@ -34,6 +34,7 @@ const createCsvUrl = (gid) => {
 };
 
 function App() {
+  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
   const [allData, setAllData] = useState({});
   const [currentCategory, setCurrentCategory] = useState("홈");
   const [parentCategory, setParentCategory] = useState(null); // 상위 카테고리 상태 추가
@@ -160,8 +161,12 @@ function App() {
   };
 
   return (
-    <div className={`App-container theme-${theme}`}>
+    <div
+      className={`App-container ${isSidebarCollapsed ? "sidebar-collapsed" : ""} theme-${theme}`}
+    >
       <Sidebar
+        isCollapsed={isSidebarCollapsed}
+        setIsCollapsed={setIsSidebarCollapsed}
         gidMap={GID_MAP}
         onSelectCategory={handleSelectCategory}
         currentCategory={currentCategory}

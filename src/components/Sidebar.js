@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import "./Sidebar.css";
+import hamburgerIcon from "../images/icon/hamburger-icon.svg";
 
 function Sidebar({
   gidMap,
@@ -8,6 +9,8 @@ function Sidebar({
   parentCategory,
   theme,
   setTheme,
+  isCollapsed,
+  setIsCollapsed,
 }) {
   const [isRawDataOpen, setIsRawDataOpen] = useState(false);
 
@@ -46,8 +49,17 @@ function Sidebar({
   }, [gidMap]); // currentCategory와 parentCategory는 메뉴 구조 생성에 영향을 주지 않으므로 deps에 불필요
 
   return (
-    <div className="sidebar">
-      <h2>목차</h2>
+    <div className={`sidebar ${isCollapsed ? "collapsed" : ""}`}>
+      <div className="sidebar-header">
+        {!isCollapsed && <h2>목차</h2>}
+        <button
+          className="sidebar-toggle-btn"
+          onClick={() => setIsCollapsed(!isCollapsed)}
+          aria-label={isCollapsed ? "사이드바 펼치기" : "사이드바 접기"}
+        >
+          <img src={hamburgerIcon} alt="메뉴 토글" />
+        </button>
+      </div>
       <ul>
         {Object.keys(menu).map((mainCategory) => (
           <li
