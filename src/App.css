@@ -12,8 +12,9 @@ body {
 .App-container {
   display: grid;
   grid-template-columns: 250px 1fr; 
-  min-height: 100vh;
+  height: 100vh;
   transition: grid-template-columns 0.3s ease-in-out;
+  overflow: hidden;
 }
 
 .App-container.sidebar-collapsed {

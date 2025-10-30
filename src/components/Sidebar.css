@@ -12,7 +12,7 @@
   flex-direction: column;
   overflow: hidden;
   position: relative;
-  height: 100vh;
+  height: 100%;
 }
 
 .sidebar.collapsed {
