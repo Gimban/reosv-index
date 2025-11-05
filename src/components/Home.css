@@ -1,5 +1,10 @@
 .home-content {
-  padding: 20px;
+  padding: clamp(16px, 4vw, 28px);
+  padding-top: calc(env(safe-area-inset-top, 0px) + clamp(18px, 4vw, 32px));
+  padding-inline: calc(env(safe-area-inset-left, 0px) + clamp(16px, 5vw, 40px));
+  margin: 0 auto;
+  max-width: 100%;
+  box-sizing: border-box;
 }
 
 .home-content h1 {
@@ -9,8 +14,8 @@
 }
 
 .info-box {
-  margin-top: 40px;
-  padding: 20px;
+  margin-top: clamp(28px, 6vw, 40px);
+  padding: clamp(18px, 4vw, 24px);
   background-color: #f9f9f9;
   border: 1px solid #ddd;
   border-radius: 5px;
@@ -25,6 +30,46 @@
   padding: 2px 6px;
   border-radius: 3px;
   font-family: "Courier New", Courier, monospace;
+}
+
+@media (max-width: 374px) {
+  .home-content {
+    padding-inline: calc(env(safe-area-inset-left, 0px) + 12px);
+  }
+
+  .info-box {
+    padding: 16px 14px;
+    margin-top: 24px;
+  }
+}
+
+@media (min-width: 375px) and (max-width: 413px) {
+  .home-content {
+    padding-inline: calc(env(safe-area-inset-left, 0px) + 18px);
+  }
+
+  .info-box {
+    margin-top: 28px;
+  }
+}
+
+@media (min-width: 414px) and (max-width: 767px) {
+  .home-content {
+    max-width: clamp(620px, 88vw, 720px);
+    padding-inline: calc(env(safe-area-inset-left, 0px) + clamp(20px, 6vw, 48px));
+  }
+
+  .info-box {
+    padding: clamp(18px, 3vw, 22px) clamp(20px, 6vw, 28px);
+  }
+}
+
+@media (min-width: 768px) {
+  .home-content {
+    max-width: clamp(720px, 72vw, 960px);
+    padding-top: calc(env(safe-area-inset-top, 0px) + 36px);
+    padding-inline: clamp(28px, 6vw, 56px);
+  }
 }
 
 /* --- Dark Theme --- */
