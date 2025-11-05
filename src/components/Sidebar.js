@@ -13,6 +13,21 @@ function Sidebar({
   setIsCollapsed,
 }) {
   const [isRawDataOpen, setIsRawDataOpen] = useState(false);
+  const sidebarRef = React.useRef(null);
+  const touchDataRef = React.useRef({
+    isTracking: false,
+    isHorizontal: false,
+    startX: 0,
+    startY: 0,
+    lastX: 0,
+  });
+
+  const isMobileViewport = React.useCallback(() => {
+    if (typeof window === "undefined") {
+      return false;
+    }
+    return window.matchMedia("(max-width: 767px)").matches;
+  }, []);
 
   // GID_MAP을 기반으로 메뉴 구조를 동적으로 생성합니다.
   const menu = React.useMemo(() => {
@@ -48,8 +63,117 @@ function Sidebar({
     return menuStructure;
   }, [gidMap]); // currentCategory와 parentCategory는 메뉴 구조 생성에 영향을 주지 않으므로 deps에 불필요
 
+  React.useEffect(() => {
+    if (typeof window === "undefined") {
+      return () => {};
+    }
+
+    const EDGE_THRESHOLD = 30;
+    const SWIPE_THRESHOLD = 60;
+    touchDataRef.current.isTracking = false;
+    touchDataRef.current.isHorizontal = false;
+
+    const handleTouchStart = (event) => {
+      if (!isMobileViewport()) {
+        return;
+      }
+
+      const touch = event.touches[0];
+      const sidebarElement = sidebarRef.current;
+      const isTouchInsideSidebar =
+        sidebarElement && sidebarElement.contains(event.target);
+
+      if (isCollapsed) {
+        if (touch.clientX > EDGE_THRESHOLD) {
+          return;
+        }
+      } else if (!isTouchInsideSidebar) {
+        return;
+      }
+
+      const touchData = touchDataRef.current;
+      touchData.isTracking = true;
+      touchData.isHorizontal = false;
+      touchData.startX = touch.clientX;
+      touchData.startY = touch.clientY;
+      touchData.lastX = touch.clientX;
+    };
+
+    const handleTouchMove = (event) => {
+      const touchData = touchDataRef.current;
+      if (!touchData.isTracking) {
+        return;
+      }
+
+      if (!isMobileViewport()) {
+        touchData.isTracking = false;
+        touchData.isHorizontal = false;
+        return;
+      }
+
+      const touch = event.touches[0];
+      const deltaX = touch.clientX - touchData.startX;
+      const deltaY = touch.clientY - touchData.startY;
+
+      if (!touchData.isHorizontal) {
+        if (Math.abs(deltaY) > Math.abs(deltaX) && Math.abs(deltaY) > 16) {
+          touchData.isTracking = false;
+          touchData.isHorizontal = false;
+          return;
+        }
+
+        if (Math.abs(deltaX) > 16) {
+          touchData.isHorizontal = true;
+        }
+      }
+
+      touchData.lastX = touch.clientX;
+    };
+
+    const handleTouchEnd = () => {
+      const touchData = touchDataRef.current;
+      if (!touchData.isTracking) {
+        return;
+      }
+
+      if (!isMobileViewport()) {
+        touchData.isTracking = false;
+        touchData.isHorizontal = false;
+        return;
+      }
+
+      const deltaX = touchData.lastX - touchData.startX;
+
+      if (touchData.isHorizontal) {
+        if (isCollapsed && deltaX > SWIPE_THRESHOLD) {
+          setIsCollapsed(false);
+        } else if (!isCollapsed && deltaX < -SWIPE_THRESHOLD) {
+          setIsCollapsed(true);
+        }
+      }
+
+      touchData.isTracking = false;
+      touchData.isHorizontal = false;
+    };
+
+    window.addEventListener("touchstart", handleTouchStart, { passive: true });
+    window.addEventListener("touchmove", handleTouchMove, { passive: true });
+    window.addEventListener("touchend", handleTouchEnd);
+    window.addEventListener("touchcancel", handleTouchEnd);
+
+    return () => {
+      window.removeEventListener("touchstart", handleTouchStart);
+      window.removeEventListener("touchmove", handleTouchMove);
+      window.removeEventListener("touchend", handleTouchEnd);
+      window.removeEventListener("touchcancel", handleTouchEnd);
+    };
+  }, [isCollapsed, isMobileViewport, setIsCollapsed]);
+
   return (
-    <div className={`sidebar ${isCollapsed ? "collapsed" : ""}`}>
+    <div
+      ref={sidebarRef}
+      className={`sidebar ${isCollapsed ? "collapsed" : ""}`}
+    >
       <div className="sidebar-header">
         {!isCollapsed && <h2>목차</h2>}
         <button
@@ -97,6 +221,9 @@ function Sidebar({
                       }`}
                       onClick={() => {
                         onSelectCategory(subCategory, mainCategory);
+                        if (isMobileViewport()) {
+                          setIsCollapsed(true);
+                        }
                       }}
                     >
                       {subCategory}

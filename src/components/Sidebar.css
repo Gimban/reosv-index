@@ -173,6 +173,10 @@
   background: var(--color-surface);
 }
 
+.theme-dark .sidebar-toggle-btn img {
+  filter: invert(1);
+}
+
 .theme-dark .main-category-title {
   border-color: var(--color-divider);
 }
