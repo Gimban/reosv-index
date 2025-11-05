@@ -1,79 +1,133 @@
+:root {
+  --weapon-selection-gap: var(--space-3);
+  --weapon-selection-section-padding: var(--space-4);
+  --weapon-selection-safe-padding: calc(
+    env(safe-area-inset-bottom) + var(--space-3)
+  );
+  --weapon-selection-sticky-offset: calc(
+    env(safe-area-inset-top) + var(--space-3)
+  );
+}
+
 .weapon-selection-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-  gap: 15px;
-  margin-top: 20px;
+  grid-template-columns: 1fr;
+  gap: var(--weapon-selection-gap);
+  margin-top: var(--space-4);
+}
+
+.weapon-selection-grid:last-of-type {
+  padding-bottom: var(--weapon-selection-safe-padding);
+}
+
+@media (min-width: 414px) {
+  .weapon-selection-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (min-width: 768px) {
+  .weapon-selection-grid {
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  }
 }
 
 .weapon-slot {
   display: flex;
   flex-direction: column;
-  gap: 12px;
-  padding: 10px;
-  background-color: #fff;
-  border: 1px solid #ccc;
-  border-radius: 5px;
+  gap: var(--space-3);
+  padding: var(--weapon-selection-section-padding);
+  background-color: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
   align-items: stretch;
 }
 
 .weapon-slot-main {
   display: flex;
   align-items: center;
-  gap: 10px;
+  flex-wrap: wrap;
+  gap: var(--space-2);
 }
 
 .enable-checkbox {
   flex-shrink: 0;
-  margin-right: 5px;
+  margin-right: 0;
   cursor: pointer;
 }
 
 .weapon-slot .select-weapon-btn,
 .destiny-slot .select-weapon-btn {
-  flex-grow: 1;
-  padding: 8px;
-  background-color: #f0f0f0;
-  border: 1px solid #ccc;
-  border-radius: 4px;
+  flex: 1 1 220px;
+  min-width: 0;
+  padding: var(--space-3);
+  background-color: var(--color-surface-alt);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
   cursor: pointer;
   text-align: left;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  transition: background-color var(--transition-fast),
+    border-color var(--transition-fast);
 }
 
 .weapon-slot .select-weapon-btn:hover,
 .destiny-slot .select-weapon-btn:hover {
-  background-color: #e0e0e0;
+  background-color: var(--color-accent-soft);
+  border-color: var(--color-accent);
 }
 
-.weapon-slot input {
-  width: 60px;
+.weapon-slot input[type="number"] {
+  flex: 0 0 auto;
+  width: 72px;
   text-align: center;
+  padding: var(--space-2);
+}
+
+@media (max-width: 600px) {
+  .weapon-slot input[type="number"] {
+    flex: 1 1 120px;
+    width: 100%;
+  }
 }
 
 .destiny-weapon-block {
-  padding: 15px;
+  padding: var(--weapon-selection-section-padding);
+  padding-bottom: calc(
+    var(--weapon-selection-section-padding) + env(safe-area-inset-bottom)
+  );
   background-color: #fff8e1;
-  border: 1px solid #ddd;
-  border-radius: 8px;
-  margin-bottom: 20px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  margin-bottom: var(--space-5);
 }
 
 .destiny-weapon-block h3 {
   margin-top: 0;
-  margin-bottom: 10px;
+  margin-bottom: var(--space-3);
   font-size: 1.2em;
   color: #c59000;
+  position: sticky;
+  top: var(--weapon-selection-sticky-offset);
+  background: inherit;
+  z-index: 1;
 }
 
 .weapon-slot-stats {
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 5px 10px;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--space-2) var(--space-3);
   font-size: 0.85em;
-  border-top: 1px solid #e0e0e0;
-  padding-top: 10px;
+  border-top: 1px solid var(--color-border);
+  padding-top: var(--space-3);
+}
+
+@media (max-width: 600px) {
+  .weapon-slot-stats {
+    grid-template-columns: 1fr;
+  }
 }
 
 .disabled-stats {
@@ -99,10 +153,10 @@
 
 .formula-display {
   font-size: 0.8em;
-  color: #888;
-  margin: 4px 10px 8px;
-  padding-top: 4px;
-  border-top: 1px solid #444;
+  color: var(--color-text-subtle);
+  margin: var(--space-2) var(--space-4) var(--space-4);
+  padding-top: var(--space-2);
+  border-top: 1px dashed var(--color-border);
 }
 
 .formula-item {
@@ -149,6 +203,7 @@
 .theme-dark .weapon-name-display:hover,
 .theme-dark .select-weapon-btn:hover {
   background-color: #444;
+  border-color: #777;
 }
 
 .theme-dark .stat-item .label {
