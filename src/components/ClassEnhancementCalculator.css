@@ -10,7 +10,7 @@
 
 .calculator-main {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 40px;
 }
 
@@ -157,4 +157,37 @@
 
 .theme-light .cost-list li {
   border-bottom-color: #e0e0e0;
+}
+
+@media (max-width: 900px) {
+  .class-enhancement-calculator {
+    padding: 16px;
+  }
+
+  .calculator-main {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 24px;
+  }
+
+  .calculator-controls fieldset,
+  .calculator-results {
+    width: 100%;
+  }
+
+  .cost-list li {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 4px;
+  }
+
+  .material-amount-list {
+    align-items: stretch;
+  }
+}
+
+@media (min-width: 1200px) {
+  .calculator-main {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 48px;
+  }
 }

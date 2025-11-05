@@ -11,7 +11,7 @@
 
 .simulator-main-layout {
   display: grid;
-  grid-template-columns: 1fr 350px;
+  grid-template-columns: minmax(0, 1fr);
   gap: 30px;
 }
 
@@ -43,7 +43,8 @@
   transition: background-color 0.2s;
 }
 
-.weapon-selection-area .select-weapon-btn:hover {
+.weapon-selection-area .select-weapon-btn:active,
+.weapon-selection-area .select-weapon-btn:focus-visible {
   background-color: var(--button-hover-bg);
 }
 
@@ -106,7 +107,8 @@
   margin-left: 20px;
 }
 
-.reset-enhancement-btn:hover {
+.reset-enhancement-btn:active,
+.reset-enhancement-btn:focus-visible {
   background-color: #e74c3c;
 }
 
@@ -169,4 +171,71 @@
 }
 .grade-mortal {
   color: #f75757;
+}
+
+@media (max-width: 768px) {
+  .enhancement-simulator {
+    padding: 16px;
+  }
+
+  .simulator-main-layout {
+    gap: 20px;
+  }
+
+  .simulator-controls-panel,
+  .simulator-log-panel {
+    width: 100%;
+  }
+
+  .weapon-selection-area {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 12px;
+  }
+
+  .current-weapon-display {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+    width: 100%;
+  }
+
+  .current-weapon-display h2 {
+    font-size: 20px;
+  }
+
+  .current-level-text {
+    font-size: 16px;
+  }
+
+  .reset-enhancement-btn {
+    width: 100%;
+    margin-left: 0;
+    margin-top: 12px;
+  }
+
+  .guide-text {
+    padding: 24px 16px;
+    font-size: 16px;
+  }
+
+  .enhancement-history ul {
+    max-height: 45vh;
+  }
+}
+
+@media (min-width: 900px) {
+  .simulator-main-layout {
+    grid-template-columns: minmax(0, 1fr) 340px;
+  }
+}
+
+@media (hover: hover) {
+  .weapon-selection-area .select-weapon-btn:hover {
+    background-color: var(--button-hover-bg);
+  }
+
+  .reset-enhancement-btn:hover {
+    background-color: #e74c3c;
+  }
 }
