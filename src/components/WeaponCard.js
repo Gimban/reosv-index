@@ -1,5 +1,13 @@
-import React, { useState, useMemo, useEffect } from "react";
+import React, {
+  useState,
+  useMemo,
+  useEffect,
+  useRef,
+  useCallback,
+} from "react";
 import "./WeaponCard.css";
+
+const SWIPE_THRESHOLD = 40;
 
 function WeaponCard({
   weaponData,
@@ -7,44 +15,98 @@ function WeaponCard({
   showDescription,
   globalEnhancement,
   imageSrc,
+  isMobileView = false,
 }) {
   const [currentIndex, setCurrentIndex] = useState(0);
+  const touchStartX = useRef(null);
+  const touchDeltaX = useRef(0);
 
   useEffect(() => {
-    if (globalEnhancement !== "개별" && weaponData.length > 0) {
-      const targetEnhancement = Number(globalEnhancement);
+    if (weaponData.length === 0) {
+      setCurrentIndex(0);
+      return;
+    }
 
-      // Find the index of the weapon that best matches the target enhancement
+    if (globalEnhancement !== "개별") {
+      const targetEnhancement = Number(globalEnhancement);
       const bestMatchIndex = weaponData.reduce(
-        (bestIndex, weapon, currentIndex) => {
+        (bestIndex, weapon, index) => {
           const currentDiff = Math.abs(
             Number(weapon["강화 차수"]) - targetEnhancement
           );
           const bestDiff = Math.abs(
             Number(weaponData[bestIndex]["강화 차수"]) - targetEnhancement
           );
-          return currentDiff < bestDiff ? currentIndex : bestIndex;
+          return currentDiff < bestDiff ? index : bestIndex;
         },
         0
       );
-
       setCurrentIndex(bestMatchIndex);
+    } else {
+      // 현재 인덱스가 데이터 범위를 벗어나지 않도록 보정
+      setCurrentIndex((prev) =>
+        prev >= weaponData.length ? weaponData.length - 1 : prev
+      );
     }
   }, [globalEnhancement, weaponData]);
 
-  const handlePrev = () => {
-    setCurrentIndex((prev) => (prev === 0 ? weaponData.length - 1 : prev - 1));
+  useEffect(() => {
+    setCurrentIndex(0);
+  }, [weaponData]);
+
+  const handlePrev = useCallback(() => {
+    if (globalEnhancement !== "개별" || weaponData.length <= 1) return;
+    setCurrentIndex((prev) =>
+      prev === 0 ? weaponData.length - 1 : prev - 1
+    );
+  }, [globalEnhancement, weaponData.length]);
+
+  const handleNext = useCallback(() => {
+    if (globalEnhancement !== "개별" || weaponData.length <= 1) return;
+    setCurrentIndex((prev) =>
+      prev === weaponData.length - 1 ? 0 : prev + 1
+    );
+  }, [globalEnhancement, weaponData.length]);
+
+  const handleTouchStart = (event) => {
+    if (globalEnhancement !== "개별") return;
+    touchStartX.current = event.touches[0].clientX;
+    touchDeltaX.current = 0;
   };
 
-  const handleNext = () => {
-    setCurrentIndex((prev) => (prev === weaponData.length - 1 ? 0 : prev + 1));
+  const handleTouchMove = (event) => {
+    if (globalEnhancement !== "개별" || touchStartX.current === null) return;
+    touchDeltaX.current = event.touches[0].clientX - touchStartX.current;
+  };
+
+  const handleTouchEnd = () => {
+    if (globalEnhancement !== "개별" || touchStartX.current === null) return;
+    const delta = touchDeltaX.current;
+    touchStartX.current = null;
+    touchDeltaX.current = 0;
+
+    if (Math.abs(delta) < SWIPE_THRESHOLD) return;
+    if (delta > 0) {
+      handlePrev();
+    } else {
+      handleNext();
+    }
+  };
+
+  const handleKeyDown = (event) => {
+    if (globalEnhancement !== "개별") return;
+    if (event.key === "ArrowLeft") {
+      event.preventDefault();
+      handlePrev();
+    } else if (event.key === "ArrowRight") {
+      event.preventDefault();
+      handleNext();
+    }
   };
 
   const currentStats = weaponData[currentIndex];
-  // 1강 이상일 경우, 이전 강화 차수 데이터를 가져옵니다.
   const previousStats = currentIndex > 0 ? weaponData[currentIndex - 1] : null;
 
-  // Memoize derived stats to avoid recalculating on every render
   const { dps, dpm, manaEfficiency, mps } = useMemo(() => {
     if (!currentStats) {
       return { dps: null, dpm: null, manaEfficiency: null, mps: null };
@@ -61,12 +123,12 @@ function WeaponCard({
 
     const totalDamage = numericDamage * numericHits;
 
-    let dps = null;
-    let dpm = null;
+    let dpsValue = null;
+    let dpmValue = null;
     if (numericDamage > 0 && numericCooldown > 0) {
       const dpsRaw = totalDamage / numericCooldown;
-      dps = dpsRaw.toFixed(1);
-      dpm = (dpsRaw * 60).toLocaleString(undefined, {
+      dpsValue = dpsRaw.toFixed(1);
+      dpmValue = (dpsRaw * 60).toLocaleString(undefined, {
         minimumFractionDigits: 1,
         maximumFractionDigits: 1,
       });
@@ -81,8 +143,8 @@ function WeaponCard({
         : null;
 
     return {
-      dps: dps,
-      dpm: dpm,
+      dps: dpsValue,
+      dpm: dpmValue,
       manaEfficiency: manaEfficiencyValue,
       mps: mpsValue,
     };
@@ -109,7 +171,7 @@ function WeaponCard({
     const currentValue = Number(String(current).replace(/,/g, ""));
     const previousValue = Number(String(previous).replace(/,/g, ""));
 
-    if (isNaN(currentValue) || isNaN(previousValue)) {
+    if (Number.isNaN(currentValue) || Number.isNaN(previousValue)) {
       return "";
     }
 
@@ -126,39 +188,26 @@ function WeaponCard({
   };
 
   const formatDamage = () => {
-    if (!damage || damage === "0") return null;
+    if (!damage) return "";
 
     const numericDamage = Number(String(damage).replace(/,/g, ""));
-    const numericHits = Number(hits);
-
-    const damageDiff = getStatDiffText(
-      numericDamage,
-      previousStats?.["피해량"]
-    );
+    const numericHits = Number(hits || 1);
     const formattedDamage = numericDamage.toLocaleString();
+    const damageDiff = getStatDiffText(damage, previousStats?.["피해량"]);
 
     if (numericHits > 1) {
-      const hitsDiff = getStatDiffText(numericHits, previousStats?.["타수"]);
-
-      // 총 피해량 계산
       const totalDamage = numericDamage * numericHits;
       const formattedTotalDamage = totalDamage.toLocaleString();
-
-      // 이전 총 피해량 계산
-      let previousTotalDamage = null;
-      if (previousStats) {
-        const prevDamage = Number(
-          String(previousStats["피해량"] || "0").replace(/,/g, "")
-        );
-        const prevHits = Number(previousStats["타수"] || "0");
-        if (!isNaN(prevDamage) && !isNaN(prevHits)) {
-          previousTotalDamage = prevDamage * prevHits;
-        }
-      }
+      const hitsDiff = getStatDiffText(hits, previousStats?.["타수"]);
+      const previousTotalDamage =
+        previousStats && previousStats["피해량"] && previousStats["타수"]
+          ? Number(String(previousStats["피해량"]).replace(/,/g, "")) *
+            Number(previousStats["타수"] || 1)
+          : null;
 
       const totalDamageDiff = getStatDiffText(totalDamage, previousTotalDamage);
 
-      const baseDamageString = `${formattedDamage}${damageDiff} x ${numericHits}${hitsDiff}`;
+      const baseDamageString = `${formattedDamage}${damageDiff} × ${numericHits}${hitsDiff}`;
       const totalDamageString = ` (총 ${formattedTotalDamage}${totalDamageDiff})`;
 
       return `${baseDamageString}${totalDamageString}`;
@@ -168,6 +217,8 @@ function WeaponCard({
 
   const enhancementDisplay = Number(enhancement) > 0 ? `+${enhancement}` : "+0";
   const formattedDamageValue = formatDamage();
+  const canManualNavigate =
+    globalEnhancement === "개별" && weaponData.length > 1;
 
   const getGradeClassName = (g) => {
     const gradeMap = {
@@ -185,27 +236,42 @@ function WeaponCard({
   };
 
   return (
-    <div className="weapon-card">
-      <div className={`card-top ${getGradeClassName(grade)}`}>
-        <div className="image-placeholder">
-           {imageSrc ? (
-            <img src={imageSrc} alt={name} />
-          ) : (
-            <span>이미지</span>
-          )}
+    <article
+      className={`weapon-card ${isMobileView ? "mobile" : ""}`}
+      onTouchStart={handleTouchStart}
+      onTouchMove={handleTouchMove}
+      onTouchEnd={handleTouchEnd}
+    >
+      <header className={`card-header ${getGradeClassName(grade)}`}>
+        <div className="card-header-main">
+          <div className="image-placeholder">
+            {imageSrc ? (
+              <img src={imageSrc} alt={name} />
+            ) : (
+              <span>이미지</span>
+            )}
+          </div>
+          <div className="card-title">
+            <span className="weapon-name">{name}</span>
+            <span className="weapon-grade">{grade}</span>
+          </div>
         </div>
-        <div className="weapon-name-section">
-          <span className="weapon-name">{name}</span>
+        <div className="enhancement-summary">
           <span className="enhancement-level">{enhancementDisplay}</span>
-        </div>
-      </div>
-      <div className="card-bottom">
-        <ul className="stats-list">
-          {showDescription && description && (
-            <li>
-              <span className="stat-value description-text">{description}</span>
-            </li>
+          {weaponData.length > 1 && (
+            <span className="enhancement-count">
+              {currentIndex + 1} / {weaponData.length}
+            </span>
           )}
+        </div>
+      </header>
+
+      <section className="card-body">
+        {showDescription && description && (
+          <p className="weapon-description">{description}</p>
+        )}
+
+        <ul className="stats-list">
           {formattedDamageValue && (
             <li>
               <span className="stat-label">피해량</span>
@@ -231,52 +297,83 @@ function WeaponCard({
             </li>
           )}
           {note && (
-            <li>
+            <li className="note-item">
               <span className="stat-label">비고</span>
               <span className="stat-value">{note}</span>
             </li>
           )}
         </ul>
-        {(dps || dpm || manaEfficiency || mps) && (
-          <div className="derived-stats-container">
-            {dps && (
-              <div className="derived-stat-item">
-                <span>DPS</span>
-                <strong>{dps}</strong>
-              </div>
-            )}
-            {dpm && (
-              <div className="derived-stat-item">
-                <span>DPM</span>
-                <strong>{dpm}</strong>
-              </div>
-            )}
-            {manaEfficiency && (
-              <div className="derived-stat-item">
-                <span>ME</span>
-                <strong>{manaEfficiency}</strong>
-              </div>
-            )}
-            {mps && (
-              <div className="derived-stat-item">
-                <span>MPS</span>
-                <strong>{mps}</strong>
-              </div>
-            )}
-          </div>
-        )}
-      </div>
-      {globalEnhancement === "개별" && weaponData.length > 1 && (
-        <div className="card-navigation">
-          <button onClick={handlePrev} className="nav-arrow prev-arrow">
-            ‹
-          </button>
-          <button onClick={handleNext} className="nav-arrow next-arrow">
-            ›
-          </button>
-        </div>
+      </section>
+
+      {(dps || dpm || manaEfficiency || mps) && (
+        <section className="derived-stats-container">
+          {dps && (
+            <div className="derived-stat-item">
+              <span>DPS</span>
+              <strong>{dps}</strong>
+            </div>
+          )}
+          {dpm && (
+            <div className="derived-stat-item">
+              <span>DPM</span>
+              <strong>{dpm}</strong>
+            </div>
+          )}
+          {manaEfficiency && (
+            <div className="derived-stat-item">
+              <span>ME</span>
+              <strong>{manaEfficiency}</strong>
+            </div>
+          )}
+          {mps && (
+            <div className="derived-stat-item">
+              <span>MPS</span>
+              <strong>{mps}</strong>
+            </div>
+          )}
+        </section>
       )}
-    </div>
+
+      {weaponData.length > 1 && (
+        <footer
+          className={`card-footer ${
+            canManualNavigate ? "interactive" : "read-only"
+          }`}
+          onKeyDown={handleKeyDown}
+          tabIndex={canManualNavigate ? 0 : undefined}
+        >
+          {canManualNavigate ? (
+            <>
+              <button
+                type="button"
+                className="nav-button"
+                onClick={handlePrev}
+                aria-label="이전 강화 단계"
+              >
+                이전
+              </button>
+              <div className="enhancement-indicator">
+                <span>{enhancementDisplay}</span>
+                <small>{currentIndex + 1} / {weaponData.length}</small>
+              </div>
+              <button
+                type="button"
+                className="nav-button"
+                onClick={handleNext}
+                aria-label="다음 강화 단계"
+              >
+                다음
+              </button>
+            </>
+          ) : (
+            <div className="enhancement-indicator">
+              <span>{enhancementDisplay}</span>
+              <small>일괄 +{globalEnhancement}</small>
+            </div>
+          )}
+        </footer>
+      )}
+    </article>
   );
 }
 

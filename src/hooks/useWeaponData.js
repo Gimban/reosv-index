@@ -1,4 +1,4 @@
-import { useMemo } from "react";
+import { useMemo, useRef, useEffect, useCallback } from "react";
 
 // 정렬에 필요한 계산을 위한 헬퍼 함수
 const getWeaponMetrics = (weapon) => {
@@ -62,7 +62,23 @@ const findWeaponForSort = (weaponGroup, targetEnhancement) => {
   return bestMatch;
 };
 
-export function useWeaponData(data, sortOption, sortEnhancement) {
+const compareGroups = (groupA, groupB, sortOption, sortEnhancement) => {
+  const weaponA = findWeaponForSort(groupA, sortEnhancement);
+  const weaponB = findWeaponForSort(groupB, sortEnhancement);
+  const metricsA = getWeaponMetrics(weaponA);
+  const metricsB = getWeaponMetrics(weaponB);
+
+  if (sortOption === "총 피해량") return metricsB.totalDamage - metricsA.totalDamage;
+  if (sortOption === "DPS") return metricsB.dps - metricsA.dps;
+  if (sortOption === "마나 효율 (ME)")
+    return metricsB.manaEfficiency - metricsA.manaEfficiency;
+  return 0;
+};
+
+export function useWeaponData(
+  data,
+  { sortOption = "기본", sortEnhancement = 0, includeUngrouped = false } = {}
+) {
   const groupedWeapons = useMemo(() => {
     if (!data || data.length === 0) return {};
 
@@ -105,50 +121,78 @@ export function useWeaponData(data, sortOption, sortEnhancement) {
     });
   }, [groupedWeapons]);
 
-  const sortedGroupedWeapons = useMemo(() => {
-    if (sortOption === "기본") return groupedWeapons;
+  const sortedCacheRef = useRef(new Map());
+  const ungroupedCacheRef = useRef(null);
 
-    const sorted = {};
-    for (const grade in groupedWeapons) {
-      sorted[grade] = [...groupedWeapons[grade]].sort((groupA, groupB) => {
-        const weaponA = findWeaponForSort(groupA, sortEnhancement);
-        const weaponB = findWeaponForSort(groupB, sortEnhancement);
-        const metricsA = getWeaponMetrics(weaponA);
-        const metricsB = getWeaponMetrics(weaponB);
-
-        if (sortOption === "총 피해량")
-          return metricsB.totalDamage - metricsA.totalDamage;
-        if (sortOption === "DPS") return metricsB.dps - metricsA.dps;
-        if (sortOption === "마나 효율 (ME)")
-          return metricsB.manaEfficiency - metricsA.manaEfficiency;
-        return 0;
-      });
-    }
-    return sorted;
+  useEffect(() => {
+    sortedCacheRef.current = new Map();
   }, [groupedWeapons, sortOption, sortEnhancement]);
 
-  const allWeaponsSorted = useMemo(() => {
-    const allWeaponGroups = Object.values(groupedWeapons).flat();
+  useEffect(() => {
+    ungroupedCacheRef.current = null;
+  }, [groupedWeapons, sortOption, sortEnhancement, sortedGrades, includeUngrouped]);
+
+  const getSortedWeaponsForGrades = useCallback(
+    (grades = []) => {
+      if (!grades.length) return {};
+
+      const results = {};
+      grades.forEach((grade) => {
+        const gradeGroups = groupedWeapons[grade];
+        if (!gradeGroups) return;
+
+        if (sortOption === "기본") {
+          sortedCacheRef.current.set(grade, gradeGroups);
+          results[grade] = gradeGroups;
+          return;
+        }
+
+        if (sortedCacheRef.current.has(grade)) {
+          results[grade] = sortedCacheRef.current.get(grade);
+          return;
+        }
+
+        const sortedGroups = [...gradeGroups].sort((groupA, groupB) =>
+          compareGroups(groupA, groupB, sortOption, sortEnhancement)
+        );
+        sortedCacheRef.current.set(grade, sortedGroups);
+        results[grade] = sortedGroups;
+      });
+
+      return results;
+    },
+    [groupedWeapons, sortOption, sortEnhancement]
+  );
+
+  const getUngroupedWeapons = useCallback(() => {
+    if (!includeUngrouped) return [];
+    if (ungroupedCacheRef.current) return ungroupedCacheRef.current;
 
     if (sortOption === "기본") {
-      // 기본 정렬일 경우, 등급 순으로 정렬된 그룹을 그대로 합칩니다.
-      return sortedGrades.flatMap(grade => sortedGroupedWeapons[grade] || []);
+      ungroupedCacheRef.current = sortedGrades.flatMap(
+        (grade) => groupedWeapons[grade] || []
+      );
+      return ungroupedCacheRef.current;
     }
 
-    // '총 피해량' 또는 'DPS' 정렬
-    return allWeaponGroups.sort((groupA, groupB) => {
-      const weaponA = findWeaponForSort(groupA, sortEnhancement);
-      const weaponB = findWeaponForSort(groupB, sortEnhancement);
-      const metricsA = getWeaponMetrics(weaponA);
-      const metricsB = getWeaponMetrics(weaponB);
+    const allWeaponGroups = Object.values(groupedWeapons).flat();
+    ungroupedCacheRef.current = [...allWeaponGroups].sort((groupA, groupB) =>
+      compareGroups(groupA, groupB, sortOption, sortEnhancement)
+    );
+    return ungroupedCacheRef.current;
+  }, [
+    includeUngrouped,
+    groupedWeapons,
+    sortedGrades,
+    sortOption,
+    sortEnhancement,
+  ]);
 
-      if (sortOption === "총 피해량") return metricsB.totalDamage - metricsA.totalDamage;
-      if (sortOption === "DPS") return metricsB.dps - metricsA.dps;
-      if (sortOption === "마나 효율 (ME)")
-        return metricsB.manaEfficiency - metricsA.manaEfficiency;
-      return 0;
-    });
-  }, [groupedWeapons, sortedGrades, sortedGroupedWeapons, sortOption, sortEnhancement]);
-
-  return { groupedWeapons, sortedGrades, sortedGroupedWeapons, allWeaponsSorted };
+  return {
+    groupedWeapons,
+    sortedGrades,
+    getSortedWeaponsForGrades,
+    getUngroupedWeapons,
+  };
 }
+
