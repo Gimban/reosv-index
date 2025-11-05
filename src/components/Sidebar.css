@@ -1,219 +1,242 @@
 .sidebar {
-  width: 250px;
-  background-color: #f8f9fa;
-  padding: 20px 0 20px 20px; /* 오른쪽 패딩 제거 */
-  box-sizing: border-box;
-  border-right: 1px solid #dee2e6;
-  position: relative;
+  position: sticky;
+  top: calc(env(safe-area-inset-top));
+  z-index: 35;
   display: flex;
   flex-direction: column;
-  transition: background-color 0.3s, border-color 0.3s;
-  display: flex;
-  flex-direction: column;
-  overflow: hidden;
-  position: relative;
-  height: 100%;
-}
-
-.sidebar.collapsed {
-  width: 60px;
-}
-
-.sidebar-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 20px;
-  min-height: 30px; /* 헤더 높이 고정 */
-  padding-right: 20px; /* 오른쪽 패딩 추가 */
-}
-
-.sidebar.collapsed .sidebar-header {
-  justify-content: center;
-}
-
-.sidebar-toggle-btn {
-  background: none;
-  border: none;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 40px;
-  height: 40px;
-  z-index: 10;
-  position: absolute;
-  top: 15px;
-  right: 15px;
-  padding: 5px;
-}
-
-.sidebar-toggle-btn img {
-  width: 24px;
-  height: 24px;
-  transition: transform 0.3s ease-in-out;
-}
-
-.sidebar.collapsed .sidebar-toggle-btn {
-  right: 10px;
-}
-
-.sidebar > ul,
-.sidebar > .theme-switcher {
-  transition: opacity 0.3s ease-in-out, visibility 0.3s ease-in-out;
+  gap: var(--space-3);
+  width: 100%;
+  max-height: calc(100dvh - env(safe-area-inset-top));
+  padding: var(--space-3) var(--space-4);
+  background: var(--color-surface);
+  border-bottom: 1px solid var(--color-border);
+  box-shadow: 0 1px 0 var(--color-divider);
+  transition: width var(--transition-base), transform var(--transition-base),
+    box-shadow var(--transition-base);
 }
 
 .sidebar.collapsed > ul,
 .sidebar.collapsed > .theme-switcher {
-  opacity: 0;
-  visibility: hidden;
-  pointer-events: none;
+  display: none;
 }
 
-.sidebar > ul {
-  flex-grow: 1;
-  overflow-y: auto;
-  overflow-x: hidden;
+.sidebar-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-2);
+  min-height: 2.75rem;
+}
+
+.sidebar-header h2 {
   margin: 0;
-  padding-right: 17px; /* 스크롤바 공간 확보 (일반적인 스크롤바 너비) */
-  padding-left: 0;
-  list-style: none;
+  font-size: clamp(1rem, 0.65vw + 0.95rem, 1.25rem);
+  font-weight: 700;
+  letter-spacing: -0.01em;
 }
 
-/* 웹킷 기반 브라우저 스크롤바 숨기기 */
-.sidebar > ul::-webkit-scrollbar {
-  width: 0;
-  background: transparent; /* 투명하게 만듦 */
+.sidebar-toggle-btn {
+  background: var(--color-surface-alt);
+  border: 1px solid var(--color-border);
+  border-radius: 999px;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background-color var(--transition-fast),
+    border-color var(--transition-fast), transform var(--transition-fast);
 }
+
+.sidebar-toggle-btn:active {
+  transform: scale(0.95);
+}
+
+.sidebar-toggle-btn img {
+  width: 22px;
+  height: 22px;
+}
+
 .sidebar > ul {
-  -ms-overflow-style: none; /* IE and Edge */
-  scrollbar-width: none; /* Firefox */
-}
-
-.sidebar h2 {
-  margin-top: 0;
-  color: #343a40;
-  text-align: center;
-  padding-bottom: 10px;
-  border-bottom: 1px solid #ced4da;
-  transition: color 0.3s, border-color 0.3s;
-}
-
-.sidebar ul {
-  list-style-type: none;
   list-style: none;
+  margin: 0;
   padding: 0;
-  margin: 0;
-  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  overflow-y: auto;
+  scrollbar-width: none;
 }
 
-.sidebar a {
-  text-decoration: none;
-  color: #333;
-  font-weight: bold;
+.sidebar > ul::-webkit-scrollbar {
+  display: none;
 }
 
-.sidebar a:hover {
-  color: #007bff;
-}
-
-.sidebar ul ul {
-  padding-left: 15px;
-}
-
-.sidebar ul ul a {
-  font-weight: normal; /* 하위 목차는 굵기 제거 */
+.sidebar li {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
 }
 
 .main-category-title {
-  font-weight: bold;
-  color: #495057;
-  display: block;
-  margin-top: 15px;
-  margin-bottom: 5px;
-  font-size: 1.1em;
-  transition: color 0.3s;
   display: flex;
-  justify-content: space-between;
   align-items: center;
+  justify-content: space-between;
+  gap: var(--space-2);
+  font-weight: 700;
+  font-size: 0.95rem;
+  color: var(--color-text);
+  padding: 0.45rem 0;
+  cursor: pointer;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.main-category-title:focus-visible {
+  outline: none;
+  box-shadow: var(--focus-ring);
+}
+
+.collapse-icon {
+  font-size: 0.8rem;
+  color: var(--color-text-subtle);
+}
+
+.sidebar ul ul {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  padding-left: 0;
 }
 
 .category-button {
-  background: none;
-  border: none;
   text-align: left;
-  padding: 8px 10px;
-  width: 100%;
-  color: #212529;
-  border-radius: 4px;
-  font-size: 1em;
-  transition: background-color 0.3s, color 0.3s;
+  padding: 0.65rem 0.85rem;
+  border-radius: var(--radius-md);
+  background: transparent;
+  border: 1px solid transparent;
+  color: var(--color-text);
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color var(--transition-fast),
+    color var(--transition-fast), border-color var(--transition-fast);
 }
 
-.category-button:hover {
-  background-color: #e9ecef;
+.category-button:hover,
+.category-button:focus-visible {
+  background: var(--color-surface-alt);
+  border-color: var(--color-border);
+  outline: none;
 }
 
 .category-button.active {
-  background-color: #007bff;
-  color: white;
-  font-weight: bold;
+  background: var(--color-accent);
+  color: #ffffff;
+  border-color: transparent;
+  box-shadow: 0 8px 20px rgba(29, 111, 227, 0.25);
 }
 
 .theme-switcher {
   margin-top: auto;
-  padding-top: 20px;
-  border-top: 1px solid #ced4da;
-  padding-right: 20px; /* 오른쪽 패딩 추가 */
-  transition: border-color 0.3s;
+  padding-top: var(--space-3);
+  border-top: 1px solid var(--color-border);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
 }
 
 .theme-switcher-title {
-  font-weight: bold;
-  display: block;
-  margin-bottom: 10px;
+  font-weight: 700;
+  font-size: 0.95rem;
 }
 
 .theme-options {
   display: flex;
-  justify-content: space-around;
+  align-items: center;
+  gap: var(--space-3);
 }
 
 .theme-options label {
-  cursor: pointer;
-  display: flex;
+  display: inline-flex;
   align-items: center;
-  gap: 5px;
+  gap: var(--space-1);
+  cursor: pointer;
+  font-weight: 500;
 }
 
-.collapse-icon {
-  font-size: 0.8em;
-  transition: transform 0.2s ease-in-out;
-}
-
-/* --- Dark Theme --- */
 .theme-dark .sidebar {
-  background-color: #1e1e1e;
-  color: #e0e0e0;
-  border-right-color: #333;
+  box-shadow: 0 1px 0 var(--color-divider);
 }
 
-.theme-dark .sidebar h2,
-.theme-dark .sidebar .main-category-title,
-.theme-dark .theme-switcher-title {
-  color: #f5f5f5;
-  border-color: #444;
+.theme-dark .sidebar-toggle-btn {
+  background: var(--color-surface);
 }
 
-.theme-dark .sidebar .category-button {
-  color: #b0b0b0;
+.theme-dark .main-category-title {
+  border-color: var(--color-divider);
 }
 
-.theme-dark .sidebar .category-button:hover {
-  background-color: #333;
-  color: #fff;
+.theme-dark .category-button:hover,
+.theme-dark .category-button:focus-visible {
+  background: var(--color-surface-alt);
 }
 
-.theme-dark .sidebar-toggle-btn img {
-  filter: invert(1);
+@media (min-width: 375px) {
+  .sidebar {
+    padding-inline: var(--space-5);
+  }
+}
+
+@media (min-width: 414px) {
+  .sidebar {
+    border-radius: 0 0 var(--radius-lg) var(--radius-lg);
+  }
+}
+
+@media (min-width: 768px) {
+  .sidebar {
+    position: sticky;
+    top: calc(env(safe-area-inset-top) + var(--space-3));
+    width: clamp(16rem, 22vw, 22rem);
+    max-height: calc(100dvh - env(safe-area-inset-top) - var(--space-3));
+    border-bottom: none;
+    border-right: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-soft);
+  }
+
+  .sidebar.collapsed {
+    width: clamp(3.75rem, 6vw, 4.5rem);
+    align-items: center;
+  }
+
+  .sidebar.collapsed .sidebar-header h2,
+  .sidebar.collapsed > ul,
+  .sidebar.collapsed > .theme-switcher {
+    display: none;
+  }
+
+  .sidebar.collapsed .sidebar-toggle-btn {
+    position: static;
+  }
+
+  .sidebar > ul {
+    overflow-y: auto;
+    padding-right: 0.4rem;
+  }
+
+  .sidebar-header {
+    padding-bottom: var(--space-2);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sidebar {
+    transition: none;
+  }
+
+  .sidebar-toggle-btn {
+    transition: none;
+  }
 }

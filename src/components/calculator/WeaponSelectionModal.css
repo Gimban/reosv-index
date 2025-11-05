@@ -1,140 +1,231 @@
 .modal-overlay {
   position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background-color: rgba(0, 0, 0, 0.6);
+  inset: 0;
   display: flex;
+  align-items: flex-end;
   justify-content: center;
-  align-items: center;
-  z-index: 1000;
+  padding: env(safe-area-inset-top) env(safe-area-inset-right)
+    calc(env(safe-area-inset-bottom) + var(--space-4))
+    env(safe-area-inset-left);
+  background: rgba(12, 16, 32, 0.55);
+  backdrop-filter: blur(4px);
+  z-index: 90;
+  animation: modal-overlay-fade 180ms ease-out forwards;
 }
 
 .modal-content {
-  background: white;
-  padding: 20px;
-  border-radius: 8px;
-  width: 90%;
-  max-width: 800px;
-  max-height: 90vh;
+  width: min(100%, 30rem);
+  max-height: min(88vh, 680px);
   display: flex;
   flex-direction: column;
+  gap: var(--space-3);
+  padding: var(--space-4);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-overlay);
+  transform: translateY(0);
+  animation: modal-slide-up 220ms var(--transition-base) forwards;
 }
 
 .modal-header {
   display: flex;
-  justify-content: space-between;
   align-items: center;
-  border-bottom: 1px solid #eee;
-  padding-bottom: 10px;
-  margin-bottom: 15px;
+  justify-content: space-between;
+  gap: var(--space-3);
+  padding-bottom: var(--space-2);
+  border-bottom: 1px solid var(--color-border);
+}
+
+.modal-header h2 {
+  margin: 0;
+  font-size: clamp(1.1rem, 0.8vw + 1rem, 1.4rem);
+  font-weight: 700;
 }
 
 .modal-header-buttons {
   display: flex;
   align-items: center;
-  gap: 15px;
-}
-
-.deselect-button {
-  padding: 6px 12px;
-  background-color: #f8f9fa;
-  border: 1px solid #dee2e6;
-  border-radius: 4px;
-  cursor: pointer;
-  font-size: 0.9em;
-  color: #495057;
-  line-height: 1.5;
-}
-
-.deselect-button:hover {
-  background-color: #e9ecef;
-}
-
-.modal-header h2 {
-  margin: 0;
+  gap: var(--space-2);
 }
 
 .close-button {
-  background: none;
   border: none;
+  background: transparent;
   font-size: 2rem;
-  cursor: pointer;
   line-height: 1;
+  color: var(--color-text);
+  cursor: pointer;
+  padding: 0.15rem;
+}
+
+.deselect-button {
+  padding: 0.5rem 0.85rem;
+  border-radius: 999px;
+  border: 1px solid var(--color-border);
+  background: var(--color-surface-alt);
+  color: var(--color-text);
+  font-weight: 600;
+  cursor: pointer;
 }
 
 .modal-body {
+  flex: 1 1 auto;
+  min-height: 0;
   overflow-y: auto;
+  padding-right: 0.35rem;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
 }
 
 .filter-controls {
   display: flex;
   flex-wrap: wrap;
-  gap: 15px;
-  padding-bottom: 15px;
-  border-bottom: 1px solid #eee;
-  margin-bottom: 15px;
+  gap: var(--space-2);
+  padding-bottom: var(--space-2);
+  border-bottom: 1px solid var(--color-border);
 }
 
 .filter-controls label {
-  display: flex;
+  display: inline-flex;
   align-items: center;
-  gap: 5px;
+  gap: var(--space-1);
+  font-size: 0.9rem;
   cursor: pointer;
+  color: var(--color-text);
 }
 
 .weapon-list {
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: var(--space-4);
 }
 
 .grade-group h3 {
-  margin-top: 0;
-  margin-bottom: 10px;
-  padding-bottom: 5px;
-  border-bottom: 2px solid #ddd;
+  margin: 0;
+  font-size: clamp(1rem, 0.6vw + 0.9rem, 1.2rem);
+  font-weight: 700;
+  padding-bottom: var(--space-1);
+  border-bottom: 2px solid var(--color-border);
 }
 
 .weapon-items {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-  gap: 10px;
+  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  gap: var(--space-2);
 }
 
 .weapon-item-button {
-  padding: 10px;
-  background-color: #f7f7f7;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  cursor: pointer;
-  text-align: center;
-  font-size: 0.9em;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
   display: flex;
   align-items: center;
-  gap: 8px;
-  padding: 5px 8px;
-  text-align: left;
+  gap: var(--space-2);
+  padding: var(--space-3);
+  border-radius: var(--radius-md);
+  border: 1px solid var(--color-border);
+  background: var(--color-surface-alt);
+  color: var(--color-text);
+  cursor: pointer;
+  transition: border-color var(--transition-fast),
+    background-color var(--transition-fast), transform var(--transition-fast);
+  min-height: 64px;
+}
+
+.weapon-item-button:hover {
+  border-color: var(--color-accent);
+  background: rgba(29, 111, 227, 0.12);
+}
+
+.weapon-item-button:focus-visible {
+  outline: none;
+  box-shadow: var(--focus-ring);
 }
 
 .weapon-item-button img {
-  width: 24px;
-  height: 24px;
+  width: 28px;
+  height: 28px;
   object-fit: contain;
   flex-shrink: 0;
 }
 
 .weapon-item-button span {
+  font-size: 0.9rem;
+  font-weight: 600;
   overflow: hidden;
-  text-overflow: ellipsis;
   white-space: nowrap;
+  text-overflow: ellipsis;
 }
 
-.weapon-item-button:hover {
-  background-color: #e7e7e7;
-  border-color: #999;
+.theme-dark .modal-content {
+  background: var(--color-surface-alt);
+}
+
+.theme-dark .deselect-button {
+  background: var(--color-surface);
+}
+
+.theme-dark .weapon-item-button:hover {
+  background: rgba(63, 126, 247, 0.18);
+}
+
+@keyframes modal-overlay-fade {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes modal-slide-up {
+  from {
+    transform: translateY(12%);
+  }
+  to {
+    transform: translateY(0);
+  }
+}
+
+@media (max-width: 320px) {
+  .modal-content {
+    padding: var(--space-3);
+    width: 100%;
+  }
+
+  .weapon-items {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (min-width: 375px) {
+  .modal-content {
+    width: min(100%, 32rem);
+  }
+}
+
+@media (min-width: 414px) {
+  .weapon-items {
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  }
+}
+
+@media (min-width: 768px) {
+  .modal-overlay {
+    align-items: center;
+    padding: var(--space-5);
+  }
+
+  .modal-content {
+    width: min(90vw, 56rem);
+    max-height: min(92vh, 760px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .modal-overlay,
+  .modal-content,
+  .weapon-item-button {
+    animation: none;
+    transition: none;
+  }
 }
