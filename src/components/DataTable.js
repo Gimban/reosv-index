@@ -1,15 +1,14 @@
-import React, { useMemo, useState } from 'react';
+Ôªøimport React, { useMemo, useState } from 'react';
 import { useResponsive } from '../context/ResponsiveContext';
 import './DataTable.css';
 
 function DataTable({ data }) {
-  // ?∞Ïù¥?∞Í? Î°úÎî©?òÏ? ?äÏïò????  if (!data || data.length === 0) {
-    return <p>?∞Ïù¥?∞Î? Î∂àÎü¨?§Îäî Ï§ëÏûÖ?àÎã§...</p>;
+  if (!Array.isArray(data) || data.length === 0) {
+    return <p>Loading data...</p>;
   }
 
   const { isMobile } = useResponsive();
   const [mobileView, setMobileView] = useState('cards');
-  // ?∞Ïù¥?∞Ïùò Ï≤?Î≤àÏß∏ ?âÏùÑ ?¨Ïö©?òÏó¨ ???¥Î¶Ñ(?§Îçî)??Ï∂îÏ∂ú
   const columns = useMemo(() => Object.keys(data[0] || {}), [data]);
 
   return (
@@ -22,7 +21,7 @@ function DataTable({ data }) {
             onClick={() => setMobileView('cards')}
             aria-pressed={mobileView === 'cards'}
           >
-            Ïπ¥Îìú Î≥¥Í∏∞
+            Card view
           </button>
           <button
             type="button"
@@ -30,26 +29,26 @@ function DataTable({ data }) {
             onClick={() => setMobileView('table')}
             aria-pressed={mobileView === 'table'}
           >
-            ??Î≥¥Í∏∞
+            Table view
           </button>
         </div>
       )}
 
       {(!isMobile || mobileView === 'table') && (
         <div className="table-scroll" role="region" aria-live="polite">
-          <table aria-label="µ•¿Ã≈Õ «•">
+          <table aria-label="Data table">
             <thead>
               <tr>
-                {columns.map((column, index) => (
-                  <th key={index}>{column}</th>
+                {columns.map((column) => (
+                  <th key={column}>{column}</th>
                 ))}
               </tr>
             </thead>
             <tbody>
               {data.map((row, rowIndex) => (
                 <tr key={rowIndex}>
-                  {columns.map((column, colIndex) => (
-                    <td key={colIndex}>{row[column]}</td>
+                  {columns.map((column) => (
+                    <td key={`${rowIndex}-${column}`}>{row[column]}</td>
                   ))}
                 </tr>
               ))}
@@ -62,16 +61,12 @@ function DataTable({ data }) {
         <div className="table-card-list">
           {data.map((row, rowIndex) => (
             <article key={rowIndex} className="table-card">
-              <header className="table-card__header">??{rowIndex + 1}</header>
+              <header className="table-card__header">Row {rowIndex + 1}</header>
               <dl className="table-card__body">
                 {columns.map((column) => (
                   <div key={column} className="table-card__item">
                     <dt>{column}</dt>
-                    <dd>
-                      {row[column] !== undefined && row[column] !== null
-                        ? row[column]
-                        : '-'}
-                    </dd>
+                    <dd>{row[column] !== undefined && row[column] !== null ? row[column] : '-'}</dd>
                   </div>
                 ))}
               </dl>
@@ -84,4 +79,3 @@ function DataTable({ data }) {
 }
 
 export default DataTable;
-
