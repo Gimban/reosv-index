@@ -1,25 +1,27 @@
 .dps-chart-container {
-  margin-top: 20px;
-  padding-top: 20px;
+  margin-top: var(--calc-space-md, clamp(16px, 3.2vw, 24px));
+  padding-top: var(--calc-space-md, clamp(16px, 3.2vw, 24px));
   border-top: 1px solid #e0e0e0;
 }
 
 .dps-chart-container h4 {
   text-align: center;
-  margin-bottom: 15px;
+  margin: 0 0 var(--calc-space-sm, clamp(12px, 2.6vw, 18px));
+  font-size: clamp(1rem, 0.95rem + 0.4vw, 1.2rem);
 }
 
 .chart-and-legend {
   display: flex;
-  align-items: center;
+  flex-direction: column;
+  align-items: stretch;
   justify-content: center;
-  gap: 30px;
-  flex-wrap: wrap;
+  gap: var(--calc-space-md, clamp(16px, 3.2vw, 24px));
 }
 
 .pie-chart {
-  width: 150px;
-  height: 150px;
+  width: clamp(160px, 40vw, 220px);
+  height: clamp(160px, 40vw, 220px);
+  margin: 0 auto;
   border-radius: 50%;
   border: 1px solid #ccc;
 }
@@ -27,27 +29,28 @@
 .legend {
   display: flex;
   flex-direction: column;
-  gap: 8px;
-  max-width: 300px;
+  gap: var(--calc-space-xs, clamp(8px, 1.8vw, 14px));
+  width: min(340px, 100%);
+  margin: 0 auto;
 }
 
 .legend-item {
   display: flex;
   align-items: center;
-  font-size: 0.9em;
+  gap: var(--calc-space-xs, clamp(8px, 1.8vw, 14px));
+  font-size: clamp(0.85rem, 0.8rem + 0.3vw, 1rem);
 }
 
 .legend-color {
   width: 12px;
   height: 12px;
   border-radius: 3px;
-  margin-right: 8px;
   flex-shrink: 0;
 }
 
 .legend-name {
   flex-grow: 1;
-  margin-right: 10px;
+  min-width: 0;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -60,22 +63,22 @@
 }
 
 .save-image-container {
-  margin-top: 20px;
-  padding-top: 20px;
+  margin-top: var(--calc-space-md, clamp(16px, 3.2vw, 24px));
+  padding-top: var(--calc-space-sm, clamp(12px, 2.6vw, 18px));
   border-top: 1px solid var(--border-color);
   text-align: center;
 }
 
 .save-image-btn {
-  padding: 10px 20px;
-  font-size: 1.1em;
+  padding: clamp(10px, 2.4vw, 16px) clamp(18px, 4vw, 28px);
+  font-size: clamp(1rem, 0.95rem + 0.4vw, 1.15rem);
   font-weight: bold;
   cursor: pointer;
   border-radius: 5px;
   border: none;
   background-color: var(--accent-color);
   color: var(--button-text-accent);
-  transition: background-color 0.2s;
+  transition: background-color 0.2s, opacity 0.2s;
 }
 
 .save-image-btn:hover:not(:disabled) {
@@ -86,4 +89,15 @@
   background-color: var(--disabled-bg);
   color: var(--disabled-text);
   cursor: not-allowed;
+}
+
+@media (min-width: 600px) {
+  .chart-and-legend {
+    flex-direction: row;
+    align-items: center;
+  }
+
+  .legend {
+    margin: 0;
+  }
 }

@@ -1,82 +1,109 @@
+:root {
+  --calc-space-xs: clamp(8px, 1.8vw, 14px);
+  --calc-space-sm: clamp(12px, 2.6vw, 18px);
+  --calc-space-md: clamp(16px, 3.2vw, 24px);
+  --calc-space-lg: clamp(20px, 4vw, 32px);
+  --calc-radius: 12px;
+  --calc-title-size: clamp(1.5rem, 1.2rem + 1vw, 2.4rem);
+  --calc-heading-size: clamp(1.15rem, 1rem + 0.6vw, 1.5rem);
+  --calc-body-size: clamp(0.95rem, 0.9rem + 0.4vw, 1.05rem);
+}
+
 .dps-calculator-container {
-  padding: 20px;
+  width: min(100%, 1200px);
   margin: 0 auto;
+  padding: var(--calc-space-lg) var(--calc-space-md);
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--calc-space-md);
+  box-sizing: border-box;
 }
 
 .dps-calculator-container h1 {
+  grid-column: 1 / -1;
   text-align: center;
-  margin-bottom: 30px;
+  margin: 0;
+  font-size: var(--calc-title-size);
+  line-height: 1.2;
 }
 
 .calculator-block {
   background-color: #f8f9fa;
   border: 1px solid #dee2e6;
-  border-radius: 8px;
-  padding: 20px;
-  margin-bottom: 20px; /* 블록 간 간격 복원 */
-  max-width: 800px; /* Default width for all blocks */
-  margin-left: auto; /* Center the block */
-  margin-right: auto; /* Center the block */
-  transition: max-width 0.3s ease-in-out; /* Smooth transition for block's own width */
+  border-radius: var(--calc-radius);
+  padding: var(--calc-space-md);
+  margin: 0 0 var(--calc-space-md);
+  max-width: 100%;
+  font-size: var(--calc-body-size);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04);
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  gap: var(--calc-space-sm);
 }
 
-/* 아이템 선택 모드에서 블록 너비를 확장하기 위한 스타일 */
 .calculator-block.wide-block {
-  max-width: 1200px;
+  max-width: 100%;
 }
 
 .calculator-block h2 {
-  margin-top: 0;
+  margin: 0;
   border-bottom: 1px solid #ccc;
-  padding-bottom: 10px;
-  margin-bottom: 20px;
+  padding-bottom: var(--calc-space-xs);
+  margin-bottom: var(--calc-space-sm);
+  font-size: var(--calc-heading-size);
 }
 
 .form-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-  gap: 20px;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--calc-space-sm);
 }
 
 .form-group {
   display: flex;
   flex-direction: column;
+  gap: var(--calc-space-xs);
 }
 
 .form-group label {
-  margin-bottom: 8px;
   font-weight: 600;
+  font-size: clamp(0.95rem, 0.9rem + 0.4vw, 1.05rem);
 }
 
 .form-group input[type="number"] {
-  padding: 8px;
+  padding: clamp(10px, 2.5vw, 14px);
   border: 1px solid #ccc;
   border-radius: 4px;
-  font-size: 1em;
+  font-size: var(--calc-body-size);
 }
 
 .radio-group {
-  grid-column: 1 / -1; /* Span full width */
+  grid-column: 1 / -1;
 }
 
 .radio-options {
   display: flex;
-  gap: 20px;
+  gap: var(--calc-space-sm);
   flex-wrap: wrap;
+  width: 100%;
 }
 
 .radio-options label {
   display: flex;
   align-items: center;
-  gap: 5px;
+  gap: var(--calc-space-xs);
   font-weight: normal;
   cursor: pointer;
 }
 
 .calculation-summary {
-  margin-top: 20px;
-  padding-top: 20px;
+  margin-top: var(--calc-space-sm);
+  padding-top: var(--calc-space-sm);
   border-top: 1px dashed #ccc;
+  display: flex;
+  flex-direction: column;
+  gap: var(--calc-space-xs);
 }
 
 .calculation-summary h3 {
@@ -84,7 +111,7 @@
 }
 
 .calculation-summary p {
-  margin: 8px 0;
+  margin: 0;
 }
 
 .warning-text {
@@ -92,11 +119,10 @@
   font-weight: bold;
 }
 
-/* EhpClassBlock specific styles */
 .class-selection-buttons {
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 10px;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--calc-space-sm);
   width: 100%;
 }
 
@@ -104,12 +130,12 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  padding: 15px 10px;
+  padding: clamp(12px, 2.5vw, 18px) clamp(10px, 2vw, 16px);
   border: 2px solid #ccc;
-  border-radius: 8px;
+  border-radius: var(--calc-radius);
   cursor: pointer;
   text-align: center;
-  font-size: 1.1em;
+  font-size: clamp(1rem, 0.95rem + 0.4vw, 1.1rem);
   font-weight: bold;
   transition: background-color 0.2s, border-color 0.2s;
 }
@@ -124,35 +150,34 @@
   border-color: #007bff;
 }
 
-/* Class-specific active styles */
 .class-button.class-warrior.active {
   background-color: #fff8e1;
   color: #c59000;
   border-color: gold;
 }
+
 .class-button.class-blade.active {
   background-color: #fbe9e7;
   color: #b02222;
   border-color: brown;
 }
+
 .class-button.class-mage.active {
   background-color: #f3e5f5;
   color: #8a2be2;
   border-color: #9370db;
 }
+
 .class-button.class-frost.active {
   background-color: #e1f5fe;
   color: #0083b0;
   border-color: #87ceeb;
 }
 
-
-/* Hide the actual radio button */
 .class-button input[type="radio"] {
   display: none;
 }
 
-/* --- AccessoryStatsBlock specific dark theme --- */
 .theme-dark .accessory-fieldset {
   border-color: #444;
 }
@@ -162,10 +187,10 @@
   border-color: #555;
 }
 
-/* --- Dark Theme --- */
 .theme-dark .calculator-block {
   background-color: #1e1e1e;
   border-color: #444;
+  box-shadow: none;
 }
 
 .theme-dark h1,
@@ -194,26 +219,83 @@
   border-top: 1px solid #444;
 }
 
-/* EHP Class Button Dark Theme */
 .theme-dark .class-button {
   background-color: #2a2a2a;
   border-color: #555;
   color: #b0b0b0;
 }
+
 .theme-dark .class-button:hover {
   background-color: #3a3a3a;
   border-color: #777;
   color: #f0f0f0;
 }
+
 .theme-dark .class-button.active {
-  color: #fff; /* 활성화 시 텍스트 색상을 밝게 */
+  color: #fff;
 }
-.theme-dark .class-button.class-warrior.active { background-color: #4d3c1a; border-color: gold; }
-.theme-dark .class-button.class-blade.active { background-color: #4d1a1a; border-color: brown; }
-.theme-dark .class-button.class-mage.active { background-color: #492a6b; border-color: #9370db; }
-.theme-dark .class-button.class-frost.active { background-color: #1a4a5f; border-color: #87ceeb; }
+
+.theme-dark .class-button.class-warrior.active {
+  background-color: #4d3c1a;
+  border-color: gold;
+}
+
+.theme-dark .class-button.class-blade.active {
+  background-color: #4d1a1a;
+  border-color: brown;
+}
+
+.theme-dark .class-button.class-mage.active {
+  background-color: #492a6b;
+  border-color: #9370db;
+}
+
+.theme-dark .class-button.class-frost.active {
+  background-color: #1a4a5f;
+  border-color: #87ceeb;
+}
 
 .theme-dark .result-block {
   background-color: #1a2e1c;
   border-color: #2e5c31;
+}
+
+.dps-calculator-container .calculator-block {
+  margin-bottom: 0;
+}
+
+@media (min-width: 480px) {
+  .class-selection-buttons {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (min-width: 600px) {
+  .dps-calculator-container {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .form-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .calculator-block.wide-block {
+    grid-column: 1 / -1;
+  }
+}
+
+@media (min-width: 768px) {
+  .class-selection-buttons {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+@media (min-width: 960px) {
+  .dps-calculator-container {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .form-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
 }
