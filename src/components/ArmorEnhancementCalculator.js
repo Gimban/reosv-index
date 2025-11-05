@@ -1,9 +1,11 @@
 import React, { useState, useMemo, useEffect } from "react";
+import { useResponsive } from "../context/ResponsiveContext";
 import "./ArmorEnhancementCalculator.css";
 
 const parseNum = (val) => Number(String(val || "0").replace(/,/g, ""));
 
 function ArmorEnhancementCalculator({ costData }) {
+  const { isMobile } = useResponsive();
   const [currentGrade, setCurrentGrade] = useState("");
   const [currentEnh, setCurrentEnh] = useState(0);
   const [targetGrade, setTargetGrade] = useState("");
@@ -113,7 +115,7 @@ function ArmorEnhancementCalculator({ costData }) {
   }, [currentGrade, currentEnh, targetGrade, targetEnh, costData]);
 
   const renderSelect = (label, value, setter, options, isEnh = false) => (
-    <div className="form-group">
+    <div className={`form-group${isMobile ? " mobile" : ""}`}>
       <label>{label}</label>
       <select
         value={value}
@@ -135,40 +137,44 @@ function ArmorEnhancementCalculator({ costData }) {
   }
 
   return (
-    <div className="armor-enhancement-calculator">
+    <div
+      className={`armor-enhancement-calculator${isMobile ? " mobile" : ""}`}
+    >
       <h1>방어구 강화 비용 계산기</h1>
-      <div className="calculator-main">
-        <div className="calculator-controls">
-          <fieldset>
+      <div className={`calculator-main${isMobile ? " mobile" : ""}`}>
+        <div className={`calculator-controls${isMobile ? " mobile" : ""}`}>
+          <fieldset className={isMobile ? "mobile" : ""}>
             <legend>현재 상태</legend>
             {renderSelect("등급", currentGrade, setCurrentGrade, levels.grade || [])}
             {renderSelect( "강화 차수", currentEnh, setCurrentEnh, levels.enh[currentGrade] || [], true )}
           </fieldset>
-          <fieldset>
+          <fieldset className={isMobile ? "mobile" : ""}>
             <legend>목표 상태</legend>
             {renderSelect("등급", targetGrade, setTargetGrade, levels.grade || [])}
             {renderSelect( "강화 차수", targetEnh, setTargetEnh, levels.enh[targetGrade] || [], true )}
           </fieldset>
         </div>
-        <div className="calculator-results">
+        <div className={`calculator-results${isMobile ? " mobile" : ""}`}>
           <h2>계산 결과</h2>
           {calculatedCost ? (
             calculatedCost.error ? (
               <p className="error-message">{calculatedCost.error}</p>
             ) : (
-              <ul className="cost-list">
-                {Object.entries(calculatedCost).map(
-                  ([item, amount]) =>
-                    amount > 0 && (
-                      <li key={item}>
-                        <span className="material-name">{item}</span>
-                        <span className="material-amount">
-                          {amount.toLocaleString()}
-                        </span>
-                      </li>
-                    )
-                )}
-              </ul>
+              <div className={`cost-card${isMobile ? " mobile" : ""}`}>
+                <ul className="cost-list">
+                  {Object.entries(calculatedCost).map(
+                    ([item, amount]) =>
+                      amount > 0 && (
+                        <li key={item}>
+                          <span className="material-name">{item}</span>
+                          <span className="material-amount">
+                            {amount.toLocaleString()}
+                          </span>
+                        </li>
+                      )
+                  )}
+                </ul>
+              </div>
             )
           ) : (
             <p>상태를 선택하여 비용을 계산하세요.</p>

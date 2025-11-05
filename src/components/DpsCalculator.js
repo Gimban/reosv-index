@@ -1,4 +1,6 @@
 import React, { useState, useCallback, useMemo } from "react";
+import { useResponsive } from "../context/ResponsiveContext";
+import { useStepNavigation } from "../hooks/useStepNavigation";
 import PlayerStatsBlock from "./calculator/PlayerStatsBlock";
 import AccessoryStatsBlock from "./calculator/AccessoryStatsBlock";
 import ClassWeaponBlock from "./calculator/ClassWeaponBlock";
@@ -15,12 +17,80 @@ const DAMAGE_PER_ATTACK_POINT = 0.65; // 공격력 1포인트당 데미지 증�
 const DAMAGE_PER_HEALTH_POINT = 0.4; // 체력 1포인트당 데미지 증가량 (%)
 const EMPTY_WEAPON_STATS = { totalDamage: 0, cooldown: 0, dps: 0, dpm: 0 };
 
+const MobileStepperView = ({
+  steps,
+  currentStep,
+  goNext,
+  goPrev,
+  goToStep,
+  isFirstStep,
+  isLastStep,
+  stepCompletion,
+}) => {
+  const activeStep = steps[currentStep];
+  const canAdvance = stepCompletion[activeStep.id] || isLastStep;
+
+  return (
+    <div className="dps-mobile-stepper">
+      <div className="dps-mobile-stepper__progress">
+        {steps.map((step, index) => {
+          const isActive = index === currentStep;
+          const isCompleted = stepCompletion[step.id];
+          const isClickable = index <= currentStep || isCompleted;
+
+          return (
+            <button
+              type="button"
+              key={step.id}
+              className={`dps-mobile-stepper__chip${
+                isActive ? " active" : ""
+              }${isCompleted ? " completed" : ""}`}
+              onClick={() => isClickable && goToStep(index)}
+              aria-current={isActive ? "step" : undefined}
+              disabled={!isClickable}
+            >
+              <span className="dps-mobile-stepper__index">{index + 1}</span>
+              <span className="dps-mobile-stepper__label">{step.title}</span>
+            </button>
+          );
+        })}
+      </div>
+
+      <div className="dps-mobile-stepper__content">
+        {activeStep.render()}
+      </div>
+
+      <div className="dps-mobile-stepper__actions">
+        <button
+          type="button"
+          className="dps-mobile-stepper__button secondary"
+          onClick={goPrev}
+          disabled={isFirstStep}
+        >
+          이전
+        </button>
+        {!isLastStep && (
+          <button
+            type="button"
+            className="dps-mobile-stepper__button primary"
+            onClick={goNext}
+            disabled={!canAdvance}
+          >
+            다음
+          </button>
+        )}
+      </div>
+    </div>
+  );
+};
+
 function DpsCalculator({
   weaponData,
   classWeaponData,
   accessoryBaseData,
   accessoryPotentialOptionData,
 }) {
+  const { isMobile } = useResponsive();
   const [playerStats, setPlayerStats] = useState(null);
   const [accessoryStats, setAccessoryStats] = useState(null);
   const [weaponStats, setWeaponStats] = useState(null);
@@ -187,34 +257,112 @@ function DpsCalculator({
     totalStatDamageIncrease,
   ]);
 
+  const steps = [
+    {
+      id: "player",
+      title: "기본 능력치",
+      render: () => (
+        <PlayerStatsBlock
+          maxLevel={MAX_PLAYER_LEVEL}
+          damagePerAttack={DAMAGE_PER_ATTACK_POINT}
+          damagePerHealth={DAMAGE_PER_HEALTH_POINT}
+          onStatsChange={handlePlayerStatsChange}
+        />
+      ),
+    },
+    {
+      id: "accessory",
+      title: "장신구 옵션",
+      render: () => (
+        <AccessoryStatsBlock
+          onStatsChange={handleAccessoryStatsChange}
+          accessoryBaseData={accessoryBaseData}
+          accessoryPotentialOptionData={accessoryPotentialOptionData}
+        />
+      ),
+    },
+    {
+      id: "divine",
+      title: "신력의 파편",
+      render: () => (
+        <DivineShardBlock onStatsChange={handleDivineShardStatsChange} />
+      ),
+    },
+    {
+      id: "guild",
+      title: "길드 효과",
+      render: () => <GuildBlock onStatsChange={handleGuildStatsChange} />,
+    },
+    {
+      id: "classWeapon",
+      title: "클래스 무기",
+      render: () => (
+        <ClassWeaponBlock
+          classWeaponData={classWeaponData}
+          accessoryStats={accessoryStats}
+          totalStatDamageIncrease={totalStatDamageIncrease}
+          onStatsChange={handleClassWeaponStatsChange}
+        />
+      ),
+    },
+    {
+      id: "weaponSelection",
+      title: "무기 선택",
+      render: () => (
+        <WeaponSelectionBlock
+          weaponData={weaponData}
+          onStatsChange={handleWeaponStatsChange}
+          calculatedStats={allCalculations.perWeaponStats}
+        />
+      ),
+    },
+    {
+      id: "results",
+      title: "계산 결과",
+      render: () => (
+        <CalculationResultBlock results={allCalculations.finalResults} />
+      ),
+    },
+  ];
+
+  const stepCompletion = {
+    player: Boolean(playerStats),
+    accessory: Boolean(accessoryStats),
+    divine: Boolean(divineShardStats),
+    guild: Boolean(guildStats),
+    classWeapon: Boolean(classWeaponStats),
+    weaponSelection: Boolean(weaponStats),
+    results: Boolean(allCalculations.finalResults),
+  };
+
+  const {
+    currentStep,
+    goNext,
+    goPrev,
+    goToStep,
+    isFirstStep,
+    isLastStep,
+  } = useStepNavigation(steps.length);
+
   return (
-    <div className="dps-calculator-container">
+    <div
+      className={`dps-calculator-container${isMobile ? " mobile" : ""}`}
+    >
       <h1>DPS/DPM 계산기</h1>
-      <PlayerStatsBlock
-        maxLevel={MAX_PLAYER_LEVEL}
-        damagePerAttack={DAMAGE_PER_ATTACK_POINT}
-        damagePerHealth={DAMAGE_PER_HEALTH_POINT}
-        onStatsChange={handlePlayerStatsChange}
-      />
-      <AccessoryStatsBlock
-        onStatsChange={handleAccessoryStatsChange}
-        accessoryBaseData={accessoryBaseData}
-        accessoryPotentialOptionData={accessoryPotentialOptionData}
-      />
-      <DivineShardBlock onStatsChange={handleDivineShardStatsChange} />
-      <GuildBlock onStatsChange={handleGuildStatsChange} />
-      <ClassWeaponBlock
-        classWeaponData={classWeaponData}
-        accessoryStats={accessoryStats}
-        totalStatDamageIncrease={totalStatDamageIncrease}
-        onStatsChange={handleClassWeaponStatsChange}
-      />
-      <WeaponSelectionBlock
-        weaponData={weaponData}
-        onStatsChange={handleWeaponStatsChange}
-        calculatedStats={allCalculations.perWeaponStats}
-      />
-      <CalculationResultBlock results={allCalculations.finalResults} />
+      {isMobile ? (
+        <MobileStepperView
+          steps={steps}
+          currentStep={currentStep}
+          goNext={goNext}
+          goPrev={goPrev}
+          goToStep={goToStep}
+          isFirstStep={isFirstStep}
+          isLastStep={isLastStep}
+          stepCompletion={stepCompletion}
+        />
+      ) : (
+        steps.map((step) => <React.Fragment key={step.id}>{step.render()}</React.Fragment>)
+      )}
     </div>
   );
 }

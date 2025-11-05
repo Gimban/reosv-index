@@ -13,14 +13,14 @@
   border: 1px solid #dee2e6;
   border-radius: 8px;
   padding: 20px;
-  margin-bottom: 20px; /* 블록 간 간격 복원 */
+  margin-bottom: 20px; /* 블록 �?간격 복원 */
   max-width: 800px; /* Default width for all blocks */
   margin-left: auto; /* Center the block */
   margin-right: auto; /* Center the block */
   transition: max-width 0.3s ease-in-out; /* Smooth transition for block's own width */
 }
 
-/* 아이템 선택 모드에서 블록 너비를 확장하기 위한 스타일 */
+/* ?�이???�택 모드?�서 블록 ?�비�??�장?�기 ?�한 ?��???*/
 .calculator-block.wide-block {
   max-width: 1200px;
 }
@@ -206,7 +206,7 @@
   color: #f0f0f0;
 }
 .theme-dark .class-button.active {
-  color: #fff; /* 활성화 시 텍스트 색상을 밝게 */
+  color: #fff; /* ?�성?????�스???�상??밝게 */
 }
 .theme-dark .class-button.class-warrior.active { background-color: #4d3c1a; border-color: gold; }
 .theme-dark .class-button.class-blade.active { background-color: #4d1a1a; border-color: brown; }
@@ -217,3 +217,141 @@
   background-color: #1a2e1c;
   border-color: #2e5c31;
 }
+.dps-calculator-container.mobile {
+  padding: 16px;
+}
+
+.dps-mobile-stepper {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.dps-mobile-stepper__progress {
+  display: flex;
+  overflow-x: auto;
+  gap: 8px;
+  padding-bottom: 8px;
+  -webkit-overflow-scrolling: touch;
+}
+
+.dps-mobile-stepper__progress::-webkit-scrollbar {
+  height: 4px;
+}
+
+.dps-mobile-stepper__progress::-webkit-scrollbar-thumb {
+  background-color: rgba(120, 120, 120, 0.35);
+  border-radius: 4px;
+}
+
+.dps-mobile-stepper__chip {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 14px;
+  border: 1px solid #d0d0d0;
+  border-radius: 999px;
+  background: #f5f5f5;
+  color: #333;
+  font-size: 0.9rem;
+  white-space: nowrap;
+}
+
+.dps-mobile-stepper__chip.active {
+  background: #007bff;
+  color: #fff;
+  border-color: #007bff;
+}
+
+.dps-mobile-stepper__chip.completed {
+  border-color: #28a745;
+}
+
+.dps-mobile-stepper__chip:disabled {
+  opacity: 0.5;
+}
+
+.dps-mobile-stepper__index {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: rgba(0, 0, 0, 0.1);
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+.dps-mobile-stepper__chip.active .dps-mobile-stepper__index {
+  background: rgba(255, 255, 255, 0.25);
+}
+
+.dps-mobile-stepper__content {
+  background: rgba(255, 255, 255, 0.85);
+  border-radius: 16px;
+  padding: 16px;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
+}
+
+.dps-mobile-stepper__actions {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.dps-mobile-stepper__button {
+  flex: 1;
+  padding: 14px;
+  border-radius: 12px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  border: none;
+}
+
+.dps-mobile-stepper__button.primary {
+  background: linear-gradient(135deg, #007bff, #0056d2);
+  color: #fff;
+}
+
+.dps-mobile-stepper__button.secondary {
+  background: #f1f3f5;
+  color: #343a40;
+}
+
+.dps-mobile-stepper__button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.theme-dark .dps-mobile-stepper__chip {
+  background: #222;
+  border-color: #444;
+  color: #ddd;
+}
+
+.theme-dark .dps-mobile-stepper__chip.active {
+  background: #5a75ff;
+  border-color: #5a75ff;
+}
+
+.theme-dark .dps-mobile-stepper__content {
+  background: #1f1f1f;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4);
+}
+
+.theme-dark .dps-mobile-stepper__button.secondary {
+  background: #2f2f2f;
+  color: #f3f4f6;
+}
+
+
+.dps-calculator-container.mobile .calculator-block {
+  max-width: 100%;
+  margin: 0;
+  border-radius: 18px;
+  padding: 16px;
+}
+
+

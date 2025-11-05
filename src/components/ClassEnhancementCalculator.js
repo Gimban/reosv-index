@@ -1,9 +1,11 @@
 import React, { useState, useMemo, useEffect } from "react";
+import { useResponsive } from "../context/ResponsiveContext";
 import "./ClassEnhancementCalculator.css";
 
 const parseNum = (val) => Number(String(val || "0").replace(/,/g, ""));
 
 function ClassEnhancementCalculator({ costData }) {
+  const { isMobile } = useResponsive();
   const [currentAdv, setCurrentAdv] = useState(1);
   const [currentEnh, setCurrentEnh] = useState(1);
   const [targetAdv, setTargetAdv] = useState(1);
@@ -111,7 +113,7 @@ useEffect(() => {
   }, [currentAdv, currentEnh, targetAdv, targetEnh, costData]);
 
   const renderSelect = (label, value, setter, options) => (
-    <div className="form-group">
+    <div className={`form-group${isMobile ? " mobile" : ""}`}>
       <label>{label}</label>
       <select value={value} onChange={(e) => setter(parseNum(e.target.value))}>
         {options.map((opt) => (
@@ -128,11 +130,13 @@ useEffect(() => {
   }
 
   return (
-    <div className="class-enhancement-calculator">
+    <div
+      className={`class-enhancement-calculator${isMobile ? " mobile" : ""}`}
+    >
       <h1>클래스 무기 강화 비용 계산기</h1>
-      <div className="calculator-main">
-        <div className="calculator-controls">
-          <fieldset>
+      <div className={`calculator-main${isMobile ? " mobile" : ""}`}>
+        <div className={`calculator-controls${isMobile ? " mobile" : ""}`}>
+          <fieldset className={isMobile ? "mobile" : ""}>
             <legend>현재 레벨</legend>
             {renderSelect(
               "전직 차수",
@@ -147,7 +151,7 @@ useEffect(() => {
               levels.enh[currentAdv] || []
             )}
           </fieldset>
-          <fieldset>
+          <fieldset className={isMobile ? "mobile" : ""}>
             <legend>목표 레벨</legend>
             {renderSelect(
               "전직 차수",
@@ -163,31 +167,39 @@ useEffect(() => {
             )}
           </fieldset>
         </div>
-        <div className="calculator-results">
+        <div className={`calculator-results${isMobile ? " mobile" : ""}`}>
           <h2>필요 재료 총합</h2>
           {calculatedCost ? (
             calculatedCost.error ? (
               <p className="error-message">{calculatedCost.error}</p>
             ) : (
-              <ul className="cost-list">
-                {Object.entries(calculatedCost).map(
-                  ([material, amount]) =>
-                    // amount가 숫자일 경우(기본 재료)와 배열일 경우(추가 재료)를 모두 처리
-                    (typeof amount === 'number' ? amount > 0 : amount.length > 0) && (
-                      <li key={material}>
-                        <span className="material-name">{material}</span>
-                        {typeof amount === 'number' ? (
-                          <span className="material-amount">{amount.toLocaleString()}</span>
-                        ) : (
-                          // 배열인 경우, 각 항목을 별도의 줄에 표시
-                          <div className="material-amount-list">
-                            {amount.map((text, index) => <div key={index}>{text}</div>)}
-                          </div>
-                        )}
-                      </li>
-                    )
-                )}
-              </ul>
+              <div className={`cost-card${isMobile ? " mobile" : ""}`}>
+                <ul className="cost-list">
+                  {Object.entries(calculatedCost).map(
+                    ([material, amount]) =>
+                      // amount가 숫자일 경우(기본 재료)와 배열일 경우(추가 재료)를 모두 처리
+                      (typeof amount === "number"
+                        ? amount > 0
+                        : amount.length > 0) && (
+                        <li key={material}>
+                          <span className="material-name">{material}</span>
+                          {typeof amount === "number" ? (
+                            <span className="material-amount">
+                              {amount.toLocaleString()}
+                            </span>
+                          ) : (
+                            // 배열인 경우, 각 항목을 별도의 줄에 표시
+                            <div className="material-amount-list">
+                              {amount.map((text, index) => (
+                                <div key={index}>{text}</div>
+                              ))}
+                            </div>
+                          )}
+                        </li>
+                      )
+                  )}
+                </ul>
+              </div>
             )
           ) : (
             <p>레벨을 선택하여 비용을 계산하세요.</p>

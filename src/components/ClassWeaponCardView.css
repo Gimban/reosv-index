@@ -262,4 +262,104 @@
 .theme-dark .class-card-header input[type="radio"]:checked::after,
 .theme-dark .class-none-option input[type="radio"]:checked::after {
   color: #121212;
+}\n.class-weapon-view.mobile {
+  padding: 16px;
+  gap: 16px;
 }
+
+.class-weapon-controls.mobile {
+  background-color: rgba(32, 32, 32, 0.6);
+  border-radius: 16px;
+  padding: 16px;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 16px;
+}
+
+.theme-light .class-weapon-controls.mobile {
+  background-color: rgba(248, 249, 250, 0.85);
+}
+
+.class-weapon-controls__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+}
+
+.control-toggle {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 500;
+}
+
+.control-toggle input {
+  width: 18px;
+  height: 18px;
+}
+
+.global-controls.mobile {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.class-weapon-card-view-container.mobile {
+  display: flex;
+  flex-wrap: nowrap;
+  overflow-x: auto;
+  gap: 16px;
+  padding-bottom: 12px;
+  scroll-snap-type: x mandatory;
+  -webkit-overflow-scrolling: touch;
+}
+
+.class-weapon-card-view-container.mobile::-webkit-scrollbar {
+  display: none;
+}
+
+.class-weapon-card.mobile {
+  min-width: 280px;
+  scroll-snap-align: center;
+}
+
+.class-weapon-card.mobile .skill-details {
+  grid-template-columns: 1fr;
+  gap: 4px;
+  font-size: 0.95em;
+}
+
+.class-weapon-card.mobile .class-weapon-card-footer {
+  text-align: left;
+}
+
+.class-weapon-card.mobile .total-dps-dpm {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+  font-size: 1em;
+}
+
+.class-weapon-controls.mobile .selector {
+  justify-content: space-between;
+}
+
+.class-weapon-controls.mobile .selector button {
+  padding: 6px 12px;
+  font-size: 1.1em;
+}
+
+.individual-controls .selector button {
+  min-width: 36px;
+}
+
+.theme-dark .class-weapon-controls.mobile {
+  background-color: rgba(34, 34, 34, 0.85);
+}
+
+.theme-light .class-weapon-card.mobile {
+  background-color: #ffffff;
+}
+
+

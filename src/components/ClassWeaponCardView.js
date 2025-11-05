@@ -1,4 +1,5 @@
 import React, { useMemo, useState, useEffect } from "react";
+import { useResponsive } from "../context/ResponsiveContext";
 import "./ClassWeaponCardView.css";
 
 const SKILL_TYPES = ["좌클릭", "우클릭", "쉬프트 좌클릭", "쉬프트 우클릭"];
@@ -13,7 +14,179 @@ const getCssClassForClassName = (className) => {
   return classMap[className] || "";
 };
 
+const ClassControlsPanel = ({
+  isMobile,
+  isGlobalMode,
+  setIsGlobalMode,
+  globalAdv,
+  globalEnh,
+  handleGlobalChange,
+}) => {
+  return (
+    <div className={`class-weapon-controls${isMobile ? " mobile" : ""}`}>
+      <div className="class-weapon-controls__header">
+        <h2>클래스 무기 스탯</h2>
+        <label className="control-toggle">
+          <input
+            type="checkbox"
+            checked={isGlobalMode}
+            onChange={(e) => setIsGlobalMode(e.target.checked)}
+          />
+          일괄 변경
+        </label>
+      </div>
+      {isGlobalMode && (
+        <div className={`global-controls${isMobile ? " mobile" : ""}`}>
+          <div className="selector">
+            <span>전직 차수:</span>
+            <button type="button" onClick={() => handleGlobalChange("adv", -1)}>
+              ‹
+            </button>
+            <span>{globalAdv}차</span>
+            <button type="button" onClick={() => handleGlobalChange("adv", 1)}>
+              ›
+            </button>
+          </div>
+          <div className="selector">
+            <span>강화 차수:</span>
+            <button type="button" onClick={() => handleGlobalChange("enh", -1)}>
+              ‹
+            </button>
+            <span>+{globalEnh}</span>
+            <button type="button" onClick={() => handleGlobalChange("enh", 1)}>
+              ›
+            </button>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+};
+
+const ClassWeaponStatsCard = ({
+  className,
+  classData,
+  isGlobalMode,
+  adv,
+  enh,
+  onIndividualChange,
+  skillTypes,
+  isMobile,
+}) => {
+  if (!classData) {
+    return null;
+  }
+
+  const weaponStats = classData?.weapons.find(
+    (w) => Number(w["전직 차수"]) === adv && Number(w["강화 차수"]) === enh
+  );
+
+  let totalDps = 0;
+  let totalDpm = 0;
+
+  const skillStats = skillTypes
+    .map((skill) => {
+      const damage = Number(weaponStats?.[`${skill} 피해량`] || 0);
+      const cooldown = Number(weaponStats?.[`${skill} 쿨타임`] || 0);
+      if (!damage || !cooldown) return null;
+
+      const dps = damage / cooldown;
+      const dpm = dps * 60;
+      totalDps += dps;
+      totalDpm += dpm;
+
+      return { skill, damage, cooldown, dps, dpm };
+    })
+    .filter(Boolean);
+
+  return (
+    <div
+      className={`class-weapon-card class-${getCssClassForClassName(
+        className
+      )} ${isMobile ? "mobile" : ""}`}
+    >
+      <div className="class-weapon-card-header">
+        <h3>{className}</h3>
+        {!isGlobalMode && (
+          <div className="individual-controls">
+            <div className="selector">
+              <button
+                type="button"
+                onClick={() => onIndividualChange(className, "adv", -1)}
+              >
+                ‹
+              </button>
+              <span>{adv}차</span>
+              <button
+                type="button"
+                onClick={() => onIndividualChange(className, "adv", 1)}
+              >
+                ›
+              </button>
+            </div>
+            <div className="selector">
+              <button
+                type="button"
+                onClick={() => onIndividualChange(className, "enh", -1)}
+              >
+                ‹
+              </button>
+              <span>+{enh}</span>
+              <button
+                type="button"
+                onClick={() => onIndividualChange(className, "enh", 1)}
+              >
+                ›
+              </button>
+            </div>
+          </div>
+        )}
+      </div>
+      <div className="class-weapon-card-body">
+        {weaponStats ? (
+          <div className="skill-list">
+            {skillStats.map(({ skill, damage, cooldown, dps, dpm }) => (
+              <div key={skill} className="skill-item">
+                <strong>{skill}</strong>
+                <div className="skill-details">
+                  <span>피해량: {damage.toLocaleString()}</span>
+                  <span>쿨타임: {cooldown}초</span>
+                  <span>
+                    DPS:{" "}
+                    {dps.toLocaleString(undefined, { maximumFractionDigits: 1 })}
+                  </span>
+                  <span>
+                    DPM:{" "}
+                    {dpm.toLocaleString(undefined, { maximumFractionDigits: 1 })}
+                  </span>
+                </div>
+              </div>
+            ))}
+          </div>
+        ) : (
+          <p className="no-stats">해당 차수/강화 정보 없음</p>
+        )}
+      </div>
+      <div className="class-weapon-card-footer">
+        <div className="total-dps-dpm">
+          <strong>총합 DPS: </strong>
+          <span>
+            {totalDps.toLocaleString(undefined, { maximumFractionDigits: 1 })}
+          </span>
+        </div>
+        <div className="total-dps-dpm">
+          <strong>총합 DPM: </strong>
+          <span>
+            {totalDpm.toLocaleString(undefined, { maximumFractionDigits: 1 })}
+          </span>
+        </div>
+      </div>
+    </div>
+  );
+};
+
 function ClassWeaponCardView({ data }) {
+  const { isMobile } = useResponsive();
   const [isGlobalMode, setIsGlobalMode] = useState(true);
   const [globalAdv, setGlobalAdv] = useState(1);
   const [globalEnh, setGlobalEnh] = useState(1);
@@ -134,132 +307,37 @@ function ClassWeaponCardView({ data }) {
   }
 
   return (
-    <div className="class-weapon-view">
-      <div className="class-weapon-controls">
-        <h2>클래스 무기 스탯</h2>
-        <div className="control-group">
-          <label>
-            <input
-              type="checkbox"
-              checked={isGlobalMode}
-              onChange={(e) => setIsGlobalMode(e.target.checked)}
-            />
-            일괄 변경
-          </label>
-        </div>
-        {isGlobalMode && (
-          <div className="global-controls">
-            <div className="selector">
-              <span>전직 차수:</span>
-              <button onClick={() => handleGlobalChange("adv", -1)}>‹</button>
-              <span>{globalAdv}차</span>
-              <button onClick={() => handleGlobalChange("adv", 1)}>›</button>
-            </div>
-            <div className="selector">
-              <span>강화 차수:</span>
-              <button onClick={() => handleGlobalChange("enh", -1)}>‹</button>
-              <span>+{globalEnh}</span>
-              <button onClick={() => handleGlobalChange("enh", 1)}>›</button>
-            </div>
-          </div>
-        )}
-      </div>
-      <div className="class-weapon-card-view-container">
+    <div className={`class-weapon-view${isMobile ? " mobile" : ""}`}>
+      <ClassControlsPanel
+        isMobile={isMobile}
+        isGlobalMode={isGlobalMode}
+        setIsGlobalMode={setIsGlobalMode}
+        globalAdv={globalAdv}
+        globalEnh={globalEnh}
+        handleGlobalChange={handleGlobalChange}
+      />
+      <div
+        className={`class-weapon-card-view-container${
+          isMobile ? " mobile" : ""
+        }`}
+      >
         {classNames.map((className) => {
           const { adv, enh } = isGlobalMode
             ? { adv: globalAdv, enh: globalEnh }
             : individualStates[className] || { adv: 1, enh: 1 };
 
-          const weaponStats = classData[className]?.weapons.find(
-            (w) => Number(w["전직 차수"]) === adv && Number(w["강화 차수"]) === enh
-          );
-
-          let totalDps = 0;
-          let totalDpm = 0;
-
-          const skillStats = SKILL_TYPES.map((skill) => {
-            const damage = Number(weaponStats?.[`${skill} 피해량`] || 0);
-            const cooldown = Number(weaponStats?.[`${skill} 쿨타임`] || 0);
-            if (!damage || !cooldown) return null;
-
-            const dps = damage / cooldown;
-            const dpm = dps * 60;
-            totalDps += dps;
-            totalDpm += dpm;
-
-            return { skill, damage, cooldown, dps, dpm };
-          }).filter(Boolean);
-
           return (
-            <div
+            <ClassWeaponStatsCard
               key={className}
-              className={`class-weapon-card class-${getCssClassForClassName(
-                className
-              )}`}
-            >
-              <div className="class-weapon-card-header">
-                <h3>{className}</h3>
-                {!isGlobalMode && (
-                  <div className="individual-controls">
-                    <div className="selector">
-                      <button
-                        onClick={() => handleIndividualChange(className, "adv", -1)}
-                      >
-                        ‹
-                      </button>
-                      <span>{adv}차</span>
-                      <button
-                        onClick={() => handleIndividualChange(className, "adv", 1)}
-                      >
-                        ›
-                      </button>
-                    </div>
-                    <div className="selector">
-                      <button
-                        onClick={() => handleIndividualChange(className, "enh", -1)}
-                      >
-                        ‹
-                      </button>
-                      <span>+{enh}</span>
-                      <button
-                        onClick={() => handleIndividualChange(className, "enh", 1)}
-                      >
-                        ›
-                      </button>
-                    </div>
-                  </div>
-                )}
-              </div>
-              <div className="class-weapon-card-body">
-                {weaponStats ? (
-                  <div className="skill-list">
-                    {skillStats.map(({ skill, damage, cooldown, dps, dpm }) => (
-                      <div key={skill} className="skill-item">
-                        <strong>{skill}</strong>
-                        <div className="skill-details">
-                          <span>피해량: {damage.toLocaleString()}</span>
-                          <span>쿨타임: {cooldown}초</span>
-                          <span>DPS: {dps.toLocaleString(undefined, { maximumFractionDigits: 1 })}</span>
-                          <span>DPM: {dpm.toLocaleString(undefined, { maximumFractionDigits: 1 })}</span>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                ) : (
-                  <p className="no-stats">해당 차수/강화 정보 없음</p>
-                )}
-              </div>
-              <div className="class-weapon-card-footer">
-                <div className="total-dps-dpm">
-                  <strong>총합 DPS: </strong>
-                  <span>{totalDps.toLocaleString(undefined, { maximumFractionDigits: 1 })}</span>
-                </div>
-                <div className="total-dps-dpm">
-                  <strong>총합 DPM: </strong>
-                  <span>{totalDpm.toLocaleString(undefined, { maximumFractionDigits: 1 })}</span>
-                </div>
-              </div>
-            </div>
+              className={className}
+              classData={classData[className]}
+              isGlobalMode={isGlobalMode}
+              adv={adv}
+              enh={enh}
+              onIndividualChange={handleIndividualChange}
+              skillTypes={SKILL_TYPES}
+              isMobile={isMobile}
+            />
           );
         })}
       </div>
