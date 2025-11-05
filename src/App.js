@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { isMobile } from "react-device-detect";
 import Papa from "papaparse";
 import DataTable from "./components/DataTable"; // 새로 만든 컴포넌트를 불러옵니다.
 import Sidebar from "./components/Sidebar";
@@ -10,6 +11,7 @@ import ArmorEnhancementCalculator from "./components/ArmorEnhancementCalculator"
 import DpsCalculator from "./components/DpsCalculator";
 import EnhancementSimulator from "./components/EnhancementSimulator";
 import EffectiveHpCalculator from "./components/EffectiveHpCalculator";
+import { ResponsiveProvider } from "./context/ResponsiveContext";
 import "./App.css";
 
 // 데이터를 불러올 CSV 링크
@@ -34,6 +36,13 @@ const createCsvUrl = (gid) => {
 };
 
 function App() {
+  const initialMobileState =
+    typeof window !== "undefined"
+      ? isMobile || window.innerWidth <= 1024
+      : isMobile;
+
+  const [isMobileView, setIsMobileView] = useState(initialMobileState);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(!initialMobileState);
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
   const [allData, setAllData] = useState({});
   const [currentCategory, setCurrentCategory] = useState("홈");
@@ -50,6 +59,28 @@ function App() {
           consumedWeapons: {},
         };
   });
+
+  useEffect(() => {
+    if (typeof window === "undefined") {
+      return;
+    }
+
+    const handleResize = () => {
+      const nextIsMobile = isMobile || window.innerWidth <= 1024;
+      setIsMobileView(nextIsMobile);
+    };
+
+    handleResize();
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
+  useEffect(() => {
+    setIsSidebarOpen(!isMobileView);
+    if (isMobileView) {
+      setIsSidebarCollapsed(false);
+    }
+  }, [isMobileView]);
 
   useEffect(() => {
     async function fetchAllData() {
@@ -81,6 +112,9 @@ function App() {
   const handleSelectCategory = (category, parent) => {
     setCurrentCategory(category);
     setParentCategory(parent);
+    if (isMobileView) {
+      setIsSidebarOpen(false);
+    }
   };
 
   const renderContent = () => {
@@ -160,22 +194,65 @@ function App() {
     }
   };
 
+  const handleSidebarToggle = () => {
+    if (isMobileView) {
+      setIsSidebarOpen((prev) => !prev);
+    } else {
+      setIsSidebarCollapsed((prev) => !prev);
+    }
+  };
+
+  const appContainerClassName = [
+    "App-container",
+    isMobileView ? "mobile-layout" : "",
+    !isMobileView && isSidebarCollapsed ? "sidebar-collapsed" : "",
+    `theme-${theme}`,
+  ]
+    .filter(Boolean)
+    .join(" ");
+
+  const contentClassName = `content-container${
+    isMobileView ? " mobile" : ""
+  }`;
+
+  const currentTitle =
+    parentCategory && parentCategory !== currentCategory
+      ? `${parentCategory} / ${currentCategory}`
+      : currentCategory || "Home";
+
   return (
-    <div
-      className={`App-container ${isSidebarCollapsed ? "sidebar-collapsed" : ""} theme-${theme}`}
-    >
-      <Sidebar
-        isCollapsed={isSidebarCollapsed}
-        setIsCollapsed={setIsSidebarCollapsed}
-        gidMap={GID_MAP}
-        onSelectCategory={handleSelectCategory}
-        currentCategory={currentCategory}
-        parentCategory={parentCategory}
-        theme={theme}
-        setTheme={setTheme}
-      />
-      <div className="content-container">{renderContent()}</div>
-    </div>
+    <ResponsiveProvider isMobile={isMobileView}>
+      <div className={appContainerClassName}>
+        {isMobileView && (
+          <header className="mobile-app-bar">
+            <button
+              type="button"
+              className="mobile-menu-button"
+              onClick={() => setIsSidebarOpen(true)}
+              aria-label="Open navigation"
+            >
+              Menu
+            </button>
+            <h1 className="mobile-app-bar__title">{currentTitle}</h1>
+          </header>
+        )}
+        <Sidebar
+          isCollapsed={isSidebarCollapsed}
+          setIsCollapsed={setIsSidebarCollapsed}
+          gidMap={GID_MAP}
+          onSelectCategory={handleSelectCategory}
+          currentCategory={currentCategory}
+          parentCategory={parentCategory}
+          theme={theme}
+          setTheme={setTheme}
+          isMobile={isMobileView}
+          isDrawerOpen={isSidebarOpen}
+          onToggleSidebar={handleSidebarToggle}
+          onDrawerClose={() => setIsSidebarOpen(false)}
+        />
+        <div className={contentClassName}>{renderContent()}</div>
+      </div>
+    </ResponsiveProvider>
   );
 }
 

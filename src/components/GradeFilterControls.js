@@ -6,9 +6,10 @@ function GradeFilterControls({
   handleShowAllClick,
   gradeFilter,
   handleGradeFilterChange,
+  isMobile = false,
 }) {
   return (
-    <div className="grade-filter-controls">
+    <div className={`grade-filter-controls${isMobile ? " mobile" : ""}`}>
       <span className="filter-title">등급 필터:</span>
       <label className="radio-label">
         <input

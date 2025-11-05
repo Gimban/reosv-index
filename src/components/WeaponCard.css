@@ -288,3 +288,33 @@
   color: #e0e0e0;
   border: 1px solid #555;
 }
+.weapon-card.mobile {
+  width: 100%;
+  max-width: 340px;
+  min-width: 260px;
+  padding-bottom: 12px;
+}
+
+.weapon-card.mobile .card-top,
+.weapon-card.mobile .card-bottom {
+  padding: 16px;
+}
+
+.weapon-card.mobile .stats-list li {
+  font-size: 1rem;
+}
+
+.weapon-card.mobile .derived-stats-container {
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.weapon-card.mobile .derived-stat-item {
+  flex: 1 1 45%;
+  min-width: 120px;
+}
+
+.weapon-card.mobile .card-navigation {
+  display: none;
+}
+

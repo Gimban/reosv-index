@@ -8,6 +8,11 @@
   margin-bottom: 20px;
 }
 
+.home-content.mobile {
+  padding: 16px;
+  line-height: 1.6;
+}
+
 .info-box {
   margin-top: 40px;
   padding: 20px;

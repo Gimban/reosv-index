@@ -13,9 +13,10 @@ function ViewControls({
   setGlobalEnhancement,
   hideDeleted,
   setHideDeleted,
+  isMobile = false,
 }) {
   return (
-    <div className="view-controls">
+    <div className={`view-controls${isMobile ? " mobile" : ""}`}>
       <h1>특수 무기 스탯</h1>
       <div className="controls-group">
         <div className="sort-controls">
@@ -23,7 +24,7 @@ function ViewControls({
           <select
             id="sort-select"
             value={sortOption}
-            onChange={(e) => setSortOption(e.target.value)}
+            onChange={(e) =>setSortOption(e.target.value)}
           >
             <option value="기본">기본</option>
             <option value="총 피해량">총 피해량</option>
@@ -34,13 +35,13 @@ function ViewControls({
           <select
             id="enhancement-select"
             value={sortEnhancement}
-            onChange={(e) => {
+            onChange={(e) =>{
               const value = Number(e.target.value);
               setSortEnhancement(value);
               setGlobalEnhancement(value);
             }}
           >
-            {[...Array(16).keys()].map((level) => (
+            {[...Array(16).keys()].map((level) =>(
               <option key={level} value={level}>
                 +{level}
               </option>
@@ -50,7 +51,7 @@ function ViewControls({
           <select
             id="global-enhancement-select"
             value={globalEnhancement}
-            onChange={(e) => {
+            onChange={(e) =>{
               const value = e.target.value;
               if (value === "개별") {
                 setGlobalEnhancement("개별");
@@ -62,7 +63,7 @@ function ViewControls({
             }}
           >
             <option value="개별">개별 설정</option>
-            {[...Array(16).keys()].map((level) => (
+            {[...Array(16).keys()].map((level) =>(
               <option key={level} value={level}>
                 +{level}
               </option>
@@ -73,7 +74,7 @@ function ViewControls({
           <input
             type="checkbox"
             checked={showDescription}
-            onChange={(e) => setShowDescription(e.target.checked)}
+            onChange={(e) =>setShowDescription(e.target.checked)}
           />
           설명 보기
         </label>
@@ -83,7 +84,7 @@ function ViewControls({
           <input
             type="checkbox"
             checked={!showUngrouped}
-            onChange={(e) => setShowUngrouped(!e.target.checked)}
+            onChange={(e) =>setShowUngrouped(!e.target.checked)}
           />
           등급별 보기
         </label>
@@ -91,7 +92,7 @@ function ViewControls({
           <input
             type="checkbox"
             checked={hideDeleted}
-            onChange={(e) => setHideDeleted(e.target.checked)}
+            onChange={(e) =>setHideDeleted(e.target.checked)}
           />
           삭제된 무기 숨기기
         </label>

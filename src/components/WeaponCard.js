@@ -1,4 +1,5 @@
 import React, { useState, useMemo, useEffect } from "react";
+import { useResponsive } from "../context/ResponsiveContext";
 import "./WeaponCard.css";
 
 function WeaponCard({
@@ -8,6 +9,7 @@ function WeaponCard({
   globalEnhancement,
   imageSrc,
 }) {
+  const { isMobile } = useResponsive();
   const [currentIndex, setCurrentIndex] = useState(0);
 
   useEffect(() => {
@@ -185,7 +187,7 @@ function WeaponCard({
   };
 
   return (
-    <div className="weapon-card">
+    <div className={`weapon-card${isMobile ? " mobile" : ""}`}>
       <div className={`card-top ${getGradeClassName(grade)}`}>
         <div className="image-placeholder">
            {imageSrc ? (

@@ -107,4 +107,184 @@
   background-color: #1e1e1e;
   border: 1px solid #444;
   color: #ccc;
+}.weapon-card-view.mobile {
+  padding-top: 0;
 }
+
+.weapon-card-view__mobile-toolbar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 8px 16px;
+  position: sticky;
+  top: 0;
+  z-index: 12;
+  background-color: rgba(255, 255, 255, 0.9);
+  backdrop-filter: blur(4px);
+  border-bottom: 1px solid #e5e5e5;
+}
+
+.weapon-card-view__toolbar-button {
+  flex: 1;
+  border: none;
+  border-radius: 999px;
+  padding: 10px 16px;
+  background-color: #f1f3f5;
+  color: #212529;
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.weapon-card-view__toolbar-button:focus-visible {
+  outline: 2px solid #495057;
+  outline-offset: 2px;
+}
+
+.weapon-card-view__controls-modal {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.45);
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  z-index: 1200;
+}
+
+.weapon-card-view__controls-modal-content {
+  width: 100%;
+  max-width: 520px;
+  background-color: #ffffff;
+  border-radius: 20px 20px 0 0;
+  padding: 20px;
+  max-height: 90vh;
+  overflow-y: auto;
+  box-shadow: 0 -8px 24px rgba(0, 0, 0, 0.25);
+}
+
+.weapon-card-view__controls-modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+}
+
+.weapon-card-view__controls-modal-header h2 {
+  margin: 0;
+  font-size: 1.1rem;
+}
+
+.weapon-card-view__controls-close {
+  border: none;
+  background: none;
+  color: #495057;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.weapon-card-view__controls-modal-body {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.view-controls.mobile {
+  position: static;
+  margin: 0;
+  padding: 0;
+  border: none;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 16px;
+}
+
+.view-controls.mobile .controls-group {
+  flex-direction: column;
+  align-items: stretch;
+  gap: 12px;
+}
+
+.view-controls.mobile .sort-controls {
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+.view-controls.mobile label {
+  font-size: 0.95rem;
+}
+
+.grade-filter-controls.mobile {
+  position: static;
+  margin: 0;
+  padding: 16px;
+  border-radius: 16px;
+  border: 1px solid #e5e7eb;
+  gap: 12px;
+}
+
+.grade-filter-controls.mobile .checkbox-label,
+.grade-filter-controls.mobile .radio-label {
+  font-size: 1rem;
+}
+
+.cards-container.mobile-scroll {
+  flex-wrap: nowrap;
+  overflow-x: auto;
+  gap: 16px;
+  padding: 8px 4px 24px;
+  scroll-snap-type: x mandatory;
+  -webkit-overflow-scrolling: touch;
+}
+
+.cards-container.mobile-scroll::-webkit-scrollbar {
+  display: none;
+}
+
+.weapon-card-view.mobile .cards-container.mobile-scroll .weapon-card {
+  flex: 0 0 82vw;
+  max-width: 320px;
+  scroll-snap-align: start;
+}
+
+.grade-section.mobile {
+  margin-bottom: 32px;
+}
+
+.grade-section.mobile h2 {
+  font-size: 1.05rem;
+  margin-left: 4px;
+}
+
+.theme-dark .weapon-card-view__mobile-toolbar {
+  background-color: rgba(18, 18, 18, 0.9);
+  border-bottom-color: #2a2a2a;
+}
+
+.theme-dark .weapon-card-view__toolbar-button {
+  background-color: #2d2d2d;
+  color: #f3f4f6;
+}
+
+.theme-dark .weapon-card-view__controls-modal-content {
+  background-color: #1f1f1f;
+  color: #f3f4f6;
+  box-shadow: 0 -8px 24px rgba(0, 0, 0, 0.5);
+}
+
+.theme-dark .weapon-card-view__controls-close {
+  color: #f3f4f6;
+}
+
+.theme-dark .grade-filter-controls.mobile {
+  border-color: #373737;
+}
+
+
+
+.view-controls.mobile h1 {
+  font-size: 1.05rem;
+  margin: 0;
+}
+

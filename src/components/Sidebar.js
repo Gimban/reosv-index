@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import "./Sidebar.css";
 import hamburgerIcon from "../images/icon/hamburger-icon.svg";
 
@@ -11,8 +11,30 @@ function Sidebar({
   setTheme,
   isCollapsed,
   setIsCollapsed,
+  isMobile,
+  isDrawerOpen,
+  onToggleSidebar,
+  onDrawerClose,
 }) {
   const [isRawDataOpen, setIsRawDataOpen] = useState(false);
+
+  useEffect(() => {
+    if (!isMobile) {
+      document.body.style.overflow = "";
+      return;
+    }
+
+    document.body.style.overflow = isDrawerOpen ? "hidden" : "";
+    return () => {
+      document.body.style.overflow = "";
+    };
+  }, [isDrawerOpen, isMobile]);
+
+  useEffect(() => {
+    if (isMobile && !isDrawerOpen) {
+      setIsRawDataOpen(false);
+    }
+  }, [isMobile, isDrawerOpen]);
 
   // GID_MAP을 기반으로 메뉴 구조를 동적으로 생성합니다.
   const menu = React.useMemo(() => {
@@ -48,18 +70,63 @@ function Sidebar({
     return menuStructure;
   }, [gidMap]); // currentCategory와 parentCategory는 메뉴 구조 생성에 영향을 주지 않으므로 deps에 불필요
 
+  const shouldShowCollapsed = !isMobile && isCollapsed;
+  const sidebarClassName = [
+    "sidebar",
+    shouldShowCollapsed ? "collapsed" : "",
+    isMobile ? "mobile" : "",
+    isMobile && isDrawerOpen ? "open" : "",
+  ]
+    .filter(Boolean)
+    .join(" ");
+
+  const overlayClassName = ["sidebar-overlay", isDrawerOpen ? "visible" : ""]
+    .filter(Boolean)
+    .join(" ");
+
+  const toggleAriaLabel = isMobile
+    ? "Close navigation"
+    : shouldShowCollapsed
+    ? "Expand sidebar"
+    : "Collapse sidebar";
+
+  const handleToggleClick = () => {
+    if (isMobile) {
+      onDrawerClose();
+      return;
+    }
+    if (onToggleSidebar) {
+      onToggleSidebar();
+    } else {
+      setIsCollapsed(!isCollapsed);
+    }
+  };
+
   return (
-    <div className={`sidebar ${isCollapsed ? "collapsed" : ""}`}>
-      <div className="sidebar-header">
-        {!isCollapsed && <h2>목차</h2>}
-        <button
-          className="sidebar-toggle-btn"
-          onClick={() => setIsCollapsed(!isCollapsed)}
-          aria-label={isCollapsed ? "사이드바 펼치기" : "사이드바 접기"}
-        >
-          <img src={hamburgerIcon} alt="메뉴 토글" />
-        </button>
-      </div>
+    <>
+      {isMobile && (
+        <div
+          className={overlayClassName}
+          onClick={onDrawerClose}
+          role="presentation"
+        />
+      )}
+      <div
+        className={sidebarClassName}
+        role="navigation"
+        aria-hidden={isMobile && !isDrawerOpen}
+      >
+        <div className="sidebar-header">
+          {(!shouldShowCollapsed || isMobile) && <h2>목차</h2>}
+          <button
+            type="button"
+            className="sidebar-toggle-btn"
+            onClick={handleToggleClick}
+            aria-label={toggleAriaLabel}
+          >
+            <img src={hamburgerIcon} alt="메뉴 버튼" />
+          </button>
+        </div>
       <ul>
         {Object.keys(menu).map((mainCategory) => (
           <li
@@ -97,6 +164,9 @@ function Sidebar({
                       }`}
                       onClick={() => {
                         onSelectCategory(subCategory, mainCategory);
+                        if (isMobile) {
+                          onDrawerClose();
+                        }
                       }}
                     >
                       {subCategory}
@@ -134,6 +204,7 @@ function Sidebar({
         </div>
       </div>
     </div>
+    </>
   );
 }
 
