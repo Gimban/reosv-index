@@ -5,6 +5,11 @@
   padding: 15px;
 }
 
+.enhancement-log.mobile {
+  border-radius: 16px;
+  padding: 16px;
+}
+
 .enhancement-log h3 {
   margin-top: 0;
   border-bottom: 1px solid var(--border-color);
@@ -54,4 +59,10 @@
 
 .reset-log-button:hover {
   background-color: #e74c3c;
+}
+
+.enhancement-log.mobile .reset-log-button {
+  font-size: 1.05rem;
+  padding: 12px;
+  border-radius: 10px;
 }

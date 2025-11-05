@@ -14,6 +14,7 @@ function EnhancementControls({
   probabilisticCostData,
   onEnhance,
   isAutoEnhancing,
+  isMobile = false,
 }) {
   const [probOptions, setProbOptions] = useState({
     downgradeProtection: false,
@@ -115,7 +116,7 @@ function EnhancementControls({
   }, [probabilistic, probOptions.downgradeProtection]);
 
   return (
-    <div className="enhancement-controls">
+    <div className={`enhancement-controls${isMobile ? " mobile" : ""}`}>
       <div className="enhancement-option guaranteed">
         <h3>확정 강화 (+{nextLevel})</h3>
         {guaranteed ? (

@@ -1,14 +1,14 @@
 import React from "react";
 import "./EnhancementLog.css";
 
-function EnhancementLog({ logs, onReset }) {
+function EnhancementLog({ logs, onReset, isMobile = false }) {
   const { materials, consumedWeapons } = logs;
 
   const hasMaterials = Object.values(materials).some((amount) => amount > 0);
   const hasConsumedWeapons = Object.keys(consumedWeapons).length > 0;
 
   return (
-    <div className="enhancement-log">
+    <div className={`enhancement-log${isMobile ? " mobile" : ""}`}>
       <h3>누적 사용 재화</h3>
       {hasMaterials ? (
         <ul>

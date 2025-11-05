@@ -7,6 +7,12 @@
   border-left: 5px solid #9b59b6; /* A purple accent for auto */
 }
 
+.auto-enhancement-controls.mobile {
+  margin-top: 0;
+  border-radius: 16px;
+  padding: 18px;
+}
+
 .auto-enhancement-controls h3 {
   margin-top: 0;
   border-bottom: 1px solid var(--border-color);
@@ -44,6 +50,10 @@
   gap: 10px;
 }
 
+.auto-enhancement-controls.mobile .auto-buttons {
+  flex-direction: column;
+}
+
 .auto-buttons button {
   flex: 1;
   padding: 12px;
@@ -58,6 +68,12 @@
 
 .auto-buttons button:hover {
   opacity: 0.85;
+}
+
+.auto-enhancement-controls.mobile .auto-buttons button {
+  font-size: 1.05rem;
+  padding: 14px;
+  border-radius: 10px;
 }
 
 .auto-buttons .start-btn {
@@ -81,6 +97,10 @@
   padding-top: 15px;
 }
 
+.auto-enhancement-controls.mobile .protection-settings {
+  gap: 18px;
+}
+
 .protection-item {
   display: flex;
   flex-direction: column;
@@ -100,6 +120,10 @@
 .protection-header-buttons {
   display: flex;
   gap: 8px;
+}
+
+.auto-enhancement-controls.mobile .protection-header-buttons button {
+  padding: 6px 12px;
 }
 
 .protection-header-buttons button {
@@ -133,4 +157,8 @@
   align-items: center;
   gap: 4px;
   cursor: pointer;
+}
+
+.auto-enhancement-controls.mobile .level-checkbox-grid {
+  gap: 10px;
 }

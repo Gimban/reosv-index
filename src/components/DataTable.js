@@ -1,37 +1,87 @@
-import React from 'react';
+import React, { useMemo, useState } from 'react';
+import { useResponsive } from '../context/ResponsiveContext';
 import './DataTable.css';
 
 function DataTable({ data }) {
-  // 데이터가 로딩되지 않았을 때
-  if (!data || data.length === 0) {
-    return <p>데이터를 불러오는 중입니다...</p>;
+  // ?�이?��? 로딩?��? ?�았????  if (!data || data.length === 0) {
+    return <p>?�이?��? 불러?�는 중입?�다...</p>;
   }
 
-  // 데이터의 첫 번째 행을 사용하여 열 이름(헤더)을 추출
-  const columns = Object.keys(data[0]);
+  const { isMobile } = useResponsive();
+  const [mobileView, setMobileView] = useState('cards');
+  // ?�이?�의 �?번째 ?�을 ?�용?�여 ???�름(?�더)??추출
+  const columns = useMemo(() => Object.keys(data[0] || {}), [data]);
 
   return (
-    <div className="table-container">
-      <table>
-        <thead>
-          <tr>
-            {columns.map((column, index) => (
-              <th key={index}>{column}</th>
-            ))}
-          </tr>
-        </thead>
-        <tbody>
-          {data.map((row, rowIndex) => (
-            <tr key={rowIndex}>
-              {columns.map((column, colIndex) => (
-                <td key={colIndex}>{row[column]}</td>
+    <div className={`table-container${isMobile ? ' mobile' : ''}`}>
+      {isMobile && (
+        <div className="table-mobile-toggle">
+          <button
+            type="button"
+            className={`table-mobile-toggle__btn${mobileView === 'cards' ? ' active' : ''}`}
+            onClick={() => setMobileView('cards')}
+            aria-pressed={mobileView === 'cards'}
+          >
+            카드 보기
+          </button>
+          <button
+            type="button"
+            className={`table-mobile-toggle__btn${mobileView === 'table' ? ' active' : ''}`}
+            onClick={() => setMobileView('table')}
+            aria-pressed={mobileView === 'table'}
+          >
+            ??보기
+          </button>
+        </div>
+      )}
+
+      {(!isMobile || mobileView === 'table') && (
+        <div className="table-scroll" role="region" aria-live="polite">
+          <table aria-label="������ ǥ">
+            <thead>
+              <tr>
+                {columns.map((column, index) => (
+                  <th key={index}>{column}</th>
+                ))}
+              </tr>
+            </thead>
+            <tbody>
+              {data.map((row, rowIndex) => (
+                <tr key={rowIndex}>
+                  {columns.map((column, colIndex) => (
+                    <td key={colIndex}>{row[column]}</td>
+                  ))}
+                </tr>
               ))}
-            </tr>
+            </tbody>
+          </table>
+        </div>
+      )}
+
+      {isMobile && mobileView === 'cards' && (
+        <div className="table-card-list">
+          {data.map((row, rowIndex) => (
+            <article key={rowIndex} className="table-card">
+              <header className="table-card__header">??{rowIndex + 1}</header>
+              <dl className="table-card__body">
+                {columns.map((column) => (
+                  <div key={column} className="table-card__item">
+                    <dt>{column}</dt>
+                    <dd>
+                      {row[column] !== undefined && row[column] !== null
+                        ? row[column]
+                        : '-'}
+                    </dd>
+                  </div>
+                ))}
+              </dl>
+            </article>
           ))}
-        </tbody>
-      </table>
+        </div>
+      )}
     </div>
   );
 }
 
 export default DataTable;
+

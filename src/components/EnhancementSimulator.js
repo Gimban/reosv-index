@@ -13,6 +13,7 @@ import {
   getEnhancementInfo,
   performEnhancement as performEnhancementLogic,
 } from "./enhancement/enhancementHelper";
+import { useResponsive } from "../context/ResponsiveContext";
 import "./EnhancementSimulator.css";
 
 const parseNum = (val) => Number(String(val || "0").replace(/,/g, ""));
@@ -32,6 +33,8 @@ function EnhancementSimulator({
   const [isAutoEnhancing, setIsAutoEnhancing] = useState(false);
   const [isAutoPaused, setIsAutoPaused] = useState(false);
   const [autoEnhanceStrategy, setAutoEnhanceStrategy] = useState(null);
+  const { isMobile } = useResponsive();
+  const [mobileSection, setMobileSection] = useState("manual");
 
   const autoEnhanceTimer = useRef(null);
   // This ref will hold all state and functions needed by the loop,
@@ -58,6 +61,7 @@ function EnhancementSimulator({
       setHistory([]);
       setIsModalOpen(false);
       stopAutoEnhancement(); // 무기 변경 시 자동 강화 중단
+      setMobileSection("manual");
     },
     [setHistory] // eslint-disable-line react-hooks/exhaustive-deps,
   );
@@ -279,11 +283,11 @@ function EnhancementSimulator({
   }, [selectedWeapon, guaranteedCostData, probabilisticCostData]);
 
   return (
-    <div className="enhancement-simulator">
+    <div className={`enhancement-simulator${isMobile ? " mobile" : ""}`}>
       <h1>강화 시뮬레이터</h1>
-      <div className="simulator-main-layout">
-        <div className="simulator-controls-panel">
-          <div className="weapon-selection-area">
+      {isMobile ? (
+        <>
+          <div className={`weapon-selection-area mobile`}>
             <button
               className={`select-weapon-btn ${gradeClass}`}
               onClick={() => setIsModalOpen(true)}
@@ -307,50 +311,150 @@ function EnhancementSimulator({
               </div>
             )}
           </div>
-
           {selectedWeapon ? (
             <>
-              <EnhancementControls
-                key={`${selectedWeapon[0]["이름"]}-manual`} // 무기 변경 시 컨트롤러 리셋
-                weapon={selectedWeapon}
-                currentLevel={currentLevel}
-                guaranteedCostData={guaranteedCostData}
-                probabilisticCostData={probabilisticCostData}
-                onEnhance={handleEnhancementAttempt}
-                isAutoEnhancing={isAutoEnhancing}
-              />
-              <AutoEnhancementControls
-                key={`${selectedWeapon[0]["이름"]}-auto`}
-                maxLevel={maxEnhancementLevel}
-                onStart={startAutoEnhancement}
-                onPause={pauseAutoEnhancement}
-                onStop={stopAutoEnhancement}
-                isAutoEnhancing={isAutoEnhancing}
-                isAutoPaused={isAutoPaused}
-                probabilisticCostData={probabilisticCostData}
-                guaranteedCostData={guaranteedCostData}
-                weaponGrade={weaponGrade}
-              />
+              <div className="simulator-mobile-tabs">
+                {[
+                  { id: "manual", label: "강화" },
+                  { id: "auto", label: "자동 강화" },
+                  { id: "logs", label: "기록" },
+                ].map((section) => (
+                  <button
+                    key={section.id}
+                    type="button"
+                    className={`simulator-mobile-tab${
+                      mobileSection === section.id ? " active" : ""
+                    }`}
+                    onClick={() => setMobileSection(section.id)}
+                    aria-pressed={mobileSection === section.id}
+                  >
+                    {section.label}
+                  </button>
+                ))}
+              </div>
+              <div className="simulator-mobile-content">
+                {mobileSection === "manual" && (
+                  <EnhancementControls
+                    key={`${selectedWeapon[0]["이름"]}-manual`}
+                    weapon={selectedWeapon}
+                    currentLevel={currentLevel}
+                    guaranteedCostData={guaranteedCostData}
+                    probabilisticCostData={probabilisticCostData}
+                    onEnhance={handleEnhancementAttempt}
+                    isAutoEnhancing={isAutoEnhancing}
+                    isMobile
+                  />
+                )}
+                {mobileSection === "auto" && (
+                  <AutoEnhancementControls
+                    key={`${selectedWeapon[0]["이름"]}-auto`}
+                    maxLevel={maxEnhancementLevel}
+                    onStart={startAutoEnhancement}
+                    onPause={pauseAutoEnhancement}
+                    onStop={stopAutoEnhancement}
+                    isAutoEnhancing={isAutoEnhancing}
+                    isAutoPaused={isAutoPaused}
+                    probabilisticCostData={probabilisticCostData}
+                    guaranteedCostData={guaranteedCostData}
+                    weaponGrade={weaponGrade}
+                    isMobile
+                  />
+                )}
+                {mobileSection === "logs" && (
+                  <div className="simulator-mobile-log">
+                    <EnhancementLog logs={logs} onReset={handleResetLogs} isMobile />
+                    <div className="enhancement-history mobile">
+                      <h3>최근 시도 기록 (최대 20개)</h3>
+                      <ul>
+                        {history.map((item, index) => (
+                          <li key={index} className={getHistoryItemClass(item.outcome)}>
+                            {item.message}
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  </div>
+                )}
+              </div>
             </>
           ) : (
-            <p className="guide-text">먼저 시뮬레이션할 무기를 선택해주세요.</p>
+            <p className="guide-text mobile">
+              먼저 시뮬레이션할 무기를 선택해주세요.
+            </p>
           )}
-        </div>
+        </>
+      ) : (
+        <div className="simulator-main-layout">
+          <div className="simulator-controls-panel">
+            <div className="weapon-selection-area">
+              <button
+                className={`select-weapon-btn ${gradeClass}`}
+                onClick={() => setIsModalOpen(true)}
+              >
+                {selectedWeapon ? selectedWeapon[0]["이름"] : "무기 선택"}
+              </button>
+              {selectedWeapon && (
+                <div className="current-weapon-display">
+                  <div>
+                    <h2 className={gradeClass}>{selectedWeapon[0]["이름"]}</h2>
+                    <p className="current-level-text">
+                      현재 강화: <span>+{currentLevel}</span>
+                    </p>
+                  </div>
+                  <button
+                    onClick={handleResetEnhancement}
+                    className="reset-enhancement-btn"
+                  >
+                    강화 초기화
+                  </button>
+                </div>
+              )}
+            </div>
 
-        <div className="simulator-log-panel">
-          <EnhancementLog logs={logs} onReset={handleResetLogs} />
-          <div className="enhancement-history">
-            <h3>최근 시도 기록 (최대 20개)</h3>
-            <ul>
-              {history.map((item, index) => (
-                <li key={index} className={getHistoryItemClass(item.outcome)}>
-                  {item.message}
-                </li>
-              ))}
-            </ul>
+            {selectedWeapon ? (
+              <>
+                <EnhancementControls
+                  key={`${selectedWeapon[0]["이름"]}-manual`} // 무기 변경 시 컨트롤러 리셋
+                  weapon={selectedWeapon}
+                  currentLevel={currentLevel}
+                  guaranteedCostData={guaranteedCostData}
+                  probabilisticCostData={probabilisticCostData}
+                  onEnhance={handleEnhancementAttempt}
+                  isAutoEnhancing={isAutoEnhancing}
+                />
+                <AutoEnhancementControls
+                  key={`${selectedWeapon[0]["이름"]}-auto`}
+                  maxLevel={maxEnhancementLevel}
+                  onStart={startAutoEnhancement}
+                  onPause={pauseAutoEnhancement}
+                  onStop={stopAutoEnhancement}
+                  isAutoEnhancing={isAutoEnhancing}
+                  isAutoPaused={isAutoPaused}
+                  probabilisticCostData={probabilisticCostData}
+                  guaranteedCostData={guaranteedCostData}
+                  weaponGrade={weaponGrade}
+                />
+              </>
+            ) : (
+              <p className="guide-text">먼저 시뮬레이션할 무기를 선택해주세요.</p>
+            )}
+          </div>
+
+          <div className="simulator-log-panel">
+            <EnhancementLog logs={logs} onReset={handleResetLogs} />
+            <div className="enhancement-history">
+              <h3>최근 시도 기록 (최대 20개)</h3>
+              <ul>
+                {history.map((item, index) => (
+                  <li key={index} className={getHistoryItemClass(item.outcome)}>
+                    {item.message}
+                  </li>
+                ))}
+              </ul>
+            </div>
           </div>
         </div>
-      </div>
+      )}
 
       {isModalOpen && (
         <EnhancementWeaponSelectionModal

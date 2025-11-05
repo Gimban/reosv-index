@@ -53,3 +53,11 @@
     font-size: 0.8em;
     vertical-align: sub;
 }
+.dps-calculator-container.mobile .ehp-result-block {
+    border-radius: 18px;
+}
+
+.dps-calculator-container.mobile .ehp-result-block .formula {
+    font-size: 1rem;
+}
+

@@ -13,6 +13,7 @@ function AutoEnhancementControls({
   probabilisticCostData,
   guaranteedCostData,
   weaponGrade,
+  isMobile = false,
 }) {
   const [targetLevel, setTargetLevel] = useState(maxLevel);
   const [downgradeProtectLevels, setDowngradeProtectLevels] = useState(
@@ -110,7 +111,7 @@ function AutoEnhancementControls({
   };
 
   return (
-    <div className="auto-enhancement-controls">
+    <div className={`auto-enhancement-controls${isMobile ? " mobile" : ""}`}>
       <h3>자동 강화 설정</h3>
       <div className="auto-setting-item">
         <label htmlFor="target-level">목표 강화 (+{targetLevel})</label>
